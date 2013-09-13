@@ -135,9 +135,16 @@ function shellInit() {
 			// if they are the same length then this line is valid code
 			if(commandsArr != null && matchArr != null && commandsArr.length == matchArr.length)
 			{
-				_StdOut.putText(lines[i]);
-				_StdIn.advanceLine();
+				//_StdOut.putText(lines[i]);
+				//_StdIn.advanceLine();
 			}
+            else
+            {
+                var y = parseInt(i, 10);
+                y = parseInt(y+1, 10);
+                _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
+                _StdIn.advanceLine();
+            }
 		}
 	};
 	this.commandList[this.commandList.length] = sc;
