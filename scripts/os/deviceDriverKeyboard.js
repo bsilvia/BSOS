@@ -182,6 +182,16 @@ function krnKbdDispatchKeyPress(params)
 	    chr = String.fromCharCode(41);
         _KernelInputQueue.enqueue(chr);
 	}
+	else if (keyCode == 187 && isShifted)	// plus +
+	{
+	    chr = String.fromCharCode(43);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if (keyCode == 187)				// equals =
+	{
+	    chr = String.fromCharCode(61);
+        _KernelInputQueue.enqueue(chr);
+	}
 	else if (keyCode == 38)					// up arrow
 	{
 		_KernelInputQueue.enqueue("up");
