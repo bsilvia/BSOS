@@ -1,4 +1,4 @@
 iProject1
 ============
 
-First set of enhancements to iProject0.
+First set of enhancements to iProject1.
