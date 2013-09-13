@@ -62,7 +62,7 @@ function krnKbdDispatchKeyPress(params)
         _KernelInputQueue.enqueue(chr); 
     }
 	// Punctuation marks
-	else if (keyCode == 190 && isShifted)	// period .
+	else if (keyCode == 190 && isShifted)	// > character
 	{
 	    chr = String.fromCharCode(62);
         _KernelInputQueue.enqueue(chr);
@@ -72,7 +72,7 @@ function krnKbdDispatchKeyPress(params)
 	    chr = String.fromCharCode(46);
         _KernelInputQueue.enqueue(chr);
 	}
-	else if	(keyCode == 188 && isShifted)	// comma ,
+	else if	(keyCode == 188 && isShifted)	// < character
 	{
 	    chr = String.fromCharCode(60);
         _KernelInputQueue.enqueue(chr);
@@ -92,16 +92,6 @@ function krnKbdDispatchKeyPress(params)
 	    chr = String.fromCharCode(59);
         _KernelInputQueue.enqueue(chr);
 	}
-	else if	(keyCode == 189 && isShifted)	// underscore _
-	{
-	    chr = String.fromCharCode(95);
-        _KernelInputQueue.enqueue(chr);
-	}
-	else if	(keyCode == 189)	// hyphen -
-	{
-	    chr = String.fromCharCode(45);
-        _KernelInputQueue.enqueue(chr);
-	}
 	else if	(keyCode == 222 && isShifted)	// quotation "
 	{
 	    chr = String.fromCharCode(34);
@@ -112,6 +102,38 @@ function krnKbdDispatchKeyPress(params)
 	    chr = String.fromCharCode(39);
         _KernelInputQueue.enqueue(chr);
 	}
+
+	else if	(keyCode == 219 && isShifted)	// curly brace {
+	{
+	    chr = String.fromCharCode(123);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 219)				// square bracket [
+	{
+	    chr = String.fromCharCode(91);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 221 && isShifted)	// curly brace }
+	{
+	    chr = String.fromCharCode(125);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 221)				// square bracket ]
+	{
+	    chr = String.fromCharCode(93);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 220 && isShifted)	// backslash \
+	{
+	    chr = String.fromCharCode(124);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 220)				// | character
+	{
+	    chr = String.fromCharCode(92);
+        _KernelInputQueue.enqueue(chr);
+	}
+
 	else if	(keyCode == 192 && isShifted)	// tilde ~
 	{
 	    chr = String.fromCharCode(126);
@@ -180,6 +202,16 @@ function krnKbdDispatchKeyPress(params)
 	else if (keyCode == 48 && isShifted)	// right parenthesis )
 	{
 	    chr = String.fromCharCode(41);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 189 && isShifted)	// underscore _
+	{
+	    chr = String.fromCharCode(95);
+        _KernelInputQueue.enqueue(chr);
+	}
+	else if	(keyCode == 189)				// hyphen -
+	{
+	    chr = String.fromCharCode(45);
         _KernelInputQueue.enqueue(chr);
 	}
 	else if (keyCode == 187 && isShifted)	// plus +
