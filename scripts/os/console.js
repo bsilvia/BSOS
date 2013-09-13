@@ -130,12 +130,12 @@ function CLIconsole() {
 	   this.CurrentYPosition -= _DefaultFontSize + _FontHeightMargin;
 	}
 	
-	this.bsod = function()
+	this.bluescreen = function()
 	{
 		var img = new Image();
 		img.addEventListener("load", function() {
 		  _DrawingContext.drawImage(img, 0, 0)
 		}, false);
-		img.src = 'images/bsod.png';
+		img.src = 'images/bluescreen.png';
 	}
 }
