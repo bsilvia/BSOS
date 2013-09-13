@@ -167,7 +167,7 @@ function krnKbdDispatchKeyPress(params)
 		chr = String.fromCharCode(38);
         _KernelInputQueue.enqueue(chr);
 	}
-	else if (keyCode == 56 && isShifted)	// * character
+	else if (keyCode == 56 && isShifted)	// asterisk *
 	{
 		chr = String.fromCharCode(42);
         _KernelInputQueue.enqueue(chr);
