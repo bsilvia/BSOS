@@ -32,7 +32,7 @@
    <script type="text/javascript">
 		function updateTime() {
 			var now = new Date();
-			var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : (now.getHours() = 0 ? 12 : now.getHours());
+			var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : String(now.getHours() == 0 ? 12 : now.getHours());
 			var min = now.getMinutes() < 10 ? "0" + String(now.getMinutes()) : String(now.getMinutes());
 			var sec = now.getSeconds() < 10 ? "0" + String(now.getSeconds()) : String(now.getSeconds());
 			sec = sec + " " + (now.getHours() >= 12 ? "pm" : "am");
@@ -121,7 +121,7 @@
    </div>
    
    <div id="statusbar" style="margin:4px;">
-	  <p id="status">Status:</p>
+	  <p id="status">Welcome</p>
 	  <p id="datetime">Date Time:</p>
    </div>
 

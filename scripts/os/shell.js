@@ -123,6 +123,14 @@ function shellInit() {
 	sc.description = "- Loads code into memory.";
 	sc.function = function() {
 		var str = document.getElementById("taProgramInput").value;
+        
+        if(str.trim() == "")
+        {
+            _StdOut.putText("No commands detected");
+            _StdOut.advanceLine();
+            return;
+        }
+
 		var lines = str.split("\n");
 		var myReg = /\b[0-9A-F]{2}\b/gi;
 		for (var i in lines)
@@ -143,7 +151,7 @@ function shellInit() {
                 var y = parseInt(i, 10);
                 y = parseInt(y+1, 10);
                 _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
-                _StdIn.advanceLine();
+                _StdOut.advanceLine();
             }
 		}
 	};
