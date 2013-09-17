@@ -145,6 +145,9 @@ function shellInit() {
 			{
 				//_StdOut.putText(lines[i]);
 				//_StdIn.advanceLine();
+
+                _StdOut.putText("Valid commands, thank you");
+                _StdOut.advanceLine();
 			}
             else
             {
