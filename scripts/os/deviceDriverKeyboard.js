@@ -33,7 +33,10 @@ function krnKbdDispatchKeyPress(params)
     krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
     var chr = "";
 	
-	if(keyCode == null || isShifted == null || keyCode < 8 || keyCode > 222)
+	// make sure we got params and that isShifted is a valid value
+	// and check to see if the keyCode is outside the valid range of a keyboard
+	if(keyCode == null || isShifted == null || keyCode < 8 ||
+		keyCode > 222 || !(isShifted != true || isShifted != false))
 	{
 		krnTrapError("Keyboard driver error: invalid keycode or parameters: " + params);
 	}
@@ -232,4 +235,10 @@ function krnKbdDispatchKeyPress(params)
 	{
 		_KernelInputQueue.enqueue("dn");
 	}
+	// silently ignore keys that we don't display on screen 
+	// or handle but which are valid keyboard keys
+	/*else									// non-valid key
+	{
+		krnTrapError("Keyboard driver error: invalid keycode or parameters: " + params);
+	}*/
 }
