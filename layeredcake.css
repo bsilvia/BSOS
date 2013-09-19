@@ -47,14 +47,14 @@ h3 {
    text-align: center;
 }
 
-#statusbar {
-	/*position: absolute;
-	top: -10px;
-	left: 524px;*/
-	
-	position: relative;
-	top: -50px;
-	left: 5px;
+#divButtonBar {
+	width: 510px;
+	height: 50px;
+	float: left;
+}
+
+#divStatusBar {
+	margin-left: 510px;
 }
 
 #datetime {
