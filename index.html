@@ -29,26 +29,6 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
    <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
-   <script type="text/javascript">
-		function updateTime() {
-			var now = new Date();
-			var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : String(now.getHours() == 0 ? 12 : now.getHours());
-			var min = now.getMinutes() < 10 ? "0" + String(now.getMinutes()) : String(now.getMinutes());
-			var sec = now.getSeconds() < 10 ? "0" + String(now.getSeconds()) : String(now.getSeconds());
-			sec = sec + " " + (now.getHours() >= 12 ? "pm" : "am");
-			
-			var time = hrs + ":" + min + ":" + sec;
-			var date = [now.getMonth() + 1,
-						now.getDate(),
-						now.getFullYear()].join('/');
-
-			// set the content of the element with the ID time to the formatted string
-			document.getElementById('datetime').innerHTML = date + " " + time;
-
-			// call this function again in 1000ms
-			setTimeout(updateTime, 1000);
-		}
-   </script>
 </head>
 
 <body onload="hostInit();updateTime();">

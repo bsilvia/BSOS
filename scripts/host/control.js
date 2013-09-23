@@ -111,3 +111,23 @@ function hostBtnReset_click(btn)
     // be reloaded from the server. If it is false or not specified, the browser may reload the 
     // page from its cache, which is not what we want.
 }
+
+// function to update datetime on status bar
+function updateTime() {
+    var now = new Date();
+    var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : String(now.getHours() == 0 ? 12 : now.getHours());
+    var min = now.getMinutes() < 10 ? "0" + String(now.getMinutes()) : String(now.getMinutes());
+    var sec = now.getSeconds() < 10 ? "0" + String(now.getSeconds()) : String(now.getSeconds());
+    sec = sec + " " + (now.getHours() >= 12 ? "pm" : "am");
+
+    var time = hrs + ":" + min + ":" + sec;
+    var date = [now.getMonth() + 1,
+          now.getDate(),
+          now.getFullYear()].join('/');
+
+    // set the content of the element with the ID time to the formatted string
+    document.getElementById('datetime').innerHTML = date + " " + time;
+
+    // call this function again in 1000ms
+    setTimeout(updateTime, 1000);
+}
