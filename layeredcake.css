@@ -13,7 +13,7 @@ h1 {
 	font-size: 24pt;
 	font-weight: normal;
 	font-style: normal;	
-   border-bottom: 1px solid black;
+   /*border-bottom: 1px solid black;*/
 }
 
 h2 {
@@ -54,6 +54,9 @@ h3 {
 }
 
 #divStatusBar {
+	width: 160px;
+	height: 50px;
+	float: left;
 	margin-left: 510px;
 }
 
@@ -62,4 +65,42 @@ h3 {
 	/*left: 300px;
 	top: -36px;*/
 	top: -10px;
+}
+
+#tableMain {
+	border: 1;
+	width: 700px;
+	padding-left: 15px;
+}
+
+#buttonsCell {
+	width: 350px;
+	white-space: nowrap;
+	vertical-align: bottom;
+}
+
+#titleCell {
+	text-align: left;
+	white-space: nowrap;
+	vertical-align: top;
+	height: 50px;
+	border-bottom: 1;
+}
+
+#statusBarCell {
+	width: 200px;
+	height: 50px;
+	white-space: nowrap;
+	vertical-align: bottom;
+	text-align: left;
+}
+
+
+#displayCell {
+	vertical-align: top;
+}
+
+
+#footCell {
+	text-align: center;
 }

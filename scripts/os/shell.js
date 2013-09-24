@@ -157,8 +157,22 @@ function shellInit() {
                 _StdOut.advanceLine();
             }
 		}
+
+        // TO-DO - load program into memory, diplay PID on console
+
 	};
 	this.commandList[this.commandList.length] = sc;
+
+    // run
+    sc = new ShellCommand();
+    sc.command = "run <pid>";
+    sc.description = "- Runs the program with the given process ID.";
+    sc.function = function() {
+        
+        // TO-DO - call execution of the program
+
+    };
+    this.commandList[this.commandList.length] = sc;
 	
 	// bsod
 	sc = new ShellCommand();

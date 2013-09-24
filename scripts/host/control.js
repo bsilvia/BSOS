@@ -112,6 +112,11 @@ function hostBtnReset_click(btn)
     // page from its cache, which is not what we want.
 }
 
+function hostBtnStep_click(btn)
+{
+    // TO-DO add code to single step through program
+}
+
 // function to update datetime on status bar
 function updateTime() {
     var now = new Date();
