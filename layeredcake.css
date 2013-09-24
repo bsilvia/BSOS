@@ -60,11 +60,16 @@ h3 {
 	margin-left: 510px;
 }
 
+#status {
+	position: relative;
+	top: 25px;
+}
+
 #datetime {
 	position: relative;
 	/*left: 300px;
 	top: -36px;*/
-	top: -10px;
+	top: 10px;
 }
 
 #tableMain {
@@ -89,7 +94,7 @@ h3 {
 
 #statusBarCell {
 	width: 200px;
-	height: 50px;
+	height: 20px;
 	white-space: nowrap;
 	vertical-align: bottom;
 	text-align: left;
