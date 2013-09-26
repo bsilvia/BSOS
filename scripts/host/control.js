@@ -72,6 +72,8 @@ function hostLog(msg, source)
 //
 function hostBtnStartOS_click(btn)
 {
+
+
     // Disable the start button...
     btn.disabled = true;
     
@@ -135,4 +137,20 @@ function updateTime() {
 
     // call this function again in 1000ms
     setTimeout(updateTime, 1000);
+}
+
+// function to create the memory display table
+function createMemoryDisplay() {
+  var table = document.getElementById("memoryTable");
+
+  /*while(table.hasChildNodes()) {
+    table.removeChild(table.lastChild);
+  }
+
+  for(int i = 0; i < 96; i++) {
+    for(int j = 0; j < 9; j++) {
+
+    }
+  }*/
+
 }

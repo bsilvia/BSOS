@@ -62,14 +62,14 @@ h3 {
 
 #status {
 	position: relative;
-	top: 25px;
+	top: 30px;
 }
 
 #datetime {
 	position: relative;
 	/*left: 300px;
 	top: -36px;*/
-	top: 10px;
+	top: 20px;
 }
 
 #tableMain {
