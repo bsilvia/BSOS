@@ -72,7 +72,7 @@ function hostLog(msg, source)
 //
 function hostBtnStartOS_click(btn)
 {
-
+    createMemoryDisplay();
 
     // Disable the start button...
     btn.disabled = true;
@@ -143,14 +143,27 @@ function updateTime() {
 function createMemoryDisplay() {
   var table = document.getElementById("memoryTable");
 
-  /*while(table.hasChildNodes()) {
+  while(table.hasChildNodes()) {
     table.removeChild(table.lastChild);
   }
 
-  for(int i = 0; i < 96; i++) {
-    for(int j = 0; j < 9; j++) {
-
+  for(var i = 0; i < 96; i++) {
+    var hex = i * 8;
+    var hexString = hex.toString(16);
+    var row = table.insertRow(i);
+    for(var j = 0; j < 9; j++) {
+      var cell = row.insertCell(j);
+      
+      if(j == 0) {
+        cell.style.fontWeight = "bold";
+        var pad = "000";
+        hexString = pad.substring(0, pad.length - hexString.length) + hexString;
+        cell.innerHTML = "$" + hexString;
+      }
+      else {
+        cell.innerHTML = 00;
+      }
     }
-  }*/
+  }
 
 }
