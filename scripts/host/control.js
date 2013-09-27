@@ -42,6 +42,11 @@ function hostInit()
       _GLaDOS.init();
    };
 
+   // call the function to update the status bar time
+   updateTime();
+
+   // create an empty memory table to display
+   createMemoryDisplay();
 }
 
 function hostLog(msg, source)
@@ -72,8 +77,6 @@ function hostLog(msg, source)
 //
 function hostBtnStartOS_click(btn)
 {
-    createMemoryDisplay();
-
     // Disable the start button...
     btn.disabled = true;
     
@@ -143,17 +146,22 @@ function updateTime() {
 function createMemoryDisplay() {
   var table = document.getElementById("memoryTable");
 
+  // remove all current entries in the table
   while(table.hasChildNodes()) {
     table.removeChild(table.lastChild);
   }
 
+  // go through and generate each row and cell
   for(var i = 0; i < 96; i++) {
-    var hex = i * 8;
-    var hexString = hex.toString(16);
+    // calculate the hex value for this row
+    var hexString = (i*8).toString(16);
+    
     var row = table.insertRow(i);
+
     for(var j = 0; j < 9; j++) {
       var cell = row.insertCell(j);
       
+      // if we are in the first column, pad the number and display it in bold
       if(j == 0) {
         cell.style.fontWeight = "bold";
         var pad = "000";
