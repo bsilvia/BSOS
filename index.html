@@ -31,9 +31,9 @@
    <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
 </head>
 
-<body onload="hostInit();updateTime();createMemoryDisplay();">
+<body onload="hostInit();">
 
-  <table id="tableMain">
+  <table id="mainTable">
     <!--<tr>
       <td id="titleCell" colspan="3">
         <h1>Layered Cake</h1>
@@ -128,20 +128,34 @@
              <br>
              <textarea name="taProgramInput"
                        id  ="taProgramInput"
-                       rows="6"
+                       rows="8"
                        cols="48"
              ></textarea>
           </label>
        </div>
       </td>
       <td>
-        <div id="memoryDiv">
+        <div id="divMemoryDisplay">
           <table id="memoryTable" border="1">
             
           </table>
         </div>
-        <div>
-          
+        <div id="divCpuStatus">
+          <label>CPU</label>
+          <table id="cpuTable" border="1">
+            <tr>
+              <td>AC</td>
+              <td>X Reg</td>
+              <td>Y Reg</td>
+              <td>Z Flag</td>
+            </tr>
+            <tr>
+              <td id="tdAccumulator">00</td>
+              <td id="tdXRegister">00</td>
+              <td id="tdYRegister">00</td>
+              <td id="tdZFlag">00</td>
+            </tr>
+          </table>
         </div>
       </td>
     </tr>

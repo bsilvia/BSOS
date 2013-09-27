@@ -72,7 +72,24 @@ h3 {
 	top: 20px;
 }
 
-#tableMain {
+/*
+#divLog {
+	height: 385px;
+}*/
+
+#taLog {
+	height: 385px;
+}
+/*
+#divUserProgramInput {
+	height: 100px;
+}
+*/
+#taProgramInput {
+	height: 85px;
+}
+
+#mainTable {
 	border: 1;
 	width: 700px;
 	padding-left: 15px;
@@ -104,22 +121,36 @@ h3 {
 	vertical-align: top;
 }
 
-#memoryDiv {
+#divMemoryDisplay {
 	position: relative;
 	top: 0px;
-	height: 500px;
+	height: 390px;
 	width: 325px;
 	overflow: scroll;
 	text-align: center;
-	margin-top: 0px;
+	margin-top: -9px;
 }
 
 #memoryTable td {
 	width: 35px;
 }
 
-#memoryTable th {
+/*#memoryTable th {
 	width: 45px;
+}*/
+
+#divCpuStatus {
+	height: 100px;
+	margin-top: 5px;
+}
+
+#cpuTable {
+	text-align: center;
+}
+
+#cpuTable td {
+	width: 81px;
+	height: 35px;
 }
 
 #footCell {
