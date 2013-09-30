@@ -30,6 +30,9 @@ function krnBootstrap()      // Page 8.
    _StdIn  = _Console;
    _StdOut = _Console;
 
+   // Initialize the memory manager
+   _MemoryManager = new MemoryManager();
+
    // Load the Keyboard Device Driver
    krnTrace("Loading the keyboard device driver.");
    krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.  TODO: Should that have a _global-style name?

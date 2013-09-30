@@ -48,6 +48,12 @@ var _KernelInputQueue = null;
 var _StdIn  = null;
 var _StdOut = null;
 
+// Memory manager
+var _MemoryManager = null;
+
+// Memory size
+var _MemorySize = 768;
+
 // UI
 var _Console = null;
 var _OsShell = null;
