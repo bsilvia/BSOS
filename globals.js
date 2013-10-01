@@ -48,6 +48,10 @@ var _KernelInputQueue = null;
 var _StdIn  = null;
 var _StdOut = null;
 
+// Single steping
+var _Step = false;
+var _SingleStep = false;
+
 // Memory manager
 var _MemoryManager = null;
 

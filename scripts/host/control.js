@@ -119,5 +119,5 @@ function hostBtnReset_click(btn)
 
 function hostBtnStep_click(btn)
 {
-    // TO-DO add code to single step through program
+    _Step = true;
 }

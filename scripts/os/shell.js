@@ -135,6 +135,7 @@ function shellInit() {
 		var myReg = /\b[0-9A-F]{2}\b/gi;
         var validCommands = true;
 
+        // go through each line of commands to check its validity
 		for (var i in lines)
 		{
 			// get list of commands separated by spaces
@@ -185,6 +186,31 @@ function shellInit() {
     sc.function = function() {
         
         // TO-DO - call execution of the program
+
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // single step
+    sc = new ShellCommand();
+    sc.command = "singlestep";
+    sc.description = "<on | off> - Steps through program execution.";
+    sc.function = function(args) {
+        
+        if (args.length > 0)
+        {
+            if(args[0] == "on") {
+                _SingleStep = true;
+                document.getElementById('btnStep').disabled = false;
+            }
+            else {
+                _SingleStep = false;
+                document.getElementById('btnStep').disabled = true;
+            }
+        }
+        else
+        {
+            _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+        }
 
     };
     this.commandList[this.commandList.length] = sc;
