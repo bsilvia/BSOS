@@ -103,8 +103,8 @@ function updateCpuDisplay() {
   hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
   
   document.getElementById("tdProgramCounter").innerHTML = hexString.toUpperCase();
-  document.getElementById("tdAccumulator").innerHTML = parseInt(_CPU.AC, 10);
-  document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 10);
-  document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 10);
-  document.getElementById("tdZFlag").innerHTML = parseInt(_CPU.Zflag, 10);
+  document.getElementById("tdAccumulator").innerHTML = parseInt(_CPU.AC, 16);
+  document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 16);
+  document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 16);
+  document.getElementById("tdZFlag").innerHTML = parseInt(_CPU.Zflag, 16);
 }

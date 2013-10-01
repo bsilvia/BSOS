@@ -87,104 +87,133 @@ function Cpu() {
             this.isExecuting = false;
             break;
         }
-
-        // call methods to update memory and cpu display after cycling?
     };
 
-    // load the accumulator with a constant
+    // A9 - load the accumulator with a constant
     this.LDAconstant = function () {
       var constant = _MemoryManager.read(this.PC++);
       this.AC = constant;
     }
-    // load the accumulator from memory
+    // AD - load the accumulator from memory
     this.LDAmemory = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10)
+      var address = parseInt(mem2 + mem1, 16);
       var value = _MemoryManager.read(address);
       this.AC = value;
     }
-    // store the accumulator in memory
+    // 8D - store the accumulator in memory
     this.STA = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10);
+      var address = parseInt(mem2 + mem1, 16);
       _MemoryManager.write(address, this.AC);
     }
-    // add with carry
+    // 6D - add with carry
     this.ADC = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10)
+      var address = parseInt(mem2 + mem1, 16);
       var value = parseInt(_MemoryManager.read(address), 10);
       this.AC = (parseInt(this.AC, 10) + value).toString(16);
     }
-    // load the x register with a constant
+    // A2 - load the x register with a constant
     this.LDXconstant = function () {
       var constant = _MemoryManager.read(this.PC++);
       this.Xreg = constant;
     }
-    // load the x register from memory
+    // AE - load the x register from memory
     this.LDXmemory = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10)
+      var address = parseInt(mem2 + mem1, 16);
       var value = _MemoryManager.read(address);
       this.Xreg = value;
     }
-    // load the y register with a constant
+    // A0 - load the y register with a constant
     this.LDYconstant = function () {
       var constant = _MemoryManager.read(this.PC++);
       this.Yreg = constant;
     }
-    // load the y register from memory
+    // AC - load the y register from memory
     this.LDYmemory = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10)
+      var address = parseInt(mem2 + mem1, 16);
       var value = _MemoryManager.read(address);
       this.Yreg = value;
     }
-    // no operation
+    // EA - no operation
     this.NOP = function () {
-      
+      this.PC++;
     }
-    // break (which is really a system call)
+    // 00 - break (which is really a system call)
     this.BRK = function () {
-      
+      // stop execution and disable the step button
+      this.isExecuting = false;
+      _SingleStep = false;
+      document.getElementById('btnStep').disabled = false;
     }
-    // compare a byte in memory to the x register, sets z flag if equal
+    // EC - compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
-      var address = parseInt(mem2 + mem1, 10)
+      var address = parseInt(mem2 + mem1, 16);
       var value = _MemoryManager.read(address);
       if(parseInt(value, 10) == parseInt(this.Xreg, 10)) {
         this.Zflag = 1;
       }
     }
-    // branch x bytes if z flag = 0
+    // D0 - branch x bytes if z flag = 0
     this.BNE = function () {
+      var bytes = _MemoryManager.read(this.PC++);
+      var intBytes = parseInt(bytes, 16);
       if(this.Zflag == 0) {
-        var bytes = _MemoryManager.read(this.PC++);
+        if(this.PC + intBytes > 256) {
+          this.PC = intBytes + this.PC - 256;
+        }
+        else {
+          this.PC += intBytes;
+        }
       }
       else {
-        this.PC++;
+        //this.PC++;
       }
     }
-    // increment the value of a byte
+    // EE - increment the value of a byte
     this.INC = function () {
-      
+      var mem1 = _MemoryManager.read(this.PC++);
+      var mem2 = _MemoryManager.read(this.PC++);
+      var address = parseInt(mem2 + mem1, 16);
+      var value = _MemoryManager.read(address);
+      var numericValue = parseInt(value, 10) + 1;
+      var pad = "00";
+      var stringValue = numericValue.toString(16);
+      stringValue = pad.substring(0, pad.length - stringValue.length) + stringValue;
+      _MemoryManager.write(address, stringValue);
     }
-    // system call
+    // FF - system call
     // $01 in x register = print the integer stored in the Y register
     // $02 in x register = print the 00-terminated string stored at the address in the y register
     this.SYS = function () {
       if(parseInt(this.Xreg, 10) == 1) {
-        _StdOut.putText(this.Yreg);
+        _StdOut.putText(parseInt(this.Yreg, 10).toString());
+        _StdOut.advanceLine();
+        _StdOut.putText(">");
       }
       else if(parseInt(this.Xreg, 10) == 2) {
-        
+        var mem = this.Yreg;
+        var address = parseInt(mem, 16);
+        var data = _MemoryManager.read(address++);
+
+        // read all the characters of the string and print each out until we reach the 00 character
+        while (data != "00") {
+          var ASCIIvalue = parseInt(data, 16);
+          _StdOut.putText(String.fromCharCode(ASCIIvalue));
+          data = _MemoryManager.read(address++);
+        }
+        _StdOut.advanceLine();
+        _StdOut.putText(">");
       }
     }
 }
