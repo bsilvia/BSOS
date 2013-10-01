@@ -102,7 +102,7 @@ function updateCpuDisplay() {
   var pad = "000";
   hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
   
-  document.getElementById("tdProgramCounter").innerHTML = hexString;
+  document.getElementById("tdProgramCounter").innerHTML = hexString.toUpperCase();
   document.getElementById("tdAccumulator").innerHTML = parseInt(_CPU.AC, 10);
   document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 10);
   document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 10);

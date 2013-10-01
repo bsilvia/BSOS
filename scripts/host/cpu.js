@@ -121,19 +121,29 @@ function Cpu() {
     }
     // load the x register with a constant
     this.LDXconstant = function () {
-      
+      var constant = _MemoryManager.read(this.PC++);
+      this.Xreg = constant;
     }
     // load the x register from memory
     this.LDXmemory = function () {
-      
+      var mem1 = _MemoryManager.read(this.PC++);
+      var mem2 = _MemoryManager.read(this.PC++);
+      var address = parseInt(mem2 + mem1, 10)
+      var value = _MemoryManager.read(address);
+      this.Xreg = value;
     }
     // load the y register with a constant
     this.LDYconstant = function () {
-      
+      var constant = _MemoryManager.read(this.PC++);
+      this.Yreg = constant;
     }
     // load the y register from memory
     this.LDYmemory = function () {
-      
+      var mem1 = _MemoryManager.read(this.PC++);
+      var mem2 = _MemoryManager.read(this.PC++);
+      var address = parseInt(mem2 + mem1, 10)
+      var value = _MemoryManager.read(address);
+      this.Yreg = value;
     }
     // no operation
     this.NOP = function () {
@@ -145,11 +155,22 @@ function Cpu() {
     }
     // compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {
-      
+      var mem1 = _MemoryManager.read(this.PC++);
+      var mem2 = _MemoryManager.read(this.PC++);
+      var address = parseInt(mem2 + mem1, 10)
+      var value = _MemoryManager.read(address);
+      if(parseInt(value, 10) == parseInt(this.Xreg, 10)) {
+        this.Zflag = 1;
+      }
     }
     // branch x bytes if z flag = 0
     this.BNE = function () {
-      
+      if(this.Zflag == 0) {
+        var bytes = _MemoryManager.read(this.PC++);
+      }
+      else {
+        this.PC++;
+      }
     }
     // increment the value of a byte
     this.INC = function () {
@@ -159,6 +180,11 @@ function Cpu() {
     // $01 in x register = print the integer stored in the Y register
     // $02 in x register = print the 00-terminated string stored at the address in the y register
     this.SYS = function () {
-      
+      if(parseInt(this.Xreg, 10) == 1) {
+        _StdOut.putText(this.Yreg);
+      }
+      else if(parseInt(this.Xreg, 10) == 2) {
+        
+      }
     }
 }

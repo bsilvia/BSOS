@@ -152,7 +152,7 @@ function shellInit() {
                 //_StdOut.putText("Valid commands, thank you");
                 //_StdOut.advanceLine();
 
-                // validate commands more here
+                // TO-DO - validate commands more here
 			}
             else
             {
