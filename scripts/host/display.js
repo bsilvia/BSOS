@@ -51,7 +51,7 @@ function createMemoryDisplay() {
         cell.innerHTML = "$" + hexString;
       }
       else {
-        cell.innerHTML = 00;
+        cell.innerHTML = "00";
       }
     }
   }

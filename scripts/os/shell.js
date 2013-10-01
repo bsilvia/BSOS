@@ -165,10 +165,12 @@ function shellInit() {
 
     // run
     sc = new ShellCommand();
-    sc.command = "run <pid>";
-    sc.description = "- Runs the program with the given process ID.";
+    sc.command = "run";
+    sc.description = "<pid> - Runs the program with the given process ID.";
     sc.function = function() {
         
+        _MemoryManager.write(3, "A9");
+        updateMemoryDisplay(_MemoryManager.getMemory());
         // TO-DO - call execution of the program
 
     };
