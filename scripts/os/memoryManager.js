@@ -8,6 +8,7 @@
 
 function MemoryManager() {
    this.memory = new Memory(_MemorySize);
+   this.programPIDs = new Array();
 }
 
 // function to handle reading from 'phyiscal' memory
@@ -29,8 +30,15 @@ MemoryManager.prototype.getMemory = function() {
 MemoryManager.prototype.load = function(program) {
 	
 	// create the pcb, set its base and limit here
+	var newPCB = new PCB();
+	newPCB.base = 0;			// TO-DO keep track of which blocks of memory are open
+	newPCB.limit = 255;			//       and assign the base and limit from that
+	this.programPIDs[newPCB.pid] = newPCB;
 
 	for (var i = 0; i < program.length; i++) {
-		this.memory.write(i, program[i]);
+		this.memory.write(i + newPCB.base, program[i]);
 	};
+
+	_StdOut.putText("Loaded program with PID " + newPCB.pid);
+    _StdOut.advanceLine();
 };

@@ -94,3 +94,12 @@ function updateMemoryDisplay() {
     }
   }
 }
+
+// function to update the cpu display
+function updateCpuDisplay() {
+  document.getElementById("tdProgramCounter").innerHTML = _CPU.PC;
+  document.getElementById("tdAccumulator").innerHTML = _CPU.AC;
+  document.getElementById("tdXRegister").innerHTML = _CPU.Xreg;
+  document.getElementById("tdYRegister").innerHTML = _CPU.Yreg;
+  document.getElementById("tdZFlag").innerHTML = _CPU.Zflag;
+}

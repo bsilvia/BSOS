@@ -15,7 +15,7 @@
 
 function Cpu() {
     this.PC    = 0;     // Program Counter
-    this.Acc   = 0;     // Accumulator
+    this.AC   = 0;     // Accumulator
     this.Xreg  = 0;     // X register
     this.Yreg  = 0;     // Y register
     this.Zflag = 0;     // Z-ero flag (Think of it as "isZero".)

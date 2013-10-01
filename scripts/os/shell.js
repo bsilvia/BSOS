@@ -168,10 +168,6 @@ function shellInit() {
             _MemoryManager.load(commands);
 
             updateMemoryDisplay();
-
-            // put wherever the pcb is created
-            //_StdOut.putText("Loaded program with PID _");
-            //_StdOut.advanceLine();
         }
 
         // TO-DO - load program into memory, diplay PID on console
