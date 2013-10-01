@@ -24,3 +24,10 @@ MemoryManager.prototype.write = function(address, data) {
 MemoryManager.prototype.getMemory = function() {
 	return this.memory.getMemory();
 };
+
+// loads a given program into memory
+MemoryManager.prototype.load = function(program) {
+	for (var i = 0; i < program.length; i++) {
+		this.memory.write(i, program[i]);
+	};
+};

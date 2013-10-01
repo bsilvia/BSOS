@@ -58,8 +58,10 @@ function createMemoryDisplay() {
 }
 
 // function to update the memory display given a memory array
-function updateMemoryDisplay(memory) {
+function updateMemoryDisplay() {
    var table = document.getElementById("memoryTable");
+
+   var memory = _MemoryManager.getMemory();
 
   // remove all current entries in the table
   while(table.hasChildNodes()) {

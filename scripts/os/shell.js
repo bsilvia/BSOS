@@ -133,6 +133,8 @@ function shellInit() {
 
 		var lines = str.split("\n");
 		var myReg = /\b[0-9A-F]{2}\b/gi;
+        var validCommands = true;
+
 		for (var i in lines)
 		{
 			// get list of commands separated by spaces
@@ -155,8 +157,20 @@ function shellInit() {
                 y = parseInt(y+1, 10);
                 _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
                 _StdOut.advanceLine();
+                validCommands = false;
             }
 		}
+
+        if(validCommands) {
+            var commands = str.split(" ");
+
+            _MemoryManager.load(commands);
+
+            updateMemoryDisplay();
+
+            _StdOut.putText("Loaded program with PID _");
+            _StdOut.advanceLine();
+        }
 
         // TO-DO - load program into memory, diplay PID on console
 
@@ -169,8 +183,6 @@ function shellInit() {
     sc.description = "<pid> - Runs the program with the given process ID.";
     sc.function = function() {
         
-        _MemoryManager.write(3, "A9");
-        updateMemoryDisplay(_MemoryManager.getMemory());
         // TO-DO - call execution of the program
 
     };
