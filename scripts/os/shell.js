@@ -148,8 +148,8 @@ function shellInit() {
 				//_StdOut.putText(lines[i]);
 				//_StdIn.advanceLine();
 
-                _StdOut.putText("Valid commands, thank you");
-                _StdOut.advanceLine();
+                //_StdOut.putText("Valid commands, thank you");
+                //_StdOut.advanceLine();
 			}
             else
             {
@@ -168,8 +168,9 @@ function shellInit() {
 
             updateMemoryDisplay();
 
-            _StdOut.putText("Loaded program with PID _");
-            _StdOut.advanceLine();
+            // put wherever the pcb is created
+            //_StdOut.putText("Loaded program with PID _");
+            //_StdOut.advanceLine();
         }
 
         // TO-DO - load program into memory, diplay PID on console

@@ -27,6 +27,9 @@ MemoryManager.prototype.getMemory = function() {
 
 // loads a given program into memory
 MemoryManager.prototype.load = function(program) {
+	
+	// create the pcb, set its base and limit here
+
 	for (var i = 0; i < program.length; i++) {
 		this.memory.write(i, program[i]);
 	};
