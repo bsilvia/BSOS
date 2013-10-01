@@ -107,7 +107,11 @@ function Cpu() {
       var mem1 = _MemoryManager.read(this.PC++);
       var mem2 = _MemoryManager.read(this.PC++);
       var address = parseInt(mem2 + mem1, 16);
-      _MemoryManager.write(address, this.AC);
+
+      var pad = "00";
+      var stringValue = this.AC;
+      stringValue = pad.substring(0, pad.length - stringValue.length) + stringValue;
+      _MemoryManager.write(address, stringValue);
     }
     // 6D - add with carry
     this.ADC = function () {
@@ -149,10 +153,10 @@ function Cpu() {
     }
     // 00 - break (which is really a system call)
     this.BRK = function () {
-      // stop execution and disable the step button
+      // stop execution and disable the single step
       this.isExecuting = false;
       _SingleStep = false;
-      document.getElementById('btnStep').disabled = false;
+      disableStepBtn();
     }
     // EC - compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {
@@ -162,6 +166,9 @@ function Cpu() {
       var value = _MemoryManager.read(address);
       if(parseInt(value, 10) == parseInt(this.Xreg, 10)) {
         this.Zflag = 1;
+      }
+      else {
+        this.Zflag = 0;
       }
     }
     // D0 - branch x bytes if z flag = 0

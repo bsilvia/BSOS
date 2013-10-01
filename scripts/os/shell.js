@@ -209,9 +209,12 @@ function shellInit() {
                 _SingleStep = true;
                 document.getElementById('btnStep').disabled = false;
             }
-            else {
+            else if(args[0] == "off"){
                 _SingleStep = false;
                 document.getElementById('btnStep').disabled = true;
+            }
+            else {
+                _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
             }
         }
         else

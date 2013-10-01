@@ -74,8 +74,12 @@ function updateMemoryDisplay() {
   for(var i = 0; i < 96; i++) {
     // calculate the hex value for this row
     var hexString = (i*8).toString(16);
-    
+
     var row = table.insertRow(i);
+
+    if(memoryIndex % 256 == 0) {
+      row.style.backgroundColor = '#6191FF';
+    }
 
     for(var j = 0; j < 9; j++) {
       var cell = row.insertCell(j);
@@ -107,4 +111,9 @@ function updateCpuDisplay() {
   document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 16);
   document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 16);
   document.getElementById("tdZFlag").innerHTML = parseInt(_CPU.Zflag, 16);
+}
+
+// function to disable the step button when a program being stepped through finished
+function disableStepBtn() {
+  document.getElementById('btnStep').disabled = true;
 }
