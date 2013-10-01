@@ -97,9 +97,14 @@ function updateMemoryDisplay() {
 
 // function to update the cpu display
 function updateCpuDisplay() {
-  document.getElementById("tdProgramCounter").innerHTML = _CPU.PC;
-  document.getElementById("tdAccumulator").innerHTML = _CPU.AC;
-  document.getElementById("tdXRegister").innerHTML = _CPU.Xreg;
-  document.getElementById("tdYRegister").innerHTML = _CPU.Yreg;
-  document.getElementById("tdZFlag").innerHTML = _CPU.Zflag;
+  var programCounter = _CPU.PC;
+  var hexString = programCounter.toString(16);
+  var pad = "000";
+  hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
+  
+  document.getElementById("tdProgramCounter").innerHTML = hexString;
+  document.getElementById("tdAccumulator").innerHTML = parseInt(_CPU.AC, 10);
+  document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 10);
+  document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 10);
+  document.getElementById("tdZFlag").innerHTML = parseInt(_CPU.Zflag, 10);
 }

@@ -40,5 +40,4 @@ MemoryManager.prototype.load = function(program) {
 	};
 
 	_StdOut.putText("Loaded program with PID " + newPCB.pid);
-    _StdOut.advanceLine();
 };

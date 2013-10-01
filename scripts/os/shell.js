@@ -151,6 +151,8 @@ function shellInit() {
 
                 //_StdOut.putText("Valid commands, thank you");
                 //_StdOut.advanceLine();
+
+                // validate commands more here
 			}
             else
             {
@@ -158,6 +160,7 @@ function shellInit() {
                 y = parseInt(y+1, 10);
                 _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
                 _StdOut.advanceLine();
+                krnTrace("Invalid command on line " + y + ": ");
                 validCommands = false;
             }
 		}
@@ -179,10 +182,18 @@ function shellInit() {
     sc = new ShellCommand();
     sc.command = "run";
     sc.description = "<pid> - Runs the program with the given process ID.";
-    sc.function = function() {
-        
-        // TO-DO - call execution of the program
-
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            // TO-DO - call execution of the program
+            //         distinguish between different pids?
+            //         do something with a ready queue?
+            _CPU.isExecuting = true;
+        }
+        else
+        {
+            _StdIn.putText("Usage: run <pid>  Please supply a pid.");
+        }
     };
     this.commandList[this.commandList.length] = sc;
 

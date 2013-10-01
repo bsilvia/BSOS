@@ -88,18 +88,21 @@ function krnOnCPUClockPulse()
         var interrupt = _KernelInterruptQueue.dequeue();
         krnInterruptHandler(interrupt.irq, interrupt.params);
     }
-    else if (_CPU.isExecuting && !_SingleStep) // If there are no interrupts then run one CPU cycle if there is anything being processed.
+    else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
-        _CPU.cycle();
-    }
-    // if single stepping is on and the step button was pressed, execute one cycle on the clock tick
-    else if (_CPU.isExecuting && _SingleStep)
-    {
-        if(_Step) {
+        // if single stepping is off then execute normally
+        if(!_SingleStep) {
           _CPU.cycle();
-        // reset step after every cycle so as to stop executing until the user pressed the button again
-        _Step = false;
-      }
+        }
+        // otherwise if the step button was pressed, execute one cycle on the clock tick
+        else if (_SingleStep && _Step) {
+          _CPU.cycle();
+          // reset step after every cycle so as to stop executing until the user presses the button again
+          _Step = false;
+        }
+
+        updateCpuDisplay();
+        updateMemoryDisplay();
     }
     else                       // If there are no interrupts and there is nothing being executed then just be idle.
     {
