@@ -164,9 +164,11 @@ function Cpu() {
     this.BRK = function () {
       // stop execution and disable the single step
       // need to update and display PCB, let kernel know we are done somehow?
-      this.isExecuting = false;
+      //this.isExecuting = false;
       _SingleStep = false;
       disableStepBtn();
+
+      krnAddInterrupt(PROGRAM_TERMINATION_IRQ, true);
     };
     // EC - compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {

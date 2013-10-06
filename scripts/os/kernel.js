@@ -134,6 +134,11 @@ function krnDisableInterrupts()
     // Put more here.
 }
 
+// function to add an interrupt to the kernel interrupt queue
+function krnAddInterrupt(irq, params) {
+  _KernelInterruptQueue.enqueue(new Interrupt(irq, params));
+}
+
 function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Routine.  Pages 8 and 560.
 {
     // Trace our entrance here so we can compute Interrupt Latency by analyzing the log file later on.  Page 766.
@@ -151,6 +156,20 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case KEYBOARD_IRQ: 
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
+            break;
+        case PROGRAM_TERMINATION_IRQ:
+            // on graceful termination, display PCB contents
+            if(params == true) {
+              _Programs[_CurrentPID].update(_CPU);
+              _Programs[_CurrentPID].Display();
+            }
+            else {
+              _StdOut.putText("Process terminated unexpectedly");
+              _StdOut.advanceLine();
+              _StdOut.putText(">");
+            }
+            _CurrentPID = null;
+            _CPU.isExecuting = false;
             break;
         default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

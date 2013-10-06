@@ -28,16 +28,22 @@ function MemoryBlock(base, limit) {
 // function to handle reading from 'phyiscal' memory
 MemoryManager.prototype.read = function(address) {
 	// make sure the address isn't before or beyond its space
-	if(address < 0 || address > 255)
-		krnTrapError("Memory read - out of bounds exception!"); // maybe we don't have to be so harsh here?
+	if(address < 0 || address > 255) {
+		//krnTrapError("Memory read - out of bounds exception!"); // maybe we don't have to be so harsh here?
+		krnTrace("Memory read - out of bounds exception!");
+		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
+	}
 	else
 		return this.memory.read(address + this.offset);
 };
 
 // function to handle writing to 'phyiscal' memory
 MemoryManager.prototype.write = function(address, data) {
-	if(address < 0 || address > 255)
-		krnTrapError("Memory write - out of bounds exception!"); // maybe we don't have to be so harsh here?
+	if(address < 0 || address > 255) {
+		//krnTrapError("Memory write - out of bounds exception!"); // maybe we don't have to be so harsh here?
+		krnTrace("Memory write - out of bounds exception!");
+		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
+	}
 	else
 		this.memory.write(address + this.offset, data);
 };
