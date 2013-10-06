@@ -215,15 +215,16 @@ function krnTrapError(msg)
 
 // function to load a program into memory
 function krnLoadProgram(program) {
-  // create the programs array if it isn't created yet
-  //if(typeof _Programs == 'undefined') {
-  //  _Programs = new Array();
-  //}
-
   // create a new process control block
   var newPCB = new PCB();
   _Programs[newPCB.pid] = newPCB;
 
   // ask the memory manager to do the actual loading
   _MemoryManager.load(newPCB, program);
+}
+
+// function to run a program in memory
+function krnRunProgram(pid) {
+  
+  _CPU.isExecuting = true;
 }

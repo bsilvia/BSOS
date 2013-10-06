@@ -189,7 +189,8 @@ function shellInit() {
             // TO-DO - call execution of the program
             //         distinguish between different pids?
             //         do something with a ready queue?
-            _CPU.isExecuting = true;
+            //_CPU.isExecuting = true;
+            krnRunProgram(args[0]);
         }
         else
         {

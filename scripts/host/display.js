@@ -103,14 +103,23 @@ function updateMemoryDisplay() {
 function updateCpuDisplay() {
   var programCounter = _CPU.PC;
   var hexString = programCounter.toString(16);
-  var pad = "000";
-  hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
+  //var pad = "000";
+  //hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
   
-  document.getElementById("tdProgramCounter").innerHTML = hexString.toUpperCase();
-  document.getElementById("tdAccumulator").innerHTML = _CPU.AC;   //parseInt(_CPU.AC, 16);
-  document.getElementById("tdXRegister").innerHTML = _CPU.Xreg;   //parseInt(_CPU.Xreg, 16);
-  document.getElementById("tdYRegister").innerHTML = _CPU.Yreg;   //parseInt(_CPU.Yreg, 16);
-  document.getElementById("tdZFlag").innerHTML = _CPU.Zflag;      //parseInt(_CPU.Zflag, 16);
+  document.getElementById("tdProgramCounter").innerHTML = toHexOutput(hexString, 3);
+  document.getElementById("tdAccumulator").innerHTML = toHexOutput(_CPU.AC.toString(16), 2);   //parseInt(_CPU.AC, 16);
+  document.getElementById("tdXRegister").innerHTML = toHexOutput(_CPU.Xreg.toString(16), 2);   //parseInt(_CPU.Xreg, 16);
+  document.getElementById("tdYRegister").innerHTML = toHexOutput(_CPU.Yreg.toString(16), 2);   //parseInt(_CPU.Yreg, 16);
+  document.getElementById("tdZFlag").innerHTML = toHexOutput(_CPU.Zflag.toString(16), 2);      //parseInt(_CPU.Zflag, 16);
+}
+
+function toHexOutput(string, num) {
+  var pad = "";
+  for (var i = 0; i < num; i++) {
+    pad += "0";
+  };
+  string = "$" + pad.substring(0, pad.length - string.length) + string;
+  return string.toUpperCase();
 }
 
 // function to disable the step button when a program being stepped through finished

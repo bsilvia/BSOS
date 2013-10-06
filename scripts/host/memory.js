@@ -39,7 +39,7 @@ function MemoryCell() {
 // reads from the memory cell
 MemoryCell.prototype.read = function() {
    return this.value;
-};
+}
 
 // write to the memory cell
 MemoryCell.prototype.write = function(data) {

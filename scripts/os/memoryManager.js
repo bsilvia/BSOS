@@ -41,17 +41,17 @@ MemoryManager.prototype.load = function(pcb, program) {
 	if(!this.memoryBlocks[0].taken) {
 		pcb.base = this.memoryBlocks[0].base;
 		pcb.limit = this.memoryBlocks[0].limit;
-		this.memoryBlocks[0].take = true;
+		this.memoryBlocks[0].taken = true;
 	}
 	else if(!this.memoryBlocks[1].taken) {
 		pcb.base = this.memoryBlocks[1].base;
 		pcb.limit = this.memoryBlocks[1].limit;
-		this.memoryBlocks[1].take = true;
+		this.memoryBlocks[1].taken = true;
 	}
 	else if(!this.memoryBlocks[2].taken) {
 		pcb.base = this.memoryBlocks[2].base;
 		pcb.limit = this.memoryBlocks[2].limit;
-		this.memoryBlocks[2].take = true;
+		this.memoryBlocks[2].taken = true;
 	}
 
 	for (var i = 0; i < program.length; i++) {
