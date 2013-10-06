@@ -29,6 +29,15 @@ function Cpu() {
         this.Zflag = 0;
         this.isExecuting = false;
     };
+
+    // clears the CPU registers
+    this.clear = function() {
+      this.PC    = 0;
+      this.AC    = 0;
+      this.Xreg  = 0;
+      this.Yreg  = 0;
+      this.Zflag = 0;
+    }
     
     this.cycle = function() {
         krnTrace("CPU cycle");
@@ -154,6 +163,7 @@ function Cpu() {
     // 00 - break (which is really a system call)
     this.BRK = function () {
       // stop execution and disable the single step
+      // need to update and display PCB, let kernel know we are done somehow?
       this.isExecuting = false;
       _SingleStep = false;
       disableStepBtn();

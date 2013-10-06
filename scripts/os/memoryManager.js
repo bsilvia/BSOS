@@ -9,9 +9,14 @@
 function MemoryManager() {
    this.memory = new Memory(_MemorySize);
    this.memoryBlocks = new Array(new MemoryBlock(0, 255),
-   						new MemoryBlock(256, 511),
-   						new MemoryBlock(512,767));
+   								 new MemoryBlock(256, 511),
+   								 new MemoryBlock(512, 767));
+   this.offset = 0;
 }
+
+MemoryManager.prototype.SetOffset = function(num) {
+	this.offset = num;
+};
 
 // class to keep track of each block of memory
 function MemoryBlock(base, limit) {
@@ -22,12 +27,19 @@ function MemoryBlock(base, limit) {
 
 // function to handle reading from 'phyiscal' memory
 MemoryManager.prototype.read = function(address) {
-	return this.memory.read(address);
+	// make sure the address isn't before or beyond its space
+	if(address < 0 || address > 255)
+		krnTrapError("Memory read - out of bounds exception!"); // maybe we don't have to be so harsh here?
+	else
+		return this.memory.read(address + this.offset);
 };
 
 // function to handle writing to 'phyiscal' memory
 MemoryManager.prototype.write = function(address, data) {
-	this.memory.write(address, data);
+	if(address < 0 || address > 255)
+		krnTrapError("Memory write - out of bounds exception!"); // maybe we don't have to be so harsh here?
+	else
+		this.memory.write(address + this.offset, data);
 };
 
 // function to return entire memory array

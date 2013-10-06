@@ -152,7 +152,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
             break;
-        default: 
+        default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
 }
@@ -225,6 +225,11 @@ function krnLoadProgram(program) {
 
 // function to run a program in memory
 function krnRunProgram(pid) {
-  
+  // reset CPU values
+  _CPU.clear();
+  _CurrentPID = pid;
+  // the memory offset is the base of the pcb
+  _MemoryManager.SetOffset(_Programs[_CurrentPID].base);
+  // start executing
   _CPU.isExecuting = true;
 }

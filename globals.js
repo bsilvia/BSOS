@@ -58,8 +58,9 @@ var _MemoryManager = null;
 // Memory size
 var _MemorySize = 768;
 
-// Array to hold programs to be run
+// Array to hold programs to be run and the current pcb
 var _Programs = new Array();
+var _CurrentPCB = null;
 
 // UI
 var _Console = null;
