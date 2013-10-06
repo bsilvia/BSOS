@@ -92,7 +92,7 @@ function updateMemoryDisplay() {
         cell.innerHTML = "$" + hexString;
       }
       else {
-        cell.innerHTML = memory[memoryIndex];
+        cell.innerHTML = memory[memoryIndex].read();
         memoryIndex++;
       }
     }
@@ -107,10 +107,10 @@ function updateCpuDisplay() {
   hexString = "$" + pad.substring(0, pad.length - hexString.length) + hexString;
   
   document.getElementById("tdProgramCounter").innerHTML = hexString.toUpperCase();
-  document.getElementById("tdAccumulator").innerHTML = parseInt(_CPU.AC, 16);
-  document.getElementById("tdXRegister").innerHTML = parseInt(_CPU.Xreg, 16);
-  document.getElementById("tdYRegister").innerHTML = parseInt(_CPU.Yreg, 16);
-  document.getElementById("tdZFlag").innerHTML = parseInt(_CPU.Zflag, 16);
+  document.getElementById("tdAccumulator").innerHTML = _CPU.AC;   //parseInt(_CPU.AC, 16);
+  document.getElementById("tdXRegister").innerHTML = _CPU.Xreg;   //parseInt(_CPU.Xreg, 16);
+  document.getElementById("tdYRegister").innerHTML = _CPU.Yreg;   //parseInt(_CPU.Yreg, 16);
+  document.getElementById("tdZFlag").innerHTML = _CPU.Zflag;      //parseInt(_CPU.Zflag, 16);
 }
 
 // function to disable the step button when a program being stepped through finished
