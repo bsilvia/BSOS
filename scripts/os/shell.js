@@ -168,7 +168,8 @@ function shellInit() {
         if(validCommands) {
             var commands = str.split(" ");
 
-            _MemoryManager.load(commands);
+            //_MemoryManager.load(commands);
+            krnLoadProgram(commands);
 
             updateMemoryDisplay();
         }

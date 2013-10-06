@@ -23,7 +23,7 @@ function Cpu() {
     
     this.init = function() {
         this.PC    = 0;
-        this.AC   = 0;
+        this.AC    = 0;
         this.Xreg  = 0;
         this.Yreg  = 0;
         this.Zflag = 0;

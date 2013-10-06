@@ -58,6 +58,9 @@ var _MemoryManager = null;
 // Memory size
 var _MemorySize = 768;
 
+// Array to hold programs to be run
+var _Programs = new Array();
+
 // UI
 var _Console = null;
 var _OsShell = null;
