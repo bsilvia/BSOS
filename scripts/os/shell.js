@@ -186,10 +186,7 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            // TO-DO - call execution of the program
-            //         distinguish between different pids?
-            //         do something with a ready queue?
-            //_CPU.isExecuting = true;
+            // TO-DO - do something with a ready queue?
             krnRunProgram(args[0]);
         }
         else

@@ -248,7 +248,7 @@ function krnRunProgram(pid) {
   _CPU.clear();
   _CurrentPID = pid;
   // the memory offset is the base of the pcb
-  _MemoryManager.SetOffset(_Programs[_CurrentPID].base);
+  _MemoryManager.SetRelocationRegister(_Programs[_CurrentPID].base);
   // start executing
   _CPU.isExecuting = true;
 }

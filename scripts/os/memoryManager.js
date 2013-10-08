@@ -11,11 +11,11 @@ function MemoryManager() {
    this.memoryBlocks = new Array(new MemoryBlock(0, 255),
    								 new MemoryBlock(256, 511),
    								 new MemoryBlock(512, 767));
-   this.offset = 0;
+   this.relocationRegister = 0;
 }
 
-MemoryManager.prototype.SetOffset = function(num) {
-	this.offset = num;
+MemoryManager.prototype.SetRelocationRegister = function(num) {
+	this.relocationRegister = num;
 };
 
 // class to keep track of each block of memory
@@ -34,7 +34,7 @@ MemoryManager.prototype.read = function(address) {
 		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
 	}
 	else
-		return this.memory.read(address + this.offset);
+		return this.memory.read(address + this.relocationRegister);
 };
 
 // function to handle writing to 'phyiscal' memory
@@ -45,7 +45,7 @@ MemoryManager.prototype.write = function(address, data) {
 		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
 	}
 	else
-		this.memory.write(address + this.offset, data);
+		this.memory.write(address + this.relocationRegister, data);
 };
 
 // function to return entire memory array
