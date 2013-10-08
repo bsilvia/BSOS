@@ -160,8 +160,8 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
             if(params == true) {
-              _Programs[_CurrentPID].update(_CPU);
-              _Programs[_CurrentPID].Display();
+              _Processes[_CurrentPID].update(_CPU);
+              _Processes[_CurrentPID].Display();
             }
             else {
               _StdOut.putText("Process terminated unexpectedly");
@@ -236,7 +236,7 @@ function krnTrapError(msg)
 function krnLoadProgram(program) {
   // create a new process control block
   var newPCB = new PCB();
-  _Programs[newPCB.pid] = newPCB;
+  _Processes[newPCB.pid] = newPCB;
 
   // ask the memory manager to do the actual loading
   _MemoryManager.load(newPCB, program);
@@ -248,7 +248,7 @@ function krnRunProgram(pid) {
   _CPU.clear();
   _CurrentPID = pid;
   // the memory offset is the base of the pcb
-  _MemoryManager.SetRelocationRegister(_Programs[_CurrentPID].base);
+  _MemoryManager.SetRelocationRegister(_Processes[_CurrentPID].base);
   // start executing
   _CPU.isExecuting = true;
 }
