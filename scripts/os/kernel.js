@@ -73,7 +73,7 @@ function krnShutdown()
 }
 
 
-function krnOnCPUClockPulse() 
+function krnOnCPUClockPulse()
 {
     /* This gets called from the host hardware sim every time there is a hardware clock pulse.
        This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
@@ -81,7 +81,7 @@ function krnOnCPUClockPulse()
        that it has to look for interrupts and process them if it finds any.                           */
 
     // Check for an interrupt, are any. Page 560
-    if (_KernelInterruptQueue.getSize() > 0)    
+    if (_KernelInterruptQueue.getSize() > 0)
     {
         // Process the first interrupt on the interrupt queue.
         // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
@@ -150,16 +150,16 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
     //       Maybe the hardware simulation will grow to support/require that in the future.
     switch (irq)
     {
-        case TIMER_IRQ: 
+        case TIMER_IRQ:
             krnTimerISR();                   // Kernel built-in routine for timers (not the clock).
             break;
-        case KEYBOARD_IRQ: 
+        case KEYBOARD_IRQ:
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
             break;
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
-            if(params == true) {
+            if(params === true) {
               _Processes[_CurrentPID].update(_CPU);
               _Processes[_CurrentPID].Display();
             }
@@ -179,7 +179,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
 function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Routine (as opposed to an ISR coming from a device driver).
 {
     // Check multiprogramming parameters and enforce quanta here. Call the scheduler / context switch here if necessary.
-}   
+}
 
 
 
@@ -210,10 +210,10 @@ function krnTrace(msg)
       if (msg === "Idle")
       {
          // We can't log every idle clock pulse because it would lag the browser very quickly.
-         if (_OSclock % 10 == 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
+         if (_OSclock % 10 === 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
          {                        // idea of the tick rate and adjust this line accordingly.
             hostLog(msg, "OS");
-         }         
+         }
       }
       else
       {

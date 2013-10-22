@@ -40,7 +40,7 @@ function hostInit()
    if (typeof Glados === "function") {
       _GLaDOS = new Glados();
       _GLaDOS.init();
-   };
+   }
 
    // call the function to update the status bar time
    updateTime();
@@ -63,7 +63,7 @@ function hostLog(msg, source)
     var now = new Date().getTime();
 
     // Build the log string.   
-    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";    
+    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
 
     // Update the log console.
     var taLog = document.getElementById("taLog");
@@ -111,7 +111,7 @@ function hostBtnHaltOS_click(btn)
 function hostBtnReset_click(btn)
 {
     // The easiest and most thorough way to do this is to reload (not refresh) the document.
-    location.reload(true);  
+    location.reload(true);
     // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
     // be reloaded from the server. If it is false or not specified, the browser may reload the 
     // page from its cache, which is not what we want.

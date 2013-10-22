@@ -37,7 +37,7 @@ function Cpu() {
       this.Xreg  = 0;
       this.Yreg  = 0;
       this.Zflag = 0;
-    }
+    };
     
     this.cycle = function() {
         krnTrace("CPU cycle");
@@ -186,7 +186,7 @@ function Cpu() {
     // D0 - branch x bytes if z flag = 0
     this.BNE = function () {
       var bytes = parseInt(_MemoryManager.read(this.PC++), 16);
-      if(this.Zflag == 0) {
+      if(this.Zflag === 0) {
         if(this.PC + bytes > 256) {
           this.PC = bytes + this.PC - 256;
         }

@@ -14,15 +14,15 @@ function Queue()
 
     // Methods
     this.getSize = function() {
-        return this.q.length;    
+        return this.q.length;
     };
 
     this.isEmpty = function(){
-        return (this.q.length == 0);    
+        return (this.q.length === 0);
     };
 
     this.enqueue = function(element) {
-        this.q.push(element);        
+        this.q.push(element);
     };
     
     this.dequeue = function() {
@@ -31,7 +31,7 @@ function Queue()
         {
             retVal = this.q.shift();
         }
-        return retVal;        
+        return retVal;
     };
     
     this.toString = function() {

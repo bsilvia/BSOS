@@ -7,7 +7,7 @@
 // function to update datetime on status bar
 function updateTime() {
     var now = new Date();
-    var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : String(now.getHours() == 0 ? 12 : now.getHours());
+    var hrs = now.getHours() > 12 ? String(now.getHours() - 12) : String(now.getHours() === 0 ? 12 : now.getHours());
     var min = now.getMinutes() < 10 ? "0" + String(now.getMinutes()) : String(now.getMinutes());
     var sec = now.getSeconds() < 10 ? "0" + String(now.getSeconds()) : String(now.getSeconds());
     sec = sec + " " + (now.getHours() >= 12 ? "pm" : "am");
@@ -44,7 +44,7 @@ function createMemoryDisplay() {
       var cell = row.insertCell(j);
       
       // if we are in the first column, pad the number and display it in bold
-      if(j == 0) {
+      if(j === 0) {
         cell.style.fontWeight = "bold";
         var pad = "000";
         hexString = pad.substring(0, pad.length - hexString.length) + hexString;
@@ -77,7 +77,7 @@ function updateMemoryDisplay() {
 
     var row = table.insertRow(i);
 
-    if(memoryIndex % 256 == 0) {
+    if(memoryIndex % 256 === 0) {
       row.style.backgroundColor = '#6191FF';
     }
 
@@ -85,7 +85,7 @@ function updateMemoryDisplay() {
       var cell = row.insertCell(j);
       
       // if we are in the first column, pad the number and display it in bold
-      if(j == 0) {
+      if(j === 0) {
         cell.style.fontWeight = "bold";
         var pad = "000";
         hexString = pad.substring(0, pad.length - hexString.length) + hexString;
@@ -117,7 +117,7 @@ function toHexOutput(string, num) {
   var pad = "";
   for (var i = 0; i < num; i++) {
     pad += "0";
-  };
+  }
   string = "$" + pad.substring(0, pad.length - string.length) + string;
   return string.toUpperCase();
 }

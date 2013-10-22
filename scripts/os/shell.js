@@ -98,7 +98,7 @@ function shellInit() {
 		{
 			_StdIn.putText("Usage: status <string>  Please supply a string.");
 		}
-	}
+	};
     this.commandList[this.commandList.length] = sc;
 
 	// date
@@ -106,13 +106,13 @@ function shellInit() {
 	sc.command = "date";
 	sc.description = "- Displays the current date and time.";
 	sc.function = function() {
-		var currentdate = new Date(); 
-		var datetime = currentdate.getDate() + "/"
-						+ (currentdate.getMonth()+1)  + "/" 
-						+ currentdate.getFullYear() + " "  
-						+ currentdate.getHours() + ":"  
-						+ currentdate.getMinutes() + ":" 
-						+ currentdate.getSeconds();
+		var currentdate = new Date();
+		var datetime = currentdate.getDate() + "/" +
+						(currentdate.getMonth()+1)  + "/" +
+						currentdate.getFullYear() + " " +
+						currentdate.getHours() + ":" +
+						currentdate.getMinutes() + ":" +
+						currentdate.getSeconds();
 		_StdIn.putText(datetime);
 	};
 	this.commandList[this.commandList.length] = sc;
@@ -124,7 +124,7 @@ function shellInit() {
 	sc.function = function() {
 		var str = document.getElementById("taProgramInput").value;
         
-        if(str.trim() == "")
+        if(str.trim() === "")
         {
             _StdOut.putText("No commands detected");
             _StdOut.advanceLine();
@@ -144,7 +144,7 @@ function shellInit() {
 			var matchArr = lines[i].trim().match(myReg);
 			
 			// if they are the same length then this line is valid code
-			if(commandsArr != null && matchArr != null && commandsArr.length == matchArr.length)
+			if(commandsArr !== null && matchArr !== null && commandsArr.length === matchArr.length)
 			{
 				//_StdOut.putText(lines[i]);
 				//_StdIn.advanceLine();
@@ -346,7 +346,7 @@ function shellParseInput(buffer)
     for (var i in tempList)
     {
         var arg = trim(tempList[i]);
-        if (arg != "")
+        if (arg !== "")
         {
             retVal.args[retVal.args.length] = tempList[i];
         }
@@ -380,7 +380,7 @@ function shellExecute(fn, args)
 //
 // An "interior" or "private" class (prototype) used only inside Shell() (we hope).
 //
-function ShellCommand()     
+function ShellCommand()
 {
     // Properties
     this.command = "";
@@ -435,7 +435,7 @@ function shellApology()
 
 function shellVer(args)
 {
-    _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
+    _StdIn.putText(APP_NAME + " version " + APP_VERSION);
 }
 
 function shellHelp(args)
@@ -445,14 +445,14 @@ function shellHelp(args)
     {
         _StdIn.advanceLine();
         _StdIn.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
-    }    
+    }
 }
 
 function shellShutdown(args)
 {
      _StdIn.putText("Shutting down...");
      // Call Kernel shutdown routine.
-    krnShutdown();   
+    krnShutdown();
     // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
 }
 
@@ -469,12 +469,12 @@ function shellMan(args)
         var topic = args[0];
         switch (topic)
         {
-            case "help": 
+            case "help":
                 _StdIn.putText("Help displays a list of (hopefully) valid commands.");
                 break;
             default:
                 _StdIn.putText("No manual entry for " + args[0] + ".");
-        }        
+        }
     }
     else
     {
@@ -489,7 +489,7 @@ function shellTrace(args)
         var setting = args[0];
         switch (setting)
         {
-            case "on": 
+            case "on":
                 if (_Trace && _SarcasticMode)
                 {
                     _StdIn.putText("Trace is already on, dumbass.");
@@ -501,13 +501,13 @@ function shellTrace(args)
                 }
                 
                 break;
-            case "off": 
+            case "off":
                 _Trace = false;
-                _StdIn.putText("Trace OFF");                
-                break;                
+                _StdIn.putText("Trace OFF");
+                break;
             default:
                 _StdIn.putText("Invalid arguement.  Usage: trace <on | off>.");
-        }        
+        }
     }
     else
     {

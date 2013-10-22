@@ -9,8 +9,8 @@
 function MemoryManager() {
    this.memory = new Memory(_MemorySize);
    this.memoryBlocks = new Array(new MemoryBlock(0, 255),
-   								 new MemoryBlock(256, 511),
-   								 new MemoryBlock(512, 767));
+								new MemoryBlock(256, 511),
+								new MemoryBlock(512, 767));
    this.relocationRegister = 0;
 }
 
@@ -74,7 +74,7 @@ MemoryManager.prototype.load = function(pcb, program) {
 
 	for (var i = 0; i < program.length; i++) {
 		this.memory.write(i + pcb.base, program[i]);
-	};
+	}
 
 	_StdOut.putText("Loaded program with PID " + pcb.pid);
 };

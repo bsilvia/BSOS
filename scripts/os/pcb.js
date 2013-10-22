@@ -39,7 +39,7 @@ PCB.prototype.Display = function() {
 	_StdOut.advanceLine();
 	_StdOut.putText("   pid: " + this.pid);
 	_StdOut.advanceLine();
-	_StdOut.putText("   base: " + this.base)
+	_StdOut.putText("   base: " + this.base);
 	_StdOut.advanceLine();
 	_StdOut.putText("   limit: " + this.limit);
 	_StdOut.advanceLine();

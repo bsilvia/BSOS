@@ -44,7 +44,7 @@ function CLIconsole() {
                // ... and reset our buffer.
                this.buffer = "";
            }
-		   else if (chr == "up")
+		   else if (chr === "up")
 		   {
 				if(_CommandIndex > 0)
 				{
@@ -68,7 +68,7 @@ function CLIconsole() {
 		   }
 		   else if (chr == String.fromCharCode(8))  // Backspace
 		   {
-			   if(this.buffer != "")
+			   if(this.buffer !== "")
 			   {
 				   // Get and remove the last character in the buffer
 				   var chr = this.buffer.substring(this.buffer.length, this.buffer.length - 1);

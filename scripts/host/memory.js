@@ -16,12 +16,12 @@ function Memory(size) {
 // read the data at the given address
 Memory.prototype.read = function(addr) {
    return this.memory[addr].read();
-}
+};
 
 // write the given data to the given address
 Memory.prototype.write = function(addr, data) {
    this.memory[addr].write(data);
-}
+};
 
 // get the memory array and all of its contents
 Memory.prototype.getMemory = function() {
@@ -39,7 +39,7 @@ function MemoryCell() {
 // reads from the memory cell
 MemoryCell.prototype.read = function() {
    return this.value;
-}
+};
 
 // write to the memory cell
 MemoryCell.prototype.write = function(data) {
