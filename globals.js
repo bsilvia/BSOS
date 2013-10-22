@@ -58,13 +58,17 @@ var _SingleStep = false;
 
 // Memory manager
 var _MemoryManager = null;
-
 // Memory size
 var _MemorySize = 768;
+// Memory block size
+var _BlockSize = 255;
 
 // Array to hold processes to be run and the current pcb
 var _Processes = new Array();
 var _CurrentPCB = null;
+
+// Time quantum for Round Robin scheduling
+var _Quantum = 6;
 
 // UI
 var _Console = null;

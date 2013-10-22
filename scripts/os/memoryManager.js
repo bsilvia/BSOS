@@ -8,9 +8,9 @@
 
 function MemoryManager() {
    this.memory = new Memory(_MemorySize);
-   this.memoryBlocks = new Array(new MemoryBlock(0, 255),
-								new MemoryBlock(256, 511),
-								new MemoryBlock(512, 767));
+   this.memoryBlocks = new Array(new MemoryBlock(0, _BlockSize),
+								new MemoryBlock(_MemorySize/3, _BlockSize),
+								new MemoryBlock(_MemorySize*2/3, _BlockSize));
    this.relocationRegister = 0;
 }
 
@@ -28,7 +28,7 @@ function MemoryBlock(base, limit) {
 // function to handle reading from 'phyiscal' memory
 MemoryManager.prototype.read = function(address) {
 	// make sure the address isn't before or beyond its space
-	if(address < 0 || address > 255) {
+	if(address < 0 || address > _BlockSize) {
 		//krnTrapError("Memory read - out of bounds exception!"); // maybe we don't have to be so harsh here?
 		krnTrace("Memory read - out of bounds exception!");
 		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
@@ -39,7 +39,7 @@ MemoryManager.prototype.read = function(address) {
 
 // function to handle writing to 'phyiscal' memory
 MemoryManager.prototype.write = function(address, data) {
-	if(address < 0 || address > 255) {
+	if(address < 0 || address > _BlockSize) {
 		//krnTrapError("Memory write - out of bounds exception!"); // maybe we don't have to be so harsh here?
 		krnTrace("Memory write - out of bounds exception!");
 		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);

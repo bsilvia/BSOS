@@ -153,6 +153,11 @@ h3 {
 	height: 35px;
 }
 
+#divReadyQueueDisplay {
+	height: 150px;
+	margin-top: 5px;
+}
+
 #readyQueueTable {
 	text-align: center;
 }

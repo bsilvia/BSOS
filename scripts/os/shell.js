@@ -212,6 +212,7 @@ function shellInit() {
         if (args.length > 0 && !isNaN(args[0]))
         {
             // TODO - change global variable here
+            _Quantum = args[0];
         }
         else
         {
