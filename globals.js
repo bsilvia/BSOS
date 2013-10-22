@@ -22,6 +22,8 @@ var KEYBOARD_IRQ = 1;
 
 var PROGRAM_TERMINATION_IRQ = 2;
 
+var SYSTEM_CALL_PRINT_IRQ = 3;
+
 
 //
 // Global Variables

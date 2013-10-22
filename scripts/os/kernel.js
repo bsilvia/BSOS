@@ -171,6 +171,11 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _CurrentPID = null;
             _CPU.isExecuting = false;
             break;
+        case SYSTEM_CALL_PRINT_IRQ:
+            _StdOut.putText(params);
+            _StdOut.advanceLine();
+            _StdOut.putText(">");
+            break;
         default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
