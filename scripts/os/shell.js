@@ -152,7 +152,7 @@ function shellInit() {
                 //_StdOut.putText("Valid commands, thank you");
                 //_StdOut.advanceLine();
 
-                // TO-DO - validate commands more here
+                // TODO - validate commands more here
 			}
             else
             {
@@ -173,9 +173,6 @@ function shellInit() {
 
             updateMemoryDisplay();
         }
-
-        // TO-DO - load program into memory, diplay PID on console
-
 	};
 	this.commandList[this.commandList.length] = sc;
 
@@ -186,12 +183,65 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            // TO-DO - do something with a ready queue?
+            // TODO - do something with a ready queue?
             krnRunProgram(args[0]);
         }
         else
         {
             _StdIn.putText("Usage: run <pid>  Please supply a pid.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all the program at once.";
+    sc.function = function(args) {
+        // TODO - do something with a ready queue?
+        //krnRunProgram(args[0]);
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // quantum
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "<int> - Changes the quantum of time for Round Robin.";
+    sc.function = function(args) {
+        // ensure they passed an int
+        if (args.length > 0 && !isNaN(args[0]))
+        {
+            // TODO - change global variable here
+        }
+        else
+        {
+            _StdIn.putText("Usage: quantum <int>  Please supply a integer.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // activeprocesses
+    sc = new ShellCommand();
+    sc.command = "activeprocesses";
+    sc.description = "- Displays the PIDs of all active processes.";
+    sc.function = function(args) {
+        // TODO - display PIDs
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // kill
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "<pid> - Kills the process with the given pid.";
+    sc.function = function(args) {
+        // ensure they passed a pid
+        if (args.length > 0 && !isNaN(args[0]))
+        {
+            // TODO - kill that process
+        }
+        else
+        {
+            _StdIn.putText("Usage: kill <pid>  Please supply a pid.");
         }
     };
     this.commandList[this.commandList.length] = sc;
