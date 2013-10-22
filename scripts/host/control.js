@@ -47,6 +47,9 @@ function hostInit()
 
    // create an empty memory table to display
    createMemoryDisplay();
+
+   // create an empty ready queue
+   updateReadyQueue();
 }
 
 function hostLog(msg, source)

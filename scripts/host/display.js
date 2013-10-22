@@ -113,6 +113,56 @@ function updateCpuDisplay() {
   document.getElementById("tdZFlag").innerHTML = toHexOutput(_CPU.Zflag.toString(16), 2);      //parseInt(_CPU.Zflag, 16);
 }
 
+// function to update the ready queue display
+function updateReadyQueue () {
+  var table = document.getElementById("readyQueueTable");
+
+  // remove all current entries in the table
+  while(table.hasChildNodes()) {
+    table.removeChild(table.lastChild);
+  }
+
+  // go through and generate each row and cell
+  for(var i = 0; i < 4; i++) {
+
+    var row = table.insertRow(i);
+
+    for(var j = 0; j < 8; j++) {
+      var cell = row.insertCell(j);
+      
+      // if we are in the first column, pad the number and display it in bold
+      if(i === 0 && j === 0) {
+        cell.innerHTML = "PID";
+      }
+      else if (i === 0 && j === 1) {
+        cell.innerHTML = "Base";
+      }
+      else if (i === 0 && j === 2) {
+        cell.innerHTML = "Limit";
+      }
+      else if (i === 0 && j === 3) {
+        cell.innerHTML = "PC";
+      }
+      else if (i === 0 && j === 4) {
+        cell.innerHTML = "AC";
+      }
+      else if (i === 0 && j === 5) {
+        cell.innerHTML = "X";
+      }
+      else if (i === 0 && j === 6) {
+        cell.innerHTML = "Y";
+      }
+      else if (i === 0 && j === 7) {
+        cell.innerHTML = "Z";
+      }
+      else {
+        cell.innerHTML = "";  // TODO - insert values of ready queue here
+      }
+    }
+  }
+}
+
+// takes a string and pads it with the number of 0's for output as hex
 function toHexOutput(string, num) {
   var pad = "";
   for (var i = 0; i < num; i++) {

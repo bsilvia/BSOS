@@ -78,7 +78,7 @@ h3 {
 }*/
 
 #taLog {
-	height: 385px;
+	height: 235px;
 }
 /*
 #divUserProgramInput {
@@ -151,6 +151,15 @@ h3 {
 #cpuTable td {
 	width: 81px;
 	height: 35px;
+}
+
+#readyQueueTable {
+	text-align: center;
+}
+
+#readyQueueTable td {
+	width: 50px;
+	height: 25px;
 }
 
 #footCell {
