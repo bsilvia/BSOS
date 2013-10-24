@@ -71,6 +71,10 @@ MemoryManager.prototype.load = function(pcb, program) {
 		pcb.limit = this.memoryBlocks[2].limit;
 		this.memoryBlocks[2].taken = true;
 	}
+	else {
+		_StdOut.putText("No more free slots in memory");
+		return;
+	}
 
 	for (var i = 0; i < program.length; i++) {
 		this.memory.write(i + pcb.base, program[i]);

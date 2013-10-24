@@ -184,6 +184,7 @@ function shellInit() {
         if (args.length > 0)
         {
             // TODO - do something with a ready queue?
+            // TODO - check to make sure it is a valid pid
             krnRunProgram(args[0]);
         }
         else
@@ -198,8 +199,7 @@ function shellInit() {
     sc.command = "runall";
     sc.description = "- Runs all the program at once.";
     sc.function = function(args) {
-        // TODO - do something with a ready queue?
-        //krnRunProgram(args[0]);
+        // TODO - execute all the programs
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -211,7 +211,6 @@ function shellInit() {
         // ensure they passed an int
         if (args.length > 0 && !isNaN(args[0]))
         {
-            // TODO - change global variable here
             _Quantum = args[0];
         }
         else

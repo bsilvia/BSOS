@@ -33,6 +33,9 @@ function krnBootstrap()      // Page 8.
    // Initialize the memory manager
    _MemoryManager = new MemoryManager();
 
+   // Initialize the cpu scheduler
+   CpuScheduler = new CpuScheduler();
+
    // Load the Keyboard Device Driver
    krnTrace("Loading the keyboard device driver.");
    krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.  TODO: Should that have a _global-style name?
@@ -160,8 +163,8 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
             if(params === true) {
-              _Processes[_CurrentPID].update(_CPU);
-              _Processes[_CurrentPID].Display();
+              _ReadyQueue[_CurrentPID].update(_CPU);
+              _ReadyQueue[_CurrentPID].Display();
             }
             else {
               _StdOut.putText("Process terminated unexpectedly");
@@ -241,7 +244,7 @@ function krnTrapError(msg)
 function krnLoadProgram(program) {
   // create a new process control block
   var newPCB = new PCB();
-  _Processes[newPCB.pid] = newPCB;
+  _ReadyQueue[newPCB.pid] = newPCB;
 
   // ask the memory manager to do the actual loading
   _MemoryManager.load(newPCB, program);
@@ -253,7 +256,7 @@ function krnRunProgram(pid) {
   _CPU.clear();
   _CurrentPID = pid;
   // the memory offset is the base of the pcb
-  _MemoryManager.SetRelocationRegister(_Processes[_CurrentPID].base);
+  _MemoryManager.SetRelocationRegister(_ReadyQueue[_CurrentPID].base);
   // start executing
   _CPU.isExecuting = true;
 }

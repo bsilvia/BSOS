@@ -63,9 +63,12 @@ var _MemorySize = 768;
 // Memory block size
 var _BlockSize = 255;
 
-// Array to hold processes to be run and the current pcb
-var _Processes = new Array();
-var _CurrentPCB = null;
+// Array to hold processes that are running and the current pcb
+var _ReadyQueue = new Array();
+var _CurrentPID = null;
+
+// Array to hold processes that are loaded
+var _ResidentList = new Array();
 
 // Time quantum for Round Robin scheduling
 var _Quantum = 6;
