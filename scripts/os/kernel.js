@@ -102,7 +102,7 @@ function krnOnCPUClockPulse()
     {
         // if single stepping is off then execute normally
         if(!_SingleStep) {
-          //_CPU.cycle();
+          _CPU.cycle();
           _CpuScheduler.cycle();
 
           updateCpuDisplay();
@@ -110,7 +110,7 @@ function krnOnCPUClockPulse()
         }
         // otherwise if the step button was pressed, execute one cycle on the clock tick
         else if (_SingleStep && _Step) {
-          //_CPU.cycle();
+          _CPU.cycle();
           _CpuScheduler.cycle();
           // reset step after every cycle so as to stop executing until the user presses the button again
           _Step = false;

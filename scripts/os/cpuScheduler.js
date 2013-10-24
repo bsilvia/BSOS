@@ -14,11 +14,19 @@ function CpuScheduler() {
 
 }
 
-// performs one cycle, the kernel calls this function instead of the cpu cycle
-// because we have to perform scheduling decisions at each cycle including context switching
+// performs one cycle, the kernel calls this function because we have to
+// perform scheduling decisions at each cpu cycle including context switching
 CpuScheduler.prototype.cycle = function() {
-	// TODO - call cpu cycle here after checking for the need to context switch
+	this.cycles++;
+	this.schedule();
+};
 
-	_CPU.cycle();
+// this method checks for any scheduling decisions to be made and context switches if necessary
+CpuScheduler.prototype.schedule = function() {
+	// TODO - make decision
+	if(this.cycles === _Quantum)
+	{
+		// TODO - context switch
+	}
 };
 
