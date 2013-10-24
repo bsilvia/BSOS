@@ -220,12 +220,20 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
-    // activeprocesses
+    // processes
     sc = new ShellCommand();
-    sc.command = "activeprocesses";
+    sc.command = "processes";
     sc.description = "- Displays the PIDs of all active processes.";
     sc.function = function(args) {
-        // TODO - display PIDs
+        if(_ReadyQueue.getSize() === 0)
+        {
+            _StdOut.putText("No active processes");
+            return;
+        }
+
+        _StdOut.putText("Active processes: ");
+        StdOut.putText(_ReadyQueue.toString());
+        _StdOut.advanceLine();
     };
     this.commandList[this.commandList.length] = sc;
 

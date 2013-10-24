@@ -30,11 +30,17 @@ function krnBootstrap()      // Page 8.
    _StdIn  = _Console;
    _StdOut = _Console;
 
+   // Initialize the cpu scheduler
+   _ReadyQueue = new Queue();
+
+   // Initialize the resident list
+   _ResidentList = new Array();
+
    // Initialize the memory manager
    _MemoryManager = new MemoryManager();
 
    // Initialize the cpu scheduler
-   CpuScheduler = new CpuScheduler();
+   _CpuScheduler = new CpuScheduler();
 
    // Load the Keyboard Device Driver
    krnTrace("Loading the keyboard device driver.");
@@ -244,19 +250,29 @@ function krnTrapError(msg)
 function krnLoadProgram(program) {
   // create a new process control block
   var newPCB = new PCB();
-  _ReadyQueue[newPCB.pid] = newPCB;
+  //_ReadyQueue[newPCB.pid] = newPCB;
+  _ResidentList[newPCB.pid] = newPCB;
 
   // ask the memory manager to do the actual loading
   _MemoryManager.load(newPCB, program);
+  // TODO - have check to see if no slots of memory are available?
 }
 
 // function to run a program in memory
 function krnRunProgram(pid) {
+
+  // TODO - call command to scheduler?
+
   // reset CPU values
-  _CPU.clear();
-  _CurrentPID = pid;
+  //_CPU.clear();
+  //_CurrentPID = pid;
   // the memory offset is the base of the pcb
-  _MemoryManager.SetRelocationRegister(_ReadyQueue[_CurrentPID].base);
+  //_MemoryManager.SetRelocationRegister(_ReadyQueue[_CurrentPID].base);
   // start executing
   _CPU.isExecuting = true;
+}
+
+// function to run all the programs at once
+function krnRunAll() {
+  // TODO - call command to scheduler?
 }
