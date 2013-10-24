@@ -25,12 +25,12 @@ function getNextPid() {
 }
 
 // updates the pcb given the current state of the cpu
-PCB.prototype.update = function(cpu) {
-	this.PC = cpu.PC;
-	this.AC = cpu.AC;
-    this.Xreg = cpu.Xreg;
-    this.Yreg = cpu.Yreg;
-    this.Zflag = cpu.Zflag;
+PCB.prototype.update = function() {
+	this.PC = _CPU.PC;
+	this.AC = _CPU.AC;
+    this.Xreg = _CPU.Xreg;
+    this.Yreg = _CPU.Yreg;
+    this.Zflag = _CPU.Zflag;
 };
 
 // displays the contents of the process control block

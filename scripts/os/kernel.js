@@ -97,18 +97,21 @@ function krnOnCPUClockPulse()
         var interrupt = _KernelInterruptQueue.dequeue();
         krnInterruptHandler(interrupt.irq, interrupt.params);
     }
-    else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
+    // If there are no interrupts then run one CPU cycle if there is anything being processed.
+    else if (_CPU.isExecuting)
     {
         // if single stepping is off then execute normally
         if(!_SingleStep) {
-          _CPU.cycle();
+          //_CPU.cycle();
+          _CpuScheduler.cycle();
 
           updateCpuDisplay();
           updateMemoryDisplay();
         }
         // otherwise if the step button was pressed, execute one cycle on the clock tick
         else if (_SingleStep && _Step) {
-          _CPU.cycle();
+          //_CPU.cycle();
+          _CpuScheduler.cycle();
           // reset step after every cycle so as to stop executing until the user presses the button again
           _Step = false;
 
@@ -119,7 +122,8 @@ function krnOnCPUClockPulse()
           krnTrace("Idle");
         }
     }
-    else                       // If there are no interrupts and there is nothing being executed then just be idle.
+    // If there are no interrupts and there is nothing being executed then just be idle.
+    else
     {
        krnTrace("Idle");
     }
@@ -169,7 +173,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
             if(params === true) {
-              _ReadyQueue[_CurrentPID].update(_CPU);
+              _ReadyQueue[_CurrentPID].update();
               _ReadyQueue[_CurrentPID].Display();
             }
             else {
