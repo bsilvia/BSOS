@@ -155,11 +155,39 @@ function updateReadyQueue () {
       else if (i === 0 && j === 7) {
         cell.innerHTML = "Z";
       }
-      else {
-        cell.innerHTML = "";  // TODO - insert values of ready queue here
+      // display the item in ready queue (if applicable)
+      else if (j === 0) {
+        // if we don't have at least 1 item in the ready
+        // queue then don't display anything
+        if(_ReadyQueue.getSize() < i)
+          j = 8;
+        else
+          cell.innerHTML = _ReadyQueue.getItem(i-1).pid;
       }
-    }
-  }
+      else if (j === 1) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).base;
+      }
+      else if (j === 2) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).limit;
+      }
+      else if (j === 3) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).PC;
+      }
+      else if (j === 4) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).AC;
+      }
+      else if (j === 5) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Xreg;
+      }
+      else if (j === 6) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Yreg;
+      }
+      else if (j === 7) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Zflag;
+      }
+    } // end for each column in this row
+
+  } // end for each row in the table
 }
 
 // takes a string and pads it with the number of 0's for output as hex

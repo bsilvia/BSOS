@@ -38,6 +38,15 @@ function Cpu() {
       this.Yreg  = 0;
       this.Zflag = 0;
     };
+
+    // sets the values of the cpu registers based on a given pcb
+    this.set = function(pcb) {
+      this.PC    = pcb.PC;
+      this.AC    = pcb.AC;
+      this.Xreg  = pcb.Xreg;
+      this.Yreg  = pcb.Yreg;
+      this.Zflag = pcb.Zflag;
+    };
     
     this.cycle = function() {
         krnTrace("CPU cycle");

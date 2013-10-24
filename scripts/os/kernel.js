@@ -173,8 +173,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
             if(params === true) {
-              _ReadyQueue[_CurrentPID].update();
-              _ReadyQueue[_CurrentPID].Display();
+              // TODO - need to change this - don't need to display it since it will be shown in the ready queue?
+              //_ReadyQueue[_CurrentPID].update();
+              //_ReadyQueue[_CurrentPID].Display();
             }
             else {
               _StdOut.putText("Process terminated unexpectedly");
@@ -269,7 +270,7 @@ function krnRunProgram(pid) {
 
   // reset CPU values
   //_CPU.clear();
-  //_CurrentPID = pid;
+  _CurrentPID = pid;
   // the memory offset is the base of the pcb
   //_MemoryManager.SetRelocationRegister(_ReadyQueue[_CurrentPID].base);
   // start executing
