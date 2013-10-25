@@ -12,10 +12,20 @@ function MemoryManager() {
 								new MemoryBlock(_MemorySize/3, _BlockSize),
 								new MemoryBlock(_MemorySize*2/3, _BlockSize));
    this.relocationRegister = 0;
+   this.lastLoadedPCB = null;
 }
 
 MemoryManager.prototype.SetRelocationRegister = function(num) {
 	this.relocationRegister = num;
+};
+
+// function to return the next available block of memory if there is one
+MemoryManager.prototype.getNextAvailableBlock = function() {
+	for (var i = 0; i < this.memoryBlocks.length; i++) {
+		if(!this.memoryBlocks[i].taken)
+			return i;
+	}
+	return -1;
 };
 
 // class to keep track of each block of memory
@@ -53,32 +63,36 @@ MemoryManager.prototype.getMemory = function() {
 	return this.memory.getMemory();
 };
 
-// loads a given program into memory
-MemoryManager.prototype.load = function(pcb, program) {
-	// load the program into an open block of memory
-	if(!this.memoryBlocks[0].taken) {
-		pcb.base = this.memoryBlocks[0].base;
-		pcb.limit = this.memoryBlocks[0].limit;
-		this.memoryBlocks[0].taken = true;
-	}
-	else if(!this.memoryBlocks[1].taken) {
-		pcb.base = this.memoryBlocks[1].base;
-		pcb.limit = this.memoryBlocks[1].limit;
-		this.memoryBlocks[1].taken = true;
-	}
-	else if(!this.memoryBlocks[2].taken) {
-		pcb.base = this.memoryBlocks[2].base;
-		pcb.limit = this.memoryBlocks[2].limit;
-		this.memoryBlocks[2].taken = true;
-	}
-	else {
-		_StdOut.putText("No more free slots in memory");
-		return;
+// loads a given program into memory, returning true if sucessful, false otherwise
+MemoryManager.prototype.load = function(program) {
+	// check the size of the program
+	if(program.length > _BlockSize) {
+		_StdOut.putText("Program size exceeds max memory size");
+		return false;
 	}
 
+	var blockNum = this.getNextAvailableBlock();
+
+	if(blockNum === -1) {
+		_StdOut.putText("No more free slots in memory");
+		return false;
+	}
+
+	// create a new process control block
+	var pcb = new PCB();
+
+	// load the program into the open block of memory
+	pcb.base = this.memoryBlocks[blockNum].base;
+	pcb.limit = this.memoryBlocks[blockNum].limit;
+	this.memoryBlocks[blockNum].taken = true;
+
+	this.lastLoadedPCB = pcb;
+
+	// write the program to memory
 	for (var i = 0; i < program.length; i++) {
 		this.memory.write(i + pcb.base, program[i]);
 	}
 
 	_StdOut.putText("Loaded program with PID " + pcb.pid);
+	return true;
 };

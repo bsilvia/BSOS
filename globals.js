@@ -69,8 +69,8 @@ var _CpuScheduler = null;
 // Array to hold PCBs for processes that are running
 var _ReadyQueue = null;
 
-// Current PID
-var _CurrentPID = null;
+// Current PCB
+var _CurrentPCB = null;
 
 // Array to hold processes that are loaded
 var _ResidentList = null;

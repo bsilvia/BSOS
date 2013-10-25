@@ -254,22 +254,25 @@ function krnTrapError(msg)
 // function to load a program into memory
 function krnLoadProgram(program) {
   // create a new process control block
-  var newPCB = new PCB();
+  //var newPCB = new PCB();
   //_ReadyQueue[newPCB.pid] = newPCB;
-  _ResidentList[_ResidentList.length] = newPCB;
 
   // ask the memory manager to do the actual loading
-  _MemoryManager.load(newPCB, program);
-  // TODO - have check to see if no slots of memory are available?
+  if(_MemoryManager.load(program))
+  {
+    // add the pcb to the resident list if we could successfully load it into
+    // memory - when we get to file systems will we allow loading more than 3?
+    _ResidentList[_ResidentList.length] = _MemoryManager.lastLoadedPCB;
+  }
 }
 
 // function to run a program in memory
 function krnRunProgram(pid) {
   // reset CPU values
   //_CPU.clear();
-  //_CurrentPID = pid;
+  //... = pid;
   // the memory offset is the base of the pcb
-  //_MemoryManager.SetRelocationRegister(_ResidentList[_CurrentPID].base);
+  //_MemoryManager.SetRelocationRegister(_ResidentList[...].base);
 
   var pcb = null;
   var idx = -1;
