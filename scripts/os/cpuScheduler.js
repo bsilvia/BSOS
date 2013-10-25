@@ -39,5 +39,6 @@ cpuScheduler.prototype.contextSwitch = function() {
 	// TODO - update current PCB, then choose the next process to load in
 	// and update the CPU with that PCB and start that process
 	// should a context swtich take one clock cycle?
-	
+
+	// TODO - set relocation register in memory manager as well as setting the cpu
 };

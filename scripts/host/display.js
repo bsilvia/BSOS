@@ -159,8 +159,17 @@ function updateReadyQueue () {
       else if (j === 0) {
         // if we don't have at least 1 item in the ready
         // queue then don't display anything
-        if(_ReadyQueue.getSize() < i)
+        if(_ReadyQueue === null || _ReadyQueue.getSize() < i)
+        {
+          row.insertCell(1);
+          row.insertCell(2);
+          row.insertCell(3);
+          row.insertCell(4);
+          row.insertCell(5);
+          row.insertCell(6);
+          row.insertCell(7);
           j = 8;
+        }
         else
           cell.innerHTML = _ReadyQueue.getItem(i-1).pid;
       }

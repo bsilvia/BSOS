@@ -45,7 +45,7 @@ function Queue()
 
     // function to return the underlying array to
     // be used for displaying the ready queue
-    this.getItem= function(num) {
+    this.getItem = function(num) {
         return this.q[num];
     };
 }

@@ -211,7 +211,7 @@ function shellInit() {
         // ensure they passed an int
         if (args.length > 0 && !isNaN(args[0]))
         {
-            _Quantum = args[0];
+            _Quantum = parseInt(args[0], 10);
         }
         else
         {

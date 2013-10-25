@@ -256,7 +256,7 @@ function krnLoadProgram(program) {
   // create a new process control block
   var newPCB = new PCB();
   //_ReadyQueue[newPCB.pid] = newPCB;
-  _ResidentList[newPCB.pid] = newPCB;
+  _ResidentList[_ResidentList.length] = newPCB;
 
   // ask the memory manager to do the actual loading
   _MemoryManager.load(newPCB, program);
@@ -265,15 +265,41 @@ function krnLoadProgram(program) {
 
 // function to run a program in memory
 function krnRunProgram(pid) {
-
-  // TODO - call command to scheduler?
-
   // reset CPU values
   //_CPU.clear();
-  _CurrentPID = pid;
+  //_CurrentPID = pid;
   // the memory offset is the base of the pcb
-  //_MemoryManager.SetRelocationRegister(_ReadyQueue[_CurrentPID].base);
-  // start executing
+  //_MemoryManager.SetRelocationRegister(_ResidentList[_CurrentPID].base);
+
+  var pcb = null;
+  var idx = -1;
+
+  for (var i = 0; i < _ResidentList.length; i++) {
+    pcb = _ResidentList[i];
+    if(pcb.pid === pid)
+    {
+      idx = i;
+      break;
+    }
+  }
+
+  // check to see if we found the program in the resident list
+  if(idx === -1)
+  {
+    // wasn't found
+    _StdOut.putText("Invalid pid.");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  // found it, add it to the ready queue
+  _ReadyQueue.enqueue(pcb);
+
+  // remove it from the resident list
+  _ResidentList.splice(idx);
+
+  // start executing if not already
   _CPU.isExecuting = true;
 }
 
