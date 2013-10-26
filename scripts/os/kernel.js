@@ -183,6 +183,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               _StdOut.putText(">");
             }
             //_CurrentPID = null;
+            
             _CPU.isExecuting = false;
             break;
         case SYSTEM_CALL_PRINT_IRQ:
@@ -191,17 +192,16 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _StdOut.putText(">");
             break;
         case CONTEXT_SWITCH_IRQ:
-            // TODO - update current PCB, then choose the next process to load in
-            // and update the CPU with that PCB and start that process
-            
             // update the process's PCB
             _CurrentPCB.update();
+            var pidSwappedOut = _CurrentPCB.pid;
 
             // add the current process back onto the ready queue
             _ReadyQueue.enqueue(_CurrentPCB);
 
             // set the current process to the process that was passed
             _CurrentPCB = params;
+            var pidSwappedIn = _CurrentPCB.pid;
 
             // set the cpu values from the values in the pcb of the new process
             _CPU.set(_CurrentPCB);
@@ -211,6 +211,8 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             
             // update ready queue display
             updateReadyQueue();
+
+            krnTrace("Context switch from pid " + pidSwappedOut + " to " + pidSwappedIn);
             break;
         default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -328,4 +330,9 @@ function krnRunProgram(pid) {
 function krnRunAll() {
   // TODO - call command to scheduler to load all programs in
   //        resident list into ready queue
+
+  _CpuScheduler.runAll();
+
+  // start executing if not already
+  _CPU.isExecuting = true;
 }

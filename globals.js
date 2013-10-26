@@ -26,6 +26,13 @@ var SYSTEM_CALL_PRINT_IRQ = 3;
 
 var CONTEXT_SWITCH_IRQ = 4;
 
+// Scheduling algorithms constants
+var ROUND_ROBIN = 0;
+// more to come...
+
+// Scheduling algorithm variable
+var CURRENT_SCHEDULING_ALGOR = ROUND_ROBIN;
+
 
 //
 // Global Variables

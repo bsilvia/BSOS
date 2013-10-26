@@ -24,47 +24,60 @@ CpuScheduler.prototype.cycle = function() {
 };
 
 // this method checks for any scheduling decisions to be made and context switches if necessary
+// onRun distinguishes scheduling operations based on if we are scheduling at a clock tick or
+// because we just got a command to run one or more programs
 CpuScheduler.prototype.schedule = function() {
-	// TODO - make decision
 	// TODO - log all scheduling events
-	if(this.cycles === _Quantum)
-	{
-		this.cycles = 0;
-		if(!_ReadyQueue.isEmpty())
-		{
-			this.contextSwitch();
-		}
+	
+	switch (CURRENT_SCHEDULING_ALGOR)
+    {
+		case ROUND_ROBIN:
+			// if we aren't already running another process
+			if(!_CPU.isExecuting)
+			{
+				// have to set current pcb, cpu, and relocation register accordingly
+				_CurrentPCB = _ReadyQueue.dequeue();
+				_CPU.set(_CurrentPCB);
+				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+			}
+			else if(this.cycles === _Quantum)
+			{
+				this.cycles = 0;
+				if(!_ReadyQueue.isEmpty())
+				{
+					this.contextSwitch(_ReadyQueue.dequeue());
+				}
+			}
+			break;
 	}
 };
 
 // method to perform context switching
-CpuScheduler.prototype.contextSwitch = function() {
+CpuScheduler.prototype.contextSwitch = function(pcb) {
 	// software interrupt for a context switch
-	krnAddInterrupt(CONTEXT_SWITCH_IRQ, _ReadyQueue.dequeue());
+	krnAddInterrupt(CONTEXT_SWITCH_IRQ, pcb);
 };
 
 // this is called when a program is requested to run
 CpuScheduler.prototype.run = function(pcb, index) {
 	// add the program's pcb to the ready queue
-  	_ReadyQueue.enqueue(pcb);
+	_ReadyQueue.enqueue(pcb);
 
-  	// remove it from the resident list
+	// remove it from the resident list
 	_ResidentList.splice(index);
 
-  	// if this is the first one getting added to the ready queue then
-  	// it is the only one being run so pull it off the ready queue
-  	if(_ReadyQueue.getSize() === 1)
-  		_CurrentPCB = _ReadyQueue.dequeue();
-
-	// TODO - will need to do more with the program as we 
-	// allow for more scheduling algorithms
+	this.schedule();
 };
 
 // runs all programs that are in the resident list
 CpuScheduler.prototype.runAll = function() {
+	// put all the programs in the resident list on the ready queue
 	for (var i = 0; i < _ResidentList.length; i++) {
 		_ReadyQueue.enqueue(_ResidentList[i]);
-	};
+	}
 
+	// clear the resident list
 	_ResidentList = [];
+
+	this.schedule();
 };

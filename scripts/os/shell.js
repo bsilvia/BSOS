@@ -232,7 +232,10 @@ function shellInit() {
         }
 
         _StdOut.putText("Active processes: ");
-        StdOut.putText(_ReadyQueue.toString());
+        for (var i = 0; i < _ReadyQueue.getSize; i++) {
+            StdOut.putText(_ReadyQueue.getItem(i).pid + " ");
+        }
+        //StdOut.putText(_ReadyQueue.toString() + "[" + this.q[i] + "] "); // TODO - or resident list?
         _StdOut.advanceLine();
     };
     this.commandList[this.commandList.length] = sc;
