@@ -8,6 +8,7 @@ function PCB() {
 	this.pid = getNextPid();
 	this.base = 0;
 	this.limit = 0;
+	this.memBlock = -1;
 	
 	this.PC = 0;
 	this.AC = 0;

@@ -172,19 +172,24 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             break;
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents
-            if(params === true) {
+            //if(params === true) {
               // TODO - need to change this - don't need to display it since it will be shown in the ready queue?
               //_ReadyQueue[_CurrentPID].update();
               //_ReadyQueue[_CurrentPID].Display();
-            }
-            else {
-              _StdOut.putText("Process terminated unexpectedly");
+            //}
+            if(params === false) {
+              _StdOut.putText("Process " + _CurrentPID + " terminated unexpectedly");
               _StdOut.advanceLine();
               _StdOut.putText(">");
             }
+            else {
+                        // TODO - ALL THIS TO BE CHANGED
+            }
+
             //_CurrentPID = null;
-            
-            _CPU.isExecuting = false;
+
+            if(_ReadyQueue.getSize() === 0)
+              _CPU.isExecuting = false;
             break;
         case SYSTEM_CALL_PRINT_IRQ:
             _StdOut.putText(params);
@@ -292,12 +297,6 @@ function krnLoadProgram(program) {
 
 // function to run a program in memory
 function krnRunProgram(pid) {
-  // reset CPU values
-  //_CPU.clear();
-  //... = pid;
-  // the memory offset is the base of the pcb
-  //_MemoryManager.SetRelocationRegister(_ResidentList[...].base);
-
   var pcb = null;
   var idx = -1;
 
@@ -335,4 +334,36 @@ function krnRunAll() {
 
   // start executing if not already
   _CPU.isExecuting = true;
+}
+
+// function to kill a specific process
+function krnKill(pid) {
+  var pcb = null;
+  var idx = -1;
+
+  if(_CurrentPCB.pid === pid) {
+    CpuScheduler.kill(pid, idx);
+    return;
+  }
+
+  for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+    pcb = _ReadyQueue.getItem(i);
+    if(pcb.pid === parseInt(pid,10))
+    {
+      idx = i;
+      break;
+    }
+  }
+
+  // check to see if we found the program in the resident list
+  if(idx === -1)
+  {
+    // wasn't found
+    _StdOut.putText("Invalid pid.");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  _CpuScheduler.kill(pid, idx);
 }

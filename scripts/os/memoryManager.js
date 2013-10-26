@@ -84,6 +84,7 @@ MemoryManager.prototype.load = function(program) {
 	// load the program into the open block of memory
 	pcb.base = this.memoryBlocks[blockNum].base;
 	pcb.limit = this.memoryBlocks[blockNum].limit;
+	pcb.memBlock = blockNum;
 	this.memoryBlocks[blockNum].taken = true;
 
 	this.lastLoadedPCB = pcb;

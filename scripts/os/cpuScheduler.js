@@ -81,3 +81,15 @@ CpuScheduler.prototype.runAll = function() {
 
 	this.schedule();
 };
+
+// function to kill a process, whether it be because the user requested
+// it, the program terminated unexpectedly, or the program terminated gracefully
+CpuScheduler.prototype.kill = function(pid, idx) {
+	// we are killing the current process
+	if(idx === -1) {
+		//_MemoryManager.
+	}
+	else {
+		_ReadyQueue.removeAt(idx);
+	}
+};

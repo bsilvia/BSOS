@@ -183,8 +183,6 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            // TODO - do something with a ready queue?
-            // TODO - check to make sure it is a valid pid
             krnRunProgram(args[0]);
         }
         else
@@ -199,7 +197,7 @@ function shellInit() {
     sc.command = "runall";
     sc.description = "- Runs all the program at once.";
     sc.function = function(args) {
-        // TODO - execute all the programs
+        krnRunAll();
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -246,13 +244,13 @@ function shellInit() {
     sc.description = "<pid> - Kills the process with the given pid.";
     sc.function = function(args) {
         // ensure they passed a pid
-        if (args.length > 0 && !isNaN(args[0]))
+        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) >= 0)
         {
-            // TODO - kill that process
+            krnKill(args[0]);
         }
         else
         {
-            _StdIn.putText("Usage: kill <pid>  Please supply a pid.");
+            _StdIn.putText("Usage: kill <pid>  Please supply a non-negative pid.");
         }
     };
     this.commandList[this.commandList.length] = sc;
