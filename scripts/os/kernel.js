@@ -102,7 +102,7 @@ function krnOnCPUClockPulse()
     {
         // if single stepping is off then execute normally
         if(!_SingleStep) {
-          _CPU.cycle();
+          //_CPU.cycle();
           _CpuScheduler.cycle();
 
           updateCpuDisplay();
@@ -110,7 +110,7 @@ function krnOnCPUClockPulse()
         }
         // otherwise if the step button was pressed, execute one cycle on the clock tick
         else if (_SingleStep && _Step) {
-          _CPU.cycle();
+          //_CPU.cycle();
           _CpuScheduler.cycle();
           // reset step after every cycle so as to stop executing until the user presses the button again
           _Step = false;
@@ -182,13 +182,35 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               _StdOut.advanceLine();
               _StdOut.putText(">");
             }
-            _CurrentPID = null;
+            //_CurrentPID = null;
             _CPU.isExecuting = false;
             break;
         case SYSTEM_CALL_PRINT_IRQ:
             _StdOut.putText(params);
             _StdOut.advanceLine();
             _StdOut.putText(">");
+            break;
+        case CONTEXT_SWITCH_IRQ:
+            // TODO - update current PCB, then choose the next process to load in
+            // and update the CPU with that PCB and start that process
+            
+            // update the process's PCB
+            _CurrentPCB.update();
+
+            // add the current process back onto the ready queue
+            _ReadyQueue.enqueue(_CurrentPCB);
+
+            // set the current process to the process that was passed
+            _CurrentPCB = params;
+
+            // set the cpu values from the values in the pcb of the new process
+            _CPU.set(_CurrentPCB);
+
+            // set relocation register in memory manager
+            _MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+            
+            // update ready queue display
+            updateReadyQueue();
             break;
         default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -279,7 +301,7 @@ function krnRunProgram(pid) {
 
   for (var i = 0; i < _ResidentList.length; i++) {
     pcb = _ResidentList[i];
-    if(pcb.pid === pid)
+    if(pcb.pid === parseInt(pid,10))
     {
       idx = i;
       break;
@@ -296,11 +318,7 @@ function krnRunProgram(pid) {
     return;
   }
 
-  // found it, add it to the ready queue
-  _ReadyQueue.enqueue(pcb);
-
-  // remove it from the resident list
-  _ResidentList.splice(idx);
+  _CpuScheduler.run(pcb, idx);
 
   // start executing if not already
   _CPU.isExecuting = true;
@@ -308,5 +326,6 @@ function krnRunProgram(pid) {
 
 // function to run all the programs at once
 function krnRunAll() {
-  // TODO - call command to scheduler?
+  // TODO - call command to scheduler to load all programs in
+  //        resident list into ready queue
 }

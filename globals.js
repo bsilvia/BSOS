@@ -24,6 +24,8 @@ var PROGRAM_TERMINATION_IRQ = 2;
 
 var SYSTEM_CALL_PRINT_IRQ = 3;
 
+var CONTEXT_SWITCH_IRQ = 4;
+
 
 //
 // Global Variables

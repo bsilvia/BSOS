@@ -209,13 +209,13 @@ function shellInit() {
     sc.description = "<int> - Changes the quantum of time for Round Robin.";
     sc.function = function(args) {
         // ensure they passed an int
-        if (args.length > 0 && !isNaN(args[0]))
+        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) > 0)
         {
             _Quantum = parseInt(args[0], 10);
         }
         else
         {
-            _StdIn.putText("Usage: quantum <int>  Please supply a integer.");
+            _StdIn.putText("Usage: quantum <int>  Please supply a positive integer.");
         }
     };
     this.commandList[this.commandList.length] = sc;
