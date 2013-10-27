@@ -246,7 +246,7 @@ function shellInit() {
         // ensure they passed a pid
         if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) >= 0)
         {
-            krnKill(args[0]);
+            krnKill(parseInt(args[0],10));
         }
         else
         {

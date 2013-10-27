@@ -20,7 +20,10 @@ CpuScheduler.prototype.cycle = function() {
 	// make the client OS control the host CPU with the client OS CPU scheduler
 	_CPU.cycle();
 	this.cycles++;
-	this.schedule();
+	// only call schedule at each clock cycle if we are doing round robin
+	if(CURRENT_SCHEDULING_ALGOR === ROUND_ROBIN) {
+		this.schedule();
+	}
 };
 
 // this method checks for any scheduling decisions to be made and context switches if necessary
@@ -80,16 +83,24 @@ CpuScheduler.prototype.runAll = function() {
 	_ResidentList = [];
 
 	this.schedule();
+	updateReadyQueue();
 };
 
 // function to kill a process, whether it be because the user requested
 // it, the program terminated unexpectedly, or the program terminated gracefully
-CpuScheduler.prototype.kill = function(pid, idx) {
+CpuScheduler.prototype.killProcess = function(pid, idx) {
 	// we are killing the current process
 	if(idx === -1) {
-		//_MemoryManager.
+		_MemoryManager.deallocate(_CurrentPCB.memBlock);
+		_CurrentPCB.finished = true;
+		// simulate reaching the end of the quantum if we are doing round robin
+		this.cycles = _Quantum;
+		// we must pick a new process to run so call schedule
+		this.schedule();
 	}
+	// otherwise we just need to remove it from the ready queue
 	else {
 		_ReadyQueue.removeAt(idx);
 	}
+	updateReadyQueue();
 };

@@ -97,3 +97,8 @@ MemoryManager.prototype.load = function(program) {
 	_StdOut.putText("Loaded program with PID " + pcb.pid);
 	return true;
 };
+
+// deallocates a block of memory once a process no longer needs it
+MemoryManager.prototype.deallocate = function(idxBlock) {
+	this.memoryBlocks[idxBlock].taken = false;
+};

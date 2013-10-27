@@ -201,8 +201,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _CurrentPCB.update();
             var pidSwappedOut = _CurrentPCB.pid;
 
-            // add the current process back onto the ready queue
-            _ReadyQueue.enqueue(_CurrentPCB);
+            // add the current process back onto the ready queue if it is not finished
+            if(_CurrentPCB.finished !== true)
+              _ReadyQueue.enqueue(_CurrentPCB);
 
             // set the current process to the process that was passed
             _CurrentPCB = params;
@@ -327,9 +328,6 @@ function krnRunProgram(pid) {
 
 // function to run all the programs at once
 function krnRunAll() {
-  // TODO - call command to scheduler to load all programs in
-  //        resident list into ready queue
-
   _CpuScheduler.runAll();
 
   // start executing if not already
@@ -342,7 +340,9 @@ function krnKill(pid) {
   var idx = -1;
 
   if(_CurrentPCB.pid === pid) {
-    CpuScheduler.kill(pid, idx);
+    if(_ReadyQueue.isEmpty())
+      _CPU.isExecuting = false;
+    _CpuScheduler.killProcess(pid, idx);
     return;
   }
 
@@ -365,5 +365,5 @@ function krnKill(pid) {
     return;
   }
 
-  _CpuScheduler.kill(pid, idx);
+  _CpuScheduler.killProcess(pid, idx);
 }

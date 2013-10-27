@@ -9,6 +9,7 @@ function PCB() {
 	this.base = 0;
 	this.limit = 0;
 	this.memBlock = -1;
+	this.finished = false;
 	
 	this.PC = 0;
 	this.AC = 0;

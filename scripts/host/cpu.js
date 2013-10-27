@@ -103,7 +103,8 @@ function Cpu() {
             //_StdOut.advanceLine();
             krnTrace("Invalid op code found: " + opCode + " terminating process.");
             //this.isExecuting = false;
-            krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);  // TODO - to be changed
+            krnKill(_CurrentPCB.pid);
+            //krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);  // TODO - to be changed
             break;
         }
     };
@@ -178,7 +179,8 @@ function Cpu() {
       _SingleStep = false;
       disableStepBtn();
 
-      krnAddInterrupt(PROGRAM_TERMINATION_IRQ, true);   // TODO - to be changed
+      krnKill(_CurrentPCB.pid);
+      //krnAddInterrupt(PROGRAM_TERMINATION_IRQ, true);   // TODO - to be changed
     };
     // EC - compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {
