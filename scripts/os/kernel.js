@@ -177,19 +177,20 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               //_ReadyQueue[_CurrentPID].update();
               //_ReadyQueue[_CurrentPID].Display();
             //}
-            if(params === false) {
-              _StdOut.putText("Process " + _CurrentPID + " terminated unexpectedly");
+            //if(params === false) {
+              _StdOut.putText("Process " + _CurrentPCB.pid + " terminated unexpectedly");
               _StdOut.advanceLine();
               _StdOut.putText(">");
-            }
-            else {
+              krnKill(_CurrentPCB.pid);
+            //}
+            //else {
                         // TODO - ALL THIS TO BE CHANGED
-            }
+            //}
 
             //_CurrentPID = null;
 
-            if(_ReadyQueue.getSize() === 0)
-              _CPU.isExecuting = false;
+            //if(_ReadyQueue.getSize() === 0)
+            //  _CPU.isExecuting = false;
             break;
         case SYSTEM_CALL_PRINT_IRQ:
             _StdOut.putText(params);

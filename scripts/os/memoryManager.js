@@ -41,7 +41,7 @@ MemoryManager.prototype.read = function(address) {
 	if(address < 0 || address > _BlockSize) {
 		//krnTrapError("Memory read - out of bounds exception!"); // maybe we don't have to be so harsh here?
 		krnTrace("Memory read - out of bounds exception!");
-		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
+		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, _CurrentPCB.pid);
 	}
 	else
 		return this.memory.read(address + this.relocationRegister);
@@ -52,7 +52,7 @@ MemoryManager.prototype.write = function(address, data) {
 	if(address < 0 || address > _BlockSize) {
 		//krnTrapError("Memory write - out of bounds exception!"); // maybe we don't have to be so harsh here?
 		krnTrace("Memory write - out of bounds exception!");
-		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);
+		krnAddInterrupt(PROGRAM_TERMINATION_IRQ, _CurrentPCB.pid);
 	}
 	else
 		this.memory.write(address + this.relocationRegister, data);

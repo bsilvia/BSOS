@@ -103,8 +103,8 @@ function Cpu() {
             //_StdOut.advanceLine();
             krnTrace("Invalid op code found: " + opCode + " terminating process.");
             //this.isExecuting = false;
-            krnKill(_CurrentPCB.pid);
-            //krnAddInterrupt(PROGRAM_TERMINATION_IRQ, false);  // TODO - to be changed
+            //krnKill(_CurrentPCB.pid);
+            krnAddInterrupt(PROGRAM_TERMINATION_IRQ, _CurrentPCB.pid);
             break;
         }
     };
