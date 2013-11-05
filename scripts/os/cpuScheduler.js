@@ -43,7 +43,7 @@ CpuScheduler.prototype.schedule = function() {
 				_CPU.set(_CurrentPCB);
 				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
 			}
-			else if(this.cycles === _Quantum)
+			else if(this.cycles >= _Quantum)
 			{
 				this.cycles = 0;
 				if(!_ReadyQueue.isEmpty())
@@ -95,12 +95,25 @@ CpuScheduler.prototype.killProcess = function(pid, idx) {
 		_CurrentPCB.finished = true;
 		// simulate reaching the end of the quantum if we are doing round robin
 		this.cycles = _Quantum;
-		// we must pick a new process to run so call schedule
-		this.schedule();
+		// we must pick a new process to run if available so call schedule
+		if(!_ReadyQueue.isEmpty()) {
+			this.schedule();
+		}
 	}
 	// otherwise we just need to remove it from the ready queue
 	else {
-		_ReadyQueue.removeAt(idx);
+		var pcb = _ReadyQueue.removeAt(idx);
+		_MemoryManager.deallocate(pcb[0].memBlock);
+		pcb[0].finished = true;
 	}
 	updateReadyQueue();
 };
+
+// this function is called whenever there is a new quantum in order to
+// check if any scheduling has to take place
+//CpuScheduler.prototype.newQuantum = function() {
+	// if the quantum was set to something less then our current cycles, schedule
+//	if(_CPU.isExecuting && this.cycles > _Quantum) {
+//		this.schedule();
+//	}
+//};

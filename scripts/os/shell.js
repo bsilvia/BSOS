@@ -210,10 +210,12 @@ function shellInit() {
         if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) > 0)
         {
             _Quantum = parseInt(args[0], 10);
+            // let the scheduler know we have a new quantum
+            //_CpuScheduler.newQuantum();
         }
         else
         {
-            _StdIn.putText("Usage: quantum <int>  Please supply a positive integer.");
+            _StdOut.putText("Usage: quantum <int>  Please supply a positive integer.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -223,18 +225,19 @@ function shellInit() {
     sc.command = "processes";
     sc.description = "- Displays the PIDs of all active processes.";
     sc.function = function(args) {
-        if(_ReadyQueue.getSize() === 0)
+        if(_ReadyQueue.getSize() === 0 && _CurrentPCB.finished === true)
         {
             _StdOut.putText("No active processes");
             return;
         }
 
         _StdOut.putText("Active processes: ");
+        _StdOut.putText(_CurrentPCB.pid + " ");
         for (var i = 0; i < _ReadyQueue.getSize; i++) {
             StdOut.putText(_ReadyQueue.getItem(i).pid + " ");
         }
         //StdOut.putText(_ReadyQueue.toString() + "[" + this.q[i] + "] "); // TODO - or resident list?
-        _StdOut.advanceLine();
+        //_StdOut.advanceLine();
     };
     this.commandList[this.commandList.length] = sc;
 

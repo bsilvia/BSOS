@@ -49,8 +49,8 @@ function Queue()
         return this.q[num];
     };
 
-    // function to remove an item at the given index
+    // function to remove and return an item at the given index
     this.removeAt = function(index) {
-        this.q.splice(index);
+        return this.q.splice(index, 1);
     };
 }

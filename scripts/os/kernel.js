@@ -340,7 +340,8 @@ function krnKill(pid) {
   var pcb = null;
   var idx = -1;
 
-  if(_CurrentPCB.pid === pid) {
+  // check to see if it is the current process and make sure it is still running
+  if(_CurrentPCB.pid === pid && _CurrentPCB.finished === false) {
     if(_ReadyQueue.isEmpty())
       _CPU.isExecuting = false;
     _CpuScheduler.killProcess(pid, idx);
@@ -361,8 +362,6 @@ function krnKill(pid) {
   {
     // wasn't found
     _StdOut.putText("Invalid pid.");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
     return;
   }
 
