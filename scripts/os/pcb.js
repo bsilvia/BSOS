@@ -10,6 +10,8 @@ function PCB() {
 	this.limit = 0;
 	this.memBlock = -1;
 	this.finished = false;
+	this.priority = -1;
+	this.location = "Memory";
 	
 	this.PC = 0;
 	this.AC = 0;

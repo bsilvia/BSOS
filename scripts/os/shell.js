@@ -182,12 +182,18 @@ function shellInit() {
 	sc = new ShellCommand();
 	sc.command = "load";
 	sc.description = "<priority>- Loads code into memory with an optional priority.";
-	sc.function = function() {
+	sc.function = function(args) {
 		var str = document.getElementById("taProgramInput").value;
         
         if(str.trim() === "")
         {
             _StdOut.putText("No commands detected");
+            _StdOut.advanceLine();
+            return;
+        }
+        else if (args.length > 0 && isNaN(args[0]))
+        {
+            _StdOut.putText("Invalid priority number");
             _StdOut.advanceLine();
             return;
         }
@@ -349,7 +355,7 @@ function shellInit() {
     // format
     sc = new ShellCommand();
     sc.command = "format";
-    sc.description = "- .";
+    sc.description = "- Formats the hard disk.";
     sc.function = function(args) {
         // TODO
     };
@@ -358,7 +364,7 @@ function shellInit() {
     // ls
     sc = new ShellCommand();
     sc.command = "ls";
-    sc.description = "- .";
+    sc.description = "- Lists all files currently on disk.";
     sc.function = function(args) {
         // TODO
     };
@@ -367,7 +373,7 @@ function shellInit() {
     // create
     sc = new ShellCommand();
     sc.command = "create";
-    sc.description = "<filename> - .";
+    sc.description = "<filename> - Creates a file with the given name.";
     sc.function = function(args) {
         // ensure they passed a pid
         if (args.length > 0)
@@ -384,7 +390,7 @@ function shellInit() {
     // read
     sc = new ShellCommand();
     sc.command = "read";
-    sc.description = "<filename> - .";
+    sc.description = "<filename> - Reads the contents of the given file.";
     sc.function = function(args) {
         // ensure they passed a pid
         if (args.length > 0)
@@ -401,7 +407,7 @@ function shellInit() {
     // write
     sc = new ShellCommand();
     sc.command = "write";
-    sc.description = "<filename> - .";
+    sc.description = "<filename> - Writes the given data to a file.";
     sc.function = function(args) {
         // ensure they passed a pid
         if (args.length > 0)
@@ -418,7 +424,7 @@ function shellInit() {
     // delete
     sc = new ShellCommand();
     sc.command = "delete";
-    sc.description = "<filename> - .";
+    sc.description = "<filename> - Removes the given file for storage.";
     sc.function = function(args) {
         // ensure they passed a pid
         if (args.length > 0)
@@ -432,7 +438,6 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 	
-    //
     // Display the initial prompt.
     this.putPrompt();
 }

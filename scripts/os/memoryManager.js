@@ -73,6 +73,7 @@ MemoryManager.prototype.load = function(program) {
 
 	var blockNum = this.getNextAvailableBlock();
 
+	// TODO - need to move this down below and set the location appropriately
 	if(blockNum === -1) {
 		_StdOut.putText("No more free slots in memory");
 		return false;
@@ -94,7 +95,7 @@ MemoryManager.prototype.load = function(program) {
 		this.memory.write(i + pcb.base, program[i]);
 	}
 
-	_StdOut.putText("Loaded program with PID " + pcb.pid);
+	_StdOut.putText("Loaded program with PID " + pcb.pid + " and priority ");	// TODO - add priority
 	return true;
 };
 
