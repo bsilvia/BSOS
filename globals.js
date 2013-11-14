@@ -28,7 +28,8 @@ var CONTEXT_SWITCH_IRQ = 4;
 
 // Scheduling algorithms constants
 var ROUND_ROBIN = 0;
-// more to come...
+var FIRST_COME_FIRST_SERVE = 1;
+var PRIORITY = 2;
 
 // Scheduling algorithm variable
 var CURRENT_SCHEDULING_ALGOR = ROUND_ROBIN;

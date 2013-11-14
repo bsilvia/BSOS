@@ -209,6 +209,29 @@ function shellInit() {
 	};
 	this.commandList[this.commandList.length] = sc;
 
+    // schedule
+    sc = new ShellCommand();
+    sc.command = "schedule";
+    sc.description = "<rr | fcfs | priority> - Sets the scheduling algorithm.";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            if(args[0] === "rr")
+                CURRENT_SCHEDULING_ALGOR = ROUND_ROBIN;
+            else if (args[0] === "fcfs")
+                CURRENT_SCHEDULING_ALGOR = FIRST_COME_FIRST_SERVE;
+            else if (args[0] === "priority")
+                CURRENT_SCHEDULING_ALGOR = PRIORITY;
+            else
+                _StdIn.putText("Usage: schedule <rr | fcfs | priority>  Please supply a scheduling option.");
+        }
+        else
+        {
+            _StdIn.putText("Usage: schedule <rr | fcfs | priority>  Please supply a scheduling option.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // run
     sc = new ShellCommand();
     sc.command = "run";
