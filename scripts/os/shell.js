@@ -199,9 +199,9 @@ function shellInit() {
 	};
 	this.commandList[this.commandList.length] = sc;
 
-    // schedule
+    // setschedule
     sc = new ShellCommand();
-    sc.command = "schedule";
+    sc.command = "setschedule";
     sc.description = "<rr | fcfs | priority> - Sets the scheduling algorithm.";
     sc.function = function(args) {
         if (args.length > 0)
@@ -219,6 +219,20 @@ function shellInit() {
         {
             _StdIn.putText("Usage: schedule <rr | fcfs | priority>  Please supply a scheduling option.");
         }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // getschedule
+    sc = new ShellCommand();
+    sc.command = "getschedule";
+    sc.description = "- Returns the current scheduling algorithm.";
+    sc.function = function(args) {
+        if(CURRENT_SCHEDULING_ALGOR === ROUND_ROBIN)
+            _StdOut.putText("Current scheduling algorithm: Round Robin");
+        else if (CURRENT_SCHEDULING_ALGOR === FIRST_COME_FIRST_SERVE)
+            _StdOut.putText("Current scheduling algorithm: First Come First Serve");
+        else if (CURRENT_SCHEDULING_ALGOR === PRIORITY)
+            _StdOut.putText("Current scheduling algorithm: Priority");
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -279,8 +293,8 @@ function shellInit() {
 
         _StdOut.putText("Active processes: ");
         _StdOut.putText(_CurrentPCB.pid + " ");
-        for (var i = 0; i < _ReadyQueue.getSize; i++) {
-            StdOut.putText(_ReadyQueue.getItem(i).pid + " ");
+        for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+            _StdOut.putText(_ReadyQueue.getItem(i).pid.toString() + " ");
         }
         //StdOut.putText(_ReadyQueue.toString() + "[" + this.q[i] + "] "); // TODO - or resident list?
         //_StdOut.advanceLine();

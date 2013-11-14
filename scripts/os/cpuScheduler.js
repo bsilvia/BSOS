@@ -52,6 +52,25 @@ CpuScheduler.prototype.schedule = function() {
 				}
 			}
 			break;
+		case FIRST_COME_FIRST_SERVE:
+			// if we aren't already running another process
+			if(!_CPU.isExecuting)
+			{
+				// have to set current pcb, cpu, and relocation register accordingly
+				_CurrentPCB = _ReadyQueue.dequeue();
+				_CPU.set(_CurrentPCB);
+				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+			}
+			// otherwise we have to pluck the next process off the queue
+			else
+			{
+				this.cycles = 0;
+				if(!_ReadyQueue.isEmpty())
+				{
+					this.contextSwitch(_ReadyQueue.dequeue());
+				}
+			}
+			break;
 	}
 };
 

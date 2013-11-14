@@ -85,7 +85,7 @@ function CLIconsole() {
                if(this.CurrentXPosition >= _Canvas.width + 5)
                {
 					this.advanceLine();
-					this.putText(">");
+					//this.putText(">");
                }
 
                this.putText(chr);
@@ -103,7 +103,7 @@ function CLIconsole() {
        // decided to write one function and use the term "text" to connote string or char.
        if (text !== "")
        {
-			if(_DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text) > _Canvas.width - 10)
+			if(_DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text) > _Canvas.width - 4)
 			{
 				var idx = text.length;
 				var splitLine = text.substring(0, idx);
@@ -111,7 +111,7 @@ function CLIconsole() {
 				while(keepSplitting)
 				{
 					splitLine = text.substring(0, idx);
-					if(_DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, splitLine) < _Canvas.width - 10)
+					if(_DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, splitLine) < _Canvas.width - 4)
 					{
 						// Draw the text at the current X and Y coordinates.
 						_DrawingContext.drawText(this.CurrentFont, this.CurrentFontSize,
@@ -126,10 +126,7 @@ function CLIconsole() {
 						if(text.trim() === "")
 							keepSplitting = false;
 						else
-						{
-							this.putText("-");
 							this.advanceLine();
-						}
 					}
 					idx--;
 				}

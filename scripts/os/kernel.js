@@ -325,6 +325,9 @@ function krnRunProgram(pid) {
 
   // start executing if not already
   _CPU.isExecuting = true;
+
+  // update ready queue display
+  updateReadyQueue();
 }
 
 // function to run all the programs at once
@@ -333,6 +336,9 @@ function krnRunAll() {
 
   // start executing if not already
   _CPU.isExecuting = true;
+
+  // update ready queue display
+  updateReadyQueue();
 }
 
 // function to kill a specific process
@@ -344,6 +350,7 @@ function krnKill(pid) {
   if(_CurrentPCB.pid === pid && _CurrentPCB.finished === false) {
     if(_ReadyQueue.isEmpty())
       _CPU.isExecuting = false;
+
     _CpuScheduler.killProcess(pid, idx);
     return;
   }
