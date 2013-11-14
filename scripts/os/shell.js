@@ -153,7 +153,7 @@ function shellInit() {
 	// load 
 	sc = new ShellCommand();
 	sc.command = "load";
-	sc.description = "- Loads code into memory.";
+	sc.description = "<priority>- Loads code into memory with an optional priority.";
 	sc.function = function() {
 		var str = document.getElementById("taProgramInput").value;
         
@@ -176,19 +176,9 @@ function shellInit() {
 			// get list of commands that are composed of hex digits
 			var matchArr = lines[i].trim().match(myReg);
 			
-			// if they are the same length then this line is valid code
-			if(commandsArr !== null && matchArr !== null && commandsArr.length === matchArr.length)
+			// if they are not the same length then this line is invalid code
+			if(commandsArr === null || matchArr === null || commandsArr.length !== matchArr.length)
 			{
-				//_StdOut.putText(lines[i]);
-				//_StdIn.advanceLine();
-
-                //_StdOut.putText("Valid commands, thank you");
-                //_StdOut.advanceLine();
-
-                // TODO - validate commands more here
-			}
-            else
-            {
                 var y = parseInt(i, 10);
                 y = parseInt(y+1, 10);
                 _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
@@ -201,7 +191,7 @@ function shellInit() {
         if(validCommands) {
             var commands = str.split(" ");
 
-            //_MemoryManager.load(commands);
+            // TODO - add priority here
             krnLoadProgram(commands);
 
             updateMemoryDisplay();
