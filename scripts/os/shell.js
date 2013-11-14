@@ -150,6 +150,34 @@ function shellInit() {
 	};
 	this.commandList[this.commandList.length] = sc;
 	
+    // single step
+    sc = new ShellCommand();
+    sc.command = "singlestep";
+    sc.description = "<on | off> - Steps through program execution.";
+    sc.function = function(args) {
+        
+        if (args.length > 0)
+        {
+            if(args[0] == "on") {
+                _SingleStep = true;
+                document.getElementById('btnStep').disabled = false;
+            }
+            else if(args[0] == "off"){
+                _SingleStep = false;
+                document.getElementById('btnStep').disabled = true;
+            }
+            else {
+                _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+            }
+        }
+        else
+        {
+            _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+        }
+
+    };
+    this.commandList[this.commandList.length] = sc;
+
 	// load 
 	sc = new ShellCommand();
 	sc.command = "load";
@@ -318,34 +346,91 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
-    // single step
+    // format
     sc = new ShellCommand();
-    sc.command = "singlestep";
-    sc.description = "<on | off> - Steps through program execution.";
+    sc.command = "format";
+    sc.description = "- .";
     sc.function = function(args) {
-        
+        // TODO
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // ls
+    sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- .";
+    sc.function = function(args) {
+        // TODO
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // create
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = "<filename> - .";
+    sc.function = function(args) {
+        // ensure they passed a pid
         if (args.length > 0)
         {
-            if(args[0] == "on") {
-                _SingleStep = true;
-                document.getElementById('btnStep').disabled = false;
-            }
-            else if(args[0] == "off"){
-                _SingleStep = false;
-                document.getElementById('btnStep').disabled = true;
-            }
-            else {
-                _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
-            }
+            // TODO
         }
         else
         {
-            _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+            _StdIn.putText("Usage:  <filename>  Please supply a valid filename.");
         }
-
     };
     this.commandList[this.commandList.length] = sc;
-	
+
+    // read
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = "<filename> - .";
+    sc.function = function(args) {
+        // ensure they passed a pid
+        if (args.length > 0)
+        {
+            // TODO
+        }
+        else
+        {
+            _StdIn.putText("Usage: read <filename>  Please supply a valid filename.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // write
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = "<filename> - .";
+    sc.function = function(args) {
+        // ensure they passed a pid
+        if (args.length > 0)
+        {
+            // TODO
+        }
+        else
+        {
+            _StdIn.putText("Usage: write <filename>  Please supply a valid filename.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // delete
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = "<filename> - .";
+    sc.function = function(args) {
+        // ensure they passed a pid
+        if (args.length > 0)
+        {
+            // TODO
+        }
+        else
+        {
+            _StdIn.putText("Usage: delete <filename>  Please supply a valid filename.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
 	
     //
     // Display the initial prompt.

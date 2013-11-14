@@ -30,8 +30,6 @@ CpuScheduler.prototype.cycle = function() {
 // onRun distinguishes scheduling operations based on if we are scheduling at a clock tick or
 // because we just got a command to run one or more programs
 CpuScheduler.prototype.schedule = function() {
-	// TODO - log all scheduling events
-	
 	switch (CURRENT_SCHEDULING_ALGOR)
     {
 		case ROUND_ROBIN:
@@ -70,6 +68,9 @@ CpuScheduler.prototype.schedule = function() {
 					this.contextSwitch(_ReadyQueue.dequeue());
 				}
 			}
+			break;
+		case PRIORITY:
+			// TODO
 			break;
 	}
 };
