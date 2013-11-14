@@ -75,6 +75,35 @@ function shellInit() {
     sc.function = shellRot13;
     this.commandList[this.commandList.length] = sc;
 
+    // bsod
+    sc = new ShellCommand();
+    sc.command = "bluescreen";
+    sc.description = "- Produces an OS error.";
+    sc.function = function() {
+        krnTrapError("User simulated error");
+    };
+    this.commandList[this.commandList.length] = sc;
+    
+    // whereami
+    sc = new ShellCommand();
+    sc.command = "whereami";
+    sc.description = "- Displays the users current location.";
+    sc.function = function() {
+        var locations = new Array("Paris", "Barcelona", "London", "Maui", "New York City",
+            "San Fransico", "Puerto Rico", "Sydney", "Vancouver", "Zurich", "Prague", "Florence");
+        _StdOut.putText(locations[Math.floor((Math.random()*12)+1)]);
+    };
+    this.commandList[this.commandList.length] = sc;
+    
+    // findchucknorris
+    sc = new ShellCommand();
+    sc.command = "findchucknorris";
+    sc.description = "- Do it, I dare you.";
+    sc.function = function() {
+        _StdOut.putText("You don't find Chuck Norris, he finds you.");
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // prompt <string>
     sc = new ShellCommand();
     sc.command = "prompt";
@@ -91,8 +120,12 @@ function shellInit() {
 		{
 			//_OsShell.promptStr = args[0];
 			_Status  = document.getElementById('status');
-			_Status.value = args[0];
-			document.getElementById('status').innerHTML = args[0];
+            var newStatus = "";
+            for (var i = 0; i < args.length; i++) {
+                 newStatus += args[i] + " ";
+            };
+			_Status.value = newStatus;
+            _Status.innerHTML = newStatus;
 		}
 		else
 		{
@@ -286,38 +319,7 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 	
-	// bsod
-	sc = new ShellCommand();
-	sc.command = "bluescreen";
-	sc.description = "- Produces an OS error.";
-	sc.function = function() {
-		krnTrapError("User simulated error");
-	};
-	this.commandList[this.commandList.length] = sc;
 	
-	// whereami
-	sc = new ShellCommand();
-	sc.command = "whereami";
-	sc.description = "- Displays the users current location.";
-	sc.function = function() {
-		var locations = new Array("Paris", "Barcelona", "London", "Maui", "New York City",
-			"San Fransico", "Puerto Rico", "Sydney", "Vancouver", "Zurich", "Prague", "Florence");
-		_StdOut.putText(locations[Math.floor((Math.random()*12)+1)]);
-	};
-	this.commandList[this.commandList.length] = sc;
-	
-	// findchucknorris
-	sc = new ShellCommand();
-	sc.command = "findchucknorris";
-	sc.description = "- Do it, I dare you.";
-	sc.function = function() {
-		_StdOut.putText("You don't find Chuck Norris, he finds you.");
-	};
-	this.commandList[this.commandList.length] = sc;
-	
-    // processes - list the running processes and their IDs
-    // kill <id> - kills the specified process id.
-
     //
     // Display the initial prompt.
     this.putPrompt();
