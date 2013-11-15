@@ -34,6 +34,12 @@ var PRIORITY = 2;
 // Scheduling algorithm variable
 var CURRENT_SCHEDULING_ALGOR = ROUND_ROBIN;
 
+// Sizes for file system
+var NUMBER_OF_TRACKS = 4;
+var NUMBER_OF_SECTORS = 7;
+var NUMBER_OF_BLOCKS = 7;
+var BLOCK_SIZE = 64;
+
 
 //
 // Global Variables

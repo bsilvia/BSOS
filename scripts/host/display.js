@@ -108,19 +108,54 @@ function updateFileSystemDisplay() {
     table.removeChild(table.lastChild);
   }
 
-  var memoryIndex = 0;
+  var idx = 0;
+
+  // display the labels TSB and Data
+  var row = table.insertRow(idx);
+  for(var i = 0; i < 2; i++)
+  {
+    var cell = row.insertCell(i);
+    if(i === 0) {
+      cell.style.fontWeight = "bold";
+      cell.innerHTML = "T,S,B";
+    }
+    else {
+      cell.style.width = "400px";
+      cell.style.fontWeight = "bold";
+      cell.innerHTML = "Data";
+    }
+  }
+
+  idx++;
 
   // go through and generate each row and cell
-  for(var i = 0; i < 96; i++) {
-    // calculate the hex value for this row
-    var hexString = (i*8).toString(16);
+  for(var track = 0; track <= NUMBER_OF_TRACKS; track++) {
+    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+        row = table.insertRow(idx);
+        // change color on every 3rd track
+        if(track % 3 === 0 && sector === 0 && block === 0) {
+          row.style.backgroundColor = '#6191FF';
+        }
 
-    var row = table.insertRow(i);
+        for(var j = 0; j < 2; j++)
+        {
+          var cell = row.insertCell(j);
 
-    if(memoryIndex % 3 === 0) {               // TODO - change color on every 3rd track
-      row.style.backgroundColor = '#6191FF';
+          if(j === 0) {
+            cell.innerHTML = track.toString() + "," + sector.toString() + "," + block.toString();
+          }
+          else {
+            cell.innerHTML = "*******DATA*******";
+          }
+        }
+
+        idx++;
+      }
     }
+  }
 
+  /*
     for(var j = 0; j < 9; j++) {
       var cell = row.insertCell(j);
       
@@ -133,10 +168,11 @@ function updateFileSystemDisplay() {
       }
       else {
         cell.innerHTML = "***";
-        memoryIndex++;
+        fileSystemIndex++;
       }
     }
-  }
+    */
+
 }
 
 // function to update the cpu display
