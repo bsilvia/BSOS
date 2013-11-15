@@ -24,5 +24,16 @@ function krnFSDriverEntry() {
 
 // function to handle file system ISR operations - read, write, create, delete
 function krnFsIsr(params) {
+   if(params[0] === "create") {
 
+   }
+   else if(params[0] === "read") {
+
+   }
+   else if(params[0] === "write") {
+
+   }
+   else if(params[0] === "delete") {
+
+   }
 }

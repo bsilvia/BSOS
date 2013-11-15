@@ -129,7 +129,7 @@ function shellInit() {
 		}
 		else
 		{
-			_StdIn.putText("Usage: status <string>  Please supply a string.");
+			_StdIn.putText("Usage: status <string> Please supply a string.");
 		}
 	};
     this.commandList[this.commandList.length] = sc;
@@ -167,12 +167,12 @@ function shellInit() {
                 document.getElementById('btnStep').disabled = true;
             }
             else {
-                _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+                _StdIn.putText("Usage: singlestep <on | off> Please indicate on or off.");
             }
         }
         else
         {
-            _StdIn.putText("Usage: singlestep <on | off>  Please indicate on or off.");
+            _StdIn.putText("Usage: singlestep <on | off> Please indicate on or off.");
         }
 
     };
@@ -247,11 +247,11 @@ function shellInit() {
             else if (args[0] === "priority")
                 CURRENT_SCHEDULING_ALGOR = PRIORITY;
             else
-                _StdIn.putText("Usage: schedule <rr | fcfs | priority>  Please supply a scheduling option.");
+                _StdIn.putText("Usage: schedule <rr | fcfs | priority> Please supply a scheduling option.");
         }
         else
         {
-            _StdIn.putText("Usage: schedule <rr | fcfs | priority>  Please supply a scheduling option.");
+            _StdIn.putText("Usage: schedule <rr | fcfs | priority> Please supply a scheduling option.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -281,7 +281,7 @@ function shellInit() {
         }
         else
         {
-            _StdIn.putText("Usage: run <pid>  Please supply a pid.");
+            _StdIn.putText("Usage: run <pid> Please supply a pid.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -309,7 +309,7 @@ function shellInit() {
         }
         else
         {
-            _StdOut.putText("Usage: quantum <int>  Please supply a positive integer.");
+            _StdOut.putText("Usage: quantum <int> Please supply a positive integer.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -347,7 +347,7 @@ function shellInit() {
         }
         else
         {
-            _StdIn.putText("Usage: kill <pid>  Please supply a non-negative pid.");
+            _StdIn.putText("Usage: kill <pid> Please supply a non-negative pid.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -358,6 +358,7 @@ function shellInit() {
     sc.description = "- Formats the hard disk.";
     sc.function = function(args) {
         // TODO
+        // krnAddInterrupt(FILE_SYSTEM_IRQ, ["format"]);
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -367,6 +368,7 @@ function shellInit() {
     sc.description = "- Lists all files currently on disk.";
     sc.function = function(args) {
         // TODO
+        // krnAddInterrupt(FILE_SYSTEM_IRQ, ["ls"]);
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -375,14 +377,16 @@ function shellInit() {
     sc.command = "create";
     sc.description = "<filename> - Creates a file with the given name.";
     sc.function = function(args) {
-        // ensure they passed a pid
-        if (args.length > 0)
+        // ensure they passed a filename and that it only contains characters and digits
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO
+            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
+            //_StdOut.putText("valid");
         }
         else
         {
-            _StdIn.putText("Usage:  <filename>  Please supply a valid filename.");
+            _StdIn.putText("Usage: create <filename> Please supply a valid filename.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -392,14 +396,15 @@ function shellInit() {
     sc.command = "read";
     sc.description = "<filename> - Reads the contents of the given file.";
     sc.function = function(args) {
-        // ensure they passed a pid
-        if (args.length > 0)
+        // ensure they passed a filename
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO
+            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]); // in read isr call function to validate filename
         }
         else
         {
-            _StdIn.putText("Usage: read <filename>  Please supply a valid filename.");
+            _StdIn.putText("Usage: read <filename> Please supply a valid filename.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -409,14 +414,20 @@ function shellInit() {
     sc.command = "write";
     sc.description = "<filename data> - Writes the given data to a file.";
     sc.function = function(args) {
-        // ensure they passed a pid
-        if (args.length > 1)
+        // ensure they passed a filename
+        if (args.length > 1 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO
+            var data = "";
+            for (var i = 0; i < args.length; i++) {
+                data += args[i] + " ";
+            }
+            data.trim();
+            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["write", args[0], data]); // in write isr call function to validate filename
         }
         else
         {
-            _StdIn.putText("Usage: write <filename data>  Please supply a valid filename and some data.");
+            _StdIn.putText("Usage: write <filename data> Please supply a valid filename and some data.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -426,14 +437,15 @@ function shellInit() {
     sc.command = "delete";
     sc.description = "<filename> - Removes the given file for storage.";
     sc.function = function(args) {
-        // ensure they passed a pid
-        if (args.length > 0)
+        // ensure they passed a filename
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO
+            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]); // in delete isr call function to validate filename
         }
         else
         {
-            _StdIn.putText("Usage: delete <filename>  Please supply a valid filename.");
+            _StdIn.putText("Usage: delete <filename> Please supply a valid filename.");
         }
     };
     this.commandList[this.commandList.length] = sc;
