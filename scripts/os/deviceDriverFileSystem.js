@@ -12,7 +12,17 @@ function DeviceDriverFileSystem() {
    // "subclass"-specific attributes.
     // this.buffer = "";    // TODO: Do we need this?
     // Override the base method pointers.
-    //this.driverEntry = krnKbdDriverEntry;  // TODO
-    //this.isr = krnKbdDispatchKeyPress;     // TODO
+    this.driverEntry = krnFSDriverEntry;
+    this.isr = krnFsIsr;     // TODO
     // "Constructor" code.
+}
+
+function krnFSDriverEntry() {
+   // Initialization routine for this, the kernel-mode Keyboard Device Driver.
+   this.status = "loaded";
+}
+
+// function to handle file system ISR operations - read, write, create, delete
+function krnFsIsr(params) {
+
 }

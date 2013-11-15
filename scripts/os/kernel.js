@@ -48,6 +48,12 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
+   // Load the File System Device Driver
+   krnTrace("Loading the file system device driver.");
+   krnFileSystemDriver = new DeviceDriverFileSystem();
+   krnFileSystemDriver.driverEntry();
+   krnTrace(krnFileSystemDriver.status);
+
    //
    // ... more?
    //
@@ -169,6 +175,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case KEYBOARD_IRQ:
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
+            break;
+        case FILE_SYSTEM_IRQ:
+            krnFileSystemDriver.isr(params);
             break;
         case PROGRAM_TERMINATION_IRQ:
             // on graceful termination, display PCB contents

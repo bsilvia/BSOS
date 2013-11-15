@@ -128,7 +128,7 @@ function updateFileSystemDisplay() {
 
   idx++;
 
-  // go through and generate each row and cell
+  // foreach block in each sector in each track, generate a row and two cells to display its info
   for(var track = 0; track <= NUMBER_OF_TRACKS; track++) {
     for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
@@ -138,6 +138,7 @@ function updateFileSystemDisplay() {
           row.style.backgroundColor = '#6191FF';
         }
 
+        // go through and display the (T,S,B) and the data it contains
         for(var j = 0; j < 2; j++)
         {
           var cell = row.insertCell(j);
@@ -146,7 +147,7 @@ function updateFileSystemDisplay() {
             cell.innerHTML = track.toString() + "," + sector.toString() + "," + block.toString();
           }
           else {
-            cell.innerHTML = "*******DATA*******";
+            cell.innerHTML = "";
           }
         }
 
@@ -154,24 +155,6 @@ function updateFileSystemDisplay() {
       }
     }
   }
-
-  /*
-    for(var j = 0; j < 9; j++) {
-      var cell = row.insertCell(j);
-      
-      // if we are in the first column, pad the number and display it in bold
-      if(j === 0) {
-        cell.style.fontWeight = "bold";
-        var pad = "000";
-        hexString = pad.substring(0, pad.length - hexString.length) + hexString;
-        cell.innerHTML = "$" + hexString;
-      }
-      else {
-        cell.innerHTML = "***";
-        fileSystemIndex++;
-      }
-    }
-    */
 
 }
 

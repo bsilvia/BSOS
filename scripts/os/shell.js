@@ -217,7 +217,7 @@ function shellInit() {
                 y = parseInt(y+1, 10);
                 _StdOut.putText("Invalid command on line " + y + ": " + lines[i]);
                 _StdOut.advanceLine();
-                krnTrace("Invalid command on line " + y + ": ");
+                krnTrace("Invalid command on line " + y + ": " + lines[i]);
                 validCommands = false;
             }
 		}
@@ -407,16 +407,16 @@ function shellInit() {
     // write
     sc = new ShellCommand();
     sc.command = "write";
-    sc.description = "<filename> - Writes the given data to a file.";
+    sc.description = "<filename data> - Writes the given data to a file.";
     sc.function = function(args) {
         // ensure they passed a pid
-        if (args.length > 0)
+        if (args.length > 1)
         {
             // TODO
         }
         else
         {
-            _StdIn.putText("Usage: write <filename>  Please supply a valid filename.");
+            _StdIn.putText("Usage: write <filename data>  Please supply a valid filename and some data.");
         }
     };
     this.commandList[this.commandList.length] = sc;

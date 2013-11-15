@@ -6,7 +6,7 @@
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
 
-DeviceDriverKeyboard.prototype = new DeviceDriver;  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
+DeviceDriverKeyboard.prototype = new DeviceDriver  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
 
 function DeviceDriverKeyboard()                     // Add or override specific attributes and method pointers.
 {
@@ -35,8 +35,8 @@ function krnKbdDispatchKeyPress(params)
 	
 	// make sure we got params and that isShifted is a valid value
 	// and check to see if the keyCode is outside the valid range of a keyboard
-	if(keyCode == null || isShifted == null || keyCode < 8 ||
-		keyCode > 222 || !(isShifted != true || isShifted != false))
+	if(keyCode === null || isShifted === null || keyCode < 8 ||
+		keyCode > 222 || !(isShifted !== true || isShifted !== false))
 	{
 		krnTrapError("Keyboard driver error: invalid keycode or parameters: " + params);
 	}
@@ -54,20 +54,20 @@ function krnKbdDispatchKeyPress(params)
             chr = String.fromCharCode(keyCode);
         }
         // TODO: Check for caps-lock and handle as shifted if so.
-        _KernelInputQueue.enqueue(chr);        
-    }    
+        _KernelInputQueue.enqueue(chr);
+    }
     else if ( ((keyCode >= 48) && (keyCode <= 57) && !isShifted) ||   // digits 
                (keyCode == 32)                     ||   // space
-               (keyCode == 13)                     ||   // enter
+			   (keyCode == 13)                     ||   // enter
 			   (keyCode == 8)  )  				     	// backspace
     {
         chr = String.fromCharCode(keyCode);
-        _KernelInputQueue.enqueue(chr); 
+        _KernelInputQueue.enqueue(chr);
     }
 	// Punctuation marks
 	else if (keyCode == 190 && isShifted)	// > character
 	{
-	    chr = String.fromCharCode(62);
+		chr = String.fromCharCode(62);
         _KernelInputQueue.enqueue(chr);
 	}
 	else if (keyCode == 190)				// period .
