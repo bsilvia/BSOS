@@ -48,6 +48,9 @@ function hostInit()
    // create an empty memory table to display
    createMemoryDisplay();
 
+   // create file system table to display
+   updateFileSystemDisplay();
+
    // create an empty ready queue
    updateReadyQueue();
 }

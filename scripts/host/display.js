@@ -99,6 +99,46 @@ function updateMemoryDisplay() {
   }
 }
 
+// function to update the file system display
+function updateFileSystemDisplay() {
+   var table = document.getElementById("fileSystemTable");
+
+  // remove all current entries in the table
+  while(table.hasChildNodes()) {
+    table.removeChild(table.lastChild);
+  }
+
+  var memoryIndex = 0;
+
+  // go through and generate each row and cell
+  for(var i = 0; i < 96; i++) {
+    // calculate the hex value for this row
+    var hexString = (i*8).toString(16);
+
+    var row = table.insertRow(i);
+
+    if(memoryIndex % 3 === 0) {               // TODO - change color on every 3rd track
+      row.style.backgroundColor = '#6191FF';
+    }
+
+    for(var j = 0; j < 9; j++) {
+      var cell = row.insertCell(j);
+      
+      // if we are in the first column, pad the number and display it in bold
+      if(j === 0) {
+        cell.style.fontWeight = "bold";
+        var pad = "000";
+        hexString = pad.substring(0, pad.length - hexString.length) + hexString;
+        cell.innerHTML = "$" + hexString;
+      }
+      else {
+        cell.innerHTML = "***";
+        memoryIndex++;
+      }
+    }
+  }
+}
+
 // function to update the cpu display
 function updateCpuDisplay() {
   var programCounter = _CPU.PC;
@@ -212,4 +252,26 @@ function toHexOutput(string, num) {
 // function to disable the step button when a program being stepped through finished
 function disableStepBtn() {
   document.getElementById('btnStep').disabled = true;
+}
+
+// function to toggle between memory display and file system display
+function toggleMemoryFileSystemView() {
+  var divMem = document.getElementById("divMemViewSelected");
+  var divMemDisplay = document.getElementById("divMemoryDisplay");
+  var divFS = document.getElementById("divFileSystemViewSelected");
+  var divFSDisplay = document.getElementById("divFileSystemDisplay");
+
+  if(divMem.style.display === 'none') {
+    divMem.style.display = 'block';
+    divMemoryDisplay.style.display = 'block';
+    divFS.style.display = 'none';
+    divFSDisplay.style.display = 'none';
+  }
+  else {
+    divMem.style.display = 'none';
+    divMemoryDisplay.style.display = 'none';
+    divFS.style.display = 'block';
+    divFSDisplay.style.display = 'block';
+  }
+
 }

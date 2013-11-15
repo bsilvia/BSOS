@@ -103,7 +103,31 @@
     <tr>
       <td>Console</td>
       <td>Log</td>
-      <td>Memory</td>
+      <td>
+        <div id="divMemViewSelected">
+          <b>Memory</b>&nbsp;&nbsp;&nbsp;
+          <input type="button"
+             id = "switchToFileView"
+             name="switchToFileView"
+             class="normal_button"
+             value=" --- > "
+             tabindex=""
+             onclick="toggleMemoryFileSystemView();">&nbsp;&nbsp;&nbsp;
+          File System
+        </div>
+
+        <div id="divFileSystemViewSelected">
+          Memory&nbsp;&nbsp;&nbsp;
+          <input type="button"
+             id = "switchToFileView"
+             name="switchToFileView"
+             class="normal_button"
+             value=" < --- "
+             tabindex=""
+             onclick="toggleMemoryFileSystemView();">&nbsp;&nbsp;&nbsp;
+          <b>File System</b>
+        </div>
+      </td>
     </tr>
 
     <tr>
@@ -152,6 +176,11 @@
         <div id="divMemoryDisplay">
           <table id="memoryTable" border="1">
             
+          </table>
+        </div>
+        <div id="divFileSystemDisplay">
+          <table id="fileSystemTable" border="1">
+
           </table>
         </div>
         <div id="divCpuStatus">

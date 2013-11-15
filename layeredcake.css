@@ -129,10 +129,35 @@ h3 {
 	overflow: scroll;
 	text-align: center;
 	margin-top: -9px;
+	display: block;
 }
 
 #memoryTable td {
 	width: 35px;
+}
+
+#divFileSystemDisplay {
+	position: relative;
+	top: 0px;
+	height: 390px;
+	width: 325px;
+	overflow: scroll;
+	text-align: center;
+	display: none;
+}
+
+#fileSystemTable td {
+	width: 35px;
+}
+
+#divMemViewSelected {
+	position: relative;
+	display: block;
+}
+
+#divFileSystemViewSelected {
+	position: relative;
+	display: none;
 }
 
 /*#memoryTable th {

@@ -9,6 +9,7 @@ function PCB() {
 	this.base = 0;
 	this.limit = 0;
 	this.memBlock = -1;
+	this.swapFile = "";
 	this.finished = false;
 	this.priority = -1;
 	this.location = "Memory";
