@@ -91,4 +91,5 @@ DeviceDriverFileSystem.prototype.format = function() {
       }
     }
   }
+  this.formatted = true;
 };
