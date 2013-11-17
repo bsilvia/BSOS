@@ -55,7 +55,7 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
     this.format();
   }
   else if(params[0] === "ls") {
-    // TODO - this.list();
+    this.list();
   }
 };
 
@@ -143,16 +143,16 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
   var list = [];
 
   // foreach block in each sector in the directory, grab the entries,
-  // check to see if they are in use, i.e. they have an entry and take the data
+  // check to see if they are in use, i.e. they have an entry
   for(var track = 0; track < 1; track++) {
     for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
         
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
-        //fileEntry.parseEntry(entry);
+        fileEntry.parseEntry(entry);
         if(fileEntry.isInUse())
-          list[list.length] = fileEntry.data;
+          list[list.length] = fileEntry;
 
       }
     }
@@ -174,7 +174,7 @@ DeviceDriverFileSystem.prototype.format = function() {
         var entry = new FileEntry();
         if(track === 0 && sector === 0 && block === 0)
           entry.setData("MBR");
-        
+
         localStorage[this.makeKey(track, sector, block)] = entry.toString();
       }
     }
@@ -204,5 +204,24 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
 
 // function to list the files currently stored on the disk
 DeviceDriverFileSystem.prototype.list = function() {
-  // TODO
+  if(!this.formatted) {
+    _StdOut.putText("Error: file system not formatted yet");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  var files = this.getDirEntries();
+  if(files.length < 1) {
+    _StdOut.putText("No files found");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  for (var i = 0; i < files.length; i++) {
+    _StdOut.putText(files[i].data);
+    _StdOut.advanceLine();
+  }
+  _StdOut.putText(">");
 };

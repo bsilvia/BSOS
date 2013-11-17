@@ -378,7 +378,7 @@ function shellInit() {
     sc.description = "- Lists all files currently on disk.";
     sc.function = function(args) {
         // TODO
-        // krnAddInterrupt(FILE_SYSTEM_IRQ, ["ls"]);
+        krnAddInterrupt(FILE_SYSTEM_IRQ, ["ls"]);
     };
     this.commandList[this.commandList.length] = sc;
 
