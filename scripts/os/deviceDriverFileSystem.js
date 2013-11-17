@@ -174,9 +174,7 @@ DeviceDriverFileSystem.prototype.format = function() {
         var entry = new FileEntry();
         if(track === 0 && sector === 0 && block === 0)
           entry.setData("MBR");
-        //else
-        //  localStorage[this.makeKey(track, sector, block)] = this.formatEntry(0, "-", "-", "-", "");
-
+        
         localStorage[this.makeKey(track, sector, block)] = entry.toString();
       }
     }
