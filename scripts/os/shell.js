@@ -367,8 +367,8 @@ function shellInit() {
     sc.command = "format";
     sc.description = "- Formats the hard disk.";
     sc.function = function(args) {
-        // TODO
-        // krnAddInterrupt(FILE_SYSTEM_IRQ, ["format"]);
+        // TODO - display message for error or success
+        krnAddInterrupt(FILE_SYSTEM_IRQ, ["format"]);
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -390,7 +390,7 @@ function shellInit() {
         // ensure they passed a filename and that it only contains characters and digits
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO
+            // TODO - display message for error or success
             // krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
             //_StdOut.putText("valid");
         }
@@ -409,7 +409,7 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO
+            // TODO - display error if something went wrong
             // krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]); // in read isr call function to validate filename
         }
         else
@@ -427,7 +427,7 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 1 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO
+            // TODO - display message for error or success
             var data = "";
             for (var i = 0; i < args.length; i++) {
                 data += args[i] + " ";
@@ -450,7 +450,7 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO
+            // TODO - display message for error or success
             // krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]); // in delete isr call function to validate filename
         }
         else

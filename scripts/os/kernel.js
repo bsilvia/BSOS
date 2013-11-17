@@ -177,29 +177,14 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _StdIn.handleInput();
             break;
         case FILE_SYSTEM_IRQ:
-            krnFileSystemDriver.isr(params);  // TODO - structure of call
+            krnFileSystemDriver.isr(params);
+            updateFileSystemDisplay(krnFileSystemDriver.getEntries());
             break;
         case PROGRAM_TERMINATION_IRQ:
-            // on graceful termination, display PCB contents
-            //if(params === true) {
-              // TODO - need to change this - don't need to display it since it will be shown in the ready queue?
-              //_ReadyQueue[_CurrentPID].update();
-              //_ReadyQueue[_CurrentPID].Display();
-            //}
-            //if(params === false) {
-              _StdOut.putText("Process " + _CurrentPCB.pid + " terminated unexpectedly");
-              _StdOut.advanceLine();
-              _StdOut.putText(">");
-              krnKill(_CurrentPCB.pid);
-            //}
-            //else {
-                        // TODO - ALL THIS TO BE CHANGED
-            //}
-
-            //_CurrentPID = null;
-
-            //if(_ReadyQueue.getSize() === 0)
-            //  _CPU.isExecuting = false;
+            _StdOut.putText("Process " + _CurrentPCB.pid + " terminated unexpectedly");
+            _StdOut.advanceLine();
+            _StdOut.putText(">");
+            krnKill(_CurrentPCB.pid);
             break;
         case SYSTEM_CALL_PRINT_IRQ:
             _StdOut.putText(params);

@@ -100,7 +100,7 @@ function updateMemoryDisplay() {
 }
 
 // function to update the file system display
-function updateFileSystemDisplay() {
+function updateFileSystemDisplay(entries) {
    var table = document.getElementById("fileSystemTable");
 
   // remove all current entries in the table
@@ -134,7 +134,7 @@ function updateFileSystemDisplay() {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
         row = table.insertRow(idx);
         // change color on every 3rd track
-        if(track % 3 === 0 && sector === 0 && block === 0) {
+        if(sector === 0 && block === 0) {
           row.style.backgroundColor = '#6191FF';
         }
 
@@ -143,19 +143,37 @@ function updateFileSystemDisplay() {
         {
           var cell = row.insertCell(j);
 
+          // assign each cell the id of its T,S,B
+          cell.id = track + "," + sector + "," + block;
+
           if(j === 0) {
             cell.innerHTML = track.toString() + "," + sector.toString() + "," + block.toString();
           }
           else {
-            cell.innerHTML = "";
+            if(entries === null)
+              cell.innerHTML = "";
+            else {
+              // extract out the pointer to the given TSB
+              var id = getID(entries[idx - 1]);
+              // assign it a hyperlink to the appropriate cell if it has a pointer
+              if (id !== "-,-,-")
+                cell.innerHTML = "<a href='#" + getID(entries[idx - 1]) + "'>" + entries[idx - 1] + "</a>";
+              else
+                cell.innerHTML = entries[idx - 1];
+            }
           }
         }
 
         idx++;
       }
     }
-  }
+  } // end for each track
+}
 
+// function to retrieve the id of the file system entry
+function getID(entry) {
+  var vals = entry.split("  ", 2);
+  return vals[1];
 }
 
 // function to update the cpu display
@@ -186,7 +204,7 @@ function updateReadyQueue () {
 
     var row = table.insertRow(i);
 
-    for(var j = 0; j < 8; j++) {
+    for(var j = 0; j < 9; j++) {
       var cell = row.insertCell(j);
       
       // if we are in the first column, pad the number and display it in bold
@@ -194,24 +212,27 @@ function updateReadyQueue () {
         cell.innerHTML = "PID";
       }
       else if (i === 0 && j === 1) {
-        cell.innerHTML = "Base";
+        cell.innerHTML = "Loc.";
       }
       else if (i === 0 && j === 2) {
-        cell.innerHTML = "Limit";
+        cell.innerHTML = "Base";
       }
       else if (i === 0 && j === 3) {
-        cell.innerHTML = "PC";
+        cell.innerHTML = "Limit";
       }
       else if (i === 0 && j === 4) {
-        cell.innerHTML = "AC";
+        cell.innerHTML = "PC";
       }
       else if (i === 0 && j === 5) {
-        cell.innerHTML = "X";
+        cell.innerHTML = "AC";
       }
       else if (i === 0 && j === 6) {
-        cell.innerHTML = "Y";
+        cell.innerHTML = "X";
       }
       else if (i === 0 && j === 7) {
+        cell.innerHTML = "Y";
+      }
+      else if (i === 0 && j === 8) {
         cell.innerHTML = "Z";
       }
       // display the item in ready queue (if applicable)
@@ -227,30 +248,34 @@ function updateReadyQueue () {
           row.insertCell(5);
           row.insertCell(6);
           row.insertCell(7);
-          j = 8;
+          row.insertCell(8);
+          j = 9;
         }
         else
           cell.innerHTML = _ReadyQueue.getItem(i-1).pid;
       }
       else if (j === 1) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).base;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).location;
       }
       else if (j === 2) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).limit;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).base;
       }
       else if (j === 3) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).PC;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).limit;
       }
       else if (j === 4) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).AC;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).PC;
       }
       else if (j === 5) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).Xreg;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).AC;
       }
       else if (j === 6) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).Yreg;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Xreg;
       }
       else if (j === 7) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Yreg;
+      }
+      else if (j === 8) {
         cell.innerHTML = _ReadyQueue.getItem(i-1).Zflag;
       }
     } // end for each column in this row

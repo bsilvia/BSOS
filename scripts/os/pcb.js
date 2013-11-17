@@ -12,7 +12,7 @@ function PCB() {
 	this.swapFile = "";
 	this.finished = false;
 	this.priority = -1;
-	this.location = "Memory";
+	this.location = "Mem";
 	
 	this.PC = 0;
 	this.AC = 0;

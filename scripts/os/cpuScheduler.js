@@ -54,6 +54,7 @@ CpuScheduler.prototype.schedule = function() {
 			}
 			break;
 		case FIRST_COME_FIRST_SERVE:
+			// TODO - have something about date loaded for when the schedule is switched during execution?
 			// if we aren't already running another process
 			if(!_CPU.isExecuting)
 			{
@@ -76,7 +77,6 @@ CpuScheduler.prototype.schedule = function() {
 			}
 			break;
 		case PRIORITY:
-			// TODO
 			// if we aren't already running another process
 			if(!_CPU.isExecuting)
 			{

@@ -49,7 +49,7 @@ function hostInit()
    createMemoryDisplay();
 
    // create file system table to display
-   updateFileSystemDisplay();
+   updateFileSystemDisplay(null);
 
    // create an empty ready queue
    updateReadyQueue();

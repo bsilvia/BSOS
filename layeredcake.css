@@ -92,7 +92,9 @@ h3 {
 #mainTable {
 	border: 1;
 	width: 700px;
-	padding-left: 15px;
+	/*padding-left: 15px;*/
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #buttonsCell {
@@ -148,6 +150,11 @@ h3 {
 
 #fileSystemTable td {
 	width: 35px;
+	font-size: x-small;
+}
+
+#fileSystemTable a {
+	text-decoration: none;
 }
 
 #divMemViewSelected {
