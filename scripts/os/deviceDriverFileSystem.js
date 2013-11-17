@@ -37,7 +37,7 @@ DeviceDriverFileSystem.prototype.driverEntry = function() {
   // TODO - do we want to support non-volatile storage?
 };
 
-// function to handle file system ISR operations - read, write, create, delete, format
+// function to handle file system ISR operations - read, write, create, delete, format, ls
 DeviceDriverFileSystem.prototype.isr = function(params) {
   if(params[0] === "create") {
     // TODO - this.create(params[1]);
@@ -53,6 +53,9 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
   }
   else if(params[0] === "format") {
     this.format();
+  }
+  else if(params[0] === "ls") {
+    // TODO - this.list();
   }
 };
 
@@ -101,15 +104,19 @@ function FileEntry() {
     return true;
   };
 
+  //  get the numeric value for the link for this entry
   this.getNumericLink = function() {
     return parseInt("" + this.track + this.sector + this.block, 10);
   };
+  // gets the string value (T,S,B) for the link for this entry
   this.getStringLink = function() {
     return this.track + "," + this.sector + "," + this.block;
   };
+  // determines if this entry has a link or not
   this.hasLink = function() {
     return !isNaN(this.getNumericLink());
   };
+  // returns whether or not this entry is in use or not
   this.isInUse = function() {
     return this.inUse === 0;
   };
@@ -120,25 +127,13 @@ DeviceDriverFileSystem.prototype.isFormatted = function() {
   return this.formatted;
 };
 
-// function to make the key for local storage
+// function to make the string key for local storage
 DeviceDriverFileSystem.prototype.makeKey = function(t, s, b) {
   return t + "," + s + "," + b;
 };
 
 // function to return all the entries in the file system for display
 DeviceDriverFileSystem.prototype.getEntries = function() {
-  /*var entries = [];
-  
-  // foreach block in each sector in each track, grab the data and add it to the array
-  for(var track = 0; track <= NUMBER_OF_TRACKS; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
-        entries[entries.length] = localStorage[this.makeKey(track, sector, block)];
-      }
-    }
-  }
-
-  return entries;*/
   return this.fileEntries;
 };
 
@@ -147,15 +142,17 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
   var entry = "";
   var list = [];
 
-  // foreach block in each sector in the directory, grab the filenames
+  // foreach block in each sector in the directory, grab the entries,
+  // check to see if they are in use, i.e. they have an entry and take the data
   for(var track = 0; track < 1; track++) {
     for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
         
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
-        fileEntry.parseEntry(entry);
-        list[list.length] = fileEntry;
+        //fileEntry.parseEntry(entry);
+        if(fileEntry.isInUse())
+          list[list.length] = fileEntry.data;
 
       }
     }
