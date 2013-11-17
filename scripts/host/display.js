@@ -101,7 +101,10 @@ function updateMemoryDisplay() {
 
 // function to update the file system display
 function updateFileSystemDisplay(entries) {
-   var table = document.getElementById("fileSystemTable");
+  if(typeof entries === 'undefined')
+    return;
+  
+  var table = document.getElementById("fileSystemTable");
 
   // remove all current entries in the table
   while(table.hasChildNodes()) {

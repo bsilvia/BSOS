@@ -388,7 +388,7 @@ function shellInit() {
     sc.description = "<filename> - Creates a file with the given name.";
     sc.function = function(args) {
         // ensure they passed a filename and that it only contains characters and digits
-        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]) && args[0].length < BLOCK_SIZE - 4)
         {
             // TODO - display message for error or success
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
@@ -396,7 +396,8 @@ function shellInit() {
         }
         else
         {
-            _StdIn.putText("Usage: create <filename> Please supply a valid filename.");
+            _StdIn.putText("Usage: create <filename> Please supply a valid filename no greater then " +
+                (BLOCK_SIZE - 4).toString() + " characters in length.");
         }
     };
     this.commandList[this.commandList.length] = sc;

@@ -83,7 +83,11 @@ function FileEntry() {
       this.block = parseInt(tsb[2], 10);
 
     //this.key = vals[1];
-    this.data = vals[2].replace('*', "");
+    var idx = vals[2].indexOf("*");
+    if(idx > 0)
+      this.data = vals[2].substring(0, idx);
+    else
+      this.data = vals[2];
   };
   // function to set the data in this entry
   this.setData = function(data) {
@@ -141,19 +145,27 @@ DeviceDriverFileSystem.prototype.getNumericKey = function(tsbString) {
 
 // function to return all the entries in the file system for display
 DeviceDriverFileSystem.prototype.getEntries = function() {
+  // prevent the display from refreshing
+  if(!this.formatted)
+    return;
+
   var list = [];
-  
+
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
   for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
     for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+        // grab the file entries for everything in the dir but the mbr
+        if(track === 0 && sector === 0 && block === 0) {
+        }
+        else {
+          entry = localStorage[this.makeKey(track, sector, block)];
+          var fileEntry = new FileEntry();
+          fileEntry.parseEntry(entry);
+          list[list.length] = fileEntry;
+        }
         
-        entry = localStorage[this.makeKey(track, sector, block)];
-        var fileEntry = new FileEntry();
-        fileEntry.parseEntry(entry);
-        list[list.length] = fileEntry;
-
       }
     }
   }
