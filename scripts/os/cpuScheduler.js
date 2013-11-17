@@ -36,7 +36,10 @@ CpuScheduler.prototype.schedule = function() {
 			// if we aren't already running another process
 			if(!_CPU.isExecuting)
 			{
-				// have to set current pcb, cpu, and relocation register accordingly
+				if(_ReadyQueue.isEmpty())
+					return;
+				// pull one off the ready queue and have to set
+				// current pcb, cpu, and relocation register accordingly
 				_CurrentPCB = _ReadyQueue.dequeue();
 				_CPU.set(_CurrentPCB);
 				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
@@ -54,7 +57,10 @@ CpuScheduler.prototype.schedule = function() {
 			// if we aren't already running another process
 			if(!_CPU.isExecuting)
 			{
-				// have to set current pcb, cpu, and relocation register accordingly
+				if(_ReadyQueue.isEmpty())
+					return;
+				// pull one off the ready queue and have to set
+				// current pcb, cpu, and relocation register accordingly
 				_CurrentPCB = _ReadyQueue.dequeue();
 				_CPU.set(_CurrentPCB);
 				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
@@ -71,6 +77,26 @@ CpuScheduler.prototype.schedule = function() {
 			break;
 		case PRIORITY:
 			// TODO
+			// if we aren't already running another process
+			if(!_CPU.isExecuting)
+			{
+				if(_ReadyQueue.isEmpty())
+					return;
+				// get the next highest priority process and set
+				// current pcb, cpu, and relocation register accordingly
+				_CurrentPCB = this.getNextHighestPriorityProcess();
+				_CPU.set(_CurrentPCB);
+				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+			}
+			// otherwise we have to 
+			else
+			{
+				this.cycles = 0;
+				if(!_ReadyQueue.isEmpty())
+				{
+					this.contextSwitch(this.getNextHighestPriorityProcess());
+				}
+			}
 			break;
 	}
 };
@@ -129,11 +155,20 @@ CpuScheduler.prototype.killProcess = function(pid, idx) {
 	updateReadyQueue();
 };
 
-// this function is called whenever there is a new quantum in order to
-// check if any scheduling has to take place
-//CpuScheduler.prototype.newQuantum = function() {
-	// if the quantum was set to something less then our current cycles, schedule
-//	if(_CPU.isExecuting && this.cycles > _Quantum) {
-//		this.schedule();
-//	}
-//};
+// function to get the next highest priority in the ready queue to aid scheduling
+CpuScheduler.prototype.getNextHighestPriorityProcess = function() {
+	var lowestPriority = Number.MAX_VALUE;
+	var idx = -1;
+
+	// Go through the ready queue to find the highest priority (lowest priority number) process.
+	// Due to the default value of priority we give processes that were not loaded with a priority,
+	// they will always execute after all the processes that were given a priority number
+	for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+		if(_ReadyQueue.getItem(i).priority != -1 && _ReadyQueue.getItem(i).priority < lowestPriority){
+			lowestPriority = _ReadyQueue.getItem(i).priority;
+			idx = i;
+		}
+	}
+
+	return _ReadyQueue.removeAt(idx)[0];
+};

@@ -337,6 +337,14 @@ function krnRunProgram(pid) {
 
 // function to run all the programs at once
 function krnRunAll() {
+  // check to make sure something is loaded
+  if(_ResidentList.length === 0)
+  {
+    // wasn't found
+    _StdOut.putText("No programs loaded.");
+    return;
+  }
+
   _CpuScheduler.runAll();
 
   // start executing if not already
