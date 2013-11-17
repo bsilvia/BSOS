@@ -156,7 +156,7 @@ function updateFileSystemDisplay(entries) {
               var index = parseInt("" + track + sector + block, 10);
               // assign it a hyperlink to the appropriate cell if it has a link
               if (entries[index].hasLink())
-                cell.innerHTML = "<a href='#" + entries[index].getStringKey() + "'>" +
+                cell.innerHTML = "<a href='#" + entries[index].getStringLink() + "'>" +
                                   entries[index].toString() + "</a>";
               else
                 cell.innerHTML = entries[index].toString();
