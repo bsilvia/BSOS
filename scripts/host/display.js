@@ -129,7 +129,7 @@ function updateFileSystemDisplay(entries) {
   idx++;
 
   // foreach block in each sector in each track, generate a row and two cells to display its info
-  for(var track = 0; track <= NUMBER_OF_TRACKS; track++) {
+  for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
     for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
         row = table.insertRow(idx);
@@ -153,13 +153,13 @@ function updateFileSystemDisplay(entries) {
             if(entries === null)
               cell.innerHTML = "";
             else {
-              // extract out the pointer to the given TSB
-              var id = getID(entries[idx - 1]);
-              // assign it a hyperlink to the appropriate cell if it has a pointer
-              if (id !== "-,-,-")
-                cell.innerHTML = "<a href='#" + getID(entries[idx - 1]) + "'>" + entries[idx - 1] + "</a>";
+              var index = parseInt("" + track + sector + block, 10);
+              // assign it a hyperlink to the appropriate cell if it has a link
+              if (entries[index].hasLink())
+                cell.innerHTML = "<a href='#" + entries[index].getStringKey() + "'>" +
+                                  entries[index].toString() + "</a>";
               else
-                cell.innerHTML = entries[idx - 1];
+                cell.innerHTML = entries[index].toString();
             }
           }
         }
@@ -168,12 +168,6 @@ function updateFileSystemDisplay(entries) {
       }
     }
   } // end for each track
-}
-
-// function to retrieve the id of the file system entry
-function getID(entry) {
-  var vals = entry.split("  ", 2);
-  return vals[1];
 }
 
 // function to update the cpu display
