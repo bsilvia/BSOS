@@ -292,13 +292,9 @@ function krnTrapError(msg)
 
 
 // function to load a program into memory
-function krnLoadProgram(program) {
-  // create a new process control block
-  //var newPCB = new PCB();
-  //_ReadyQueue[newPCB.pid] = newPCB;
-
+function krnLoadProgram(program, priority) {
   // ask the memory manager to do the actual loading
-  if(_MemoryManager.load(program))
+  if(_MemoryManager.load(program, priority))
   {
     // add the pcb to the resident list if we could successfully load it into
     // memory - when we get to file systems will we allow loading more than 3?

@@ -181,10 +181,11 @@ function shellInit() {
 	// load 
 	sc = new ShellCommand();
 	sc.command = "load";
-	sc.description = "<priority>- Loads code into memory with an optional priority.";
+	sc.description = "<priority (optional)>- Loads code into memory with an optional priority.";
 	sc.function = function(args) {
 		var str = document.getElementById("taProgramInput").value;
-        
+        var priority = -1;
+
         if(str.trim() === "")
         {
             _StdOut.putText("No commands detected");
@@ -196,6 +197,15 @@ function shellInit() {
             _StdOut.putText("Invalid priority number");
             _StdOut.advanceLine();
             return;
+        }
+        else if (args.length > 0 && parseInt(args[0], 10) < 0)
+        {
+            _StdOut.putText("Invalid priority number");
+            _StdOut.advanceLine();
+            return;
+        }
+        else if (args.length > 0) {
+            priority = parseInt(args[0], 10);
         }
 
 		var lines = str.split("\n");
@@ -226,7 +236,7 @@ function shellInit() {
             var commands = str.split(" ");
 
             // TODO - add priority here
-            krnLoadProgram(commands);
+            krnLoadProgram(commands, priority);
 
             updateMemoryDisplay();
         }

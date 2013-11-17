@@ -64,7 +64,7 @@ MemoryManager.prototype.getMemory = function() {
 };
 
 // loads a given program into memory, returning true if sucessful, false otherwise
-MemoryManager.prototype.load = function(program) {
+MemoryManager.prototype.load = function(program, priority) {
 	// check the size of the program
 	if(program.length > _BlockSize) {
 		_StdOut.putText("Program size exceeds max memory size");
@@ -87,6 +87,8 @@ MemoryManager.prototype.load = function(program) {
 	pcb.limit = this.memoryBlocks[blockNum].limit;
 	pcb.memBlock = blockNum;
 	this.memoryBlocks[blockNum].taken = true;
+	if(priority > -1)
+		pcb.priority = priority;
 
 	this.lastLoadedPCB = pcb;
 
@@ -95,7 +97,10 @@ MemoryManager.prototype.load = function(program) {
 		this.memory.write(i + pcb.base, program[i]);
 	}
 
-	_StdOut.putText("Loaded program with PID " + pcb.pid + " and priority ");	// TODO - add priority
+	if(priority > -1)
+		_StdOut.putText("Loaded program with PID " + pcb.pid + " and priority " + priority);
+	else
+		_StdOut.putText("Loaded program with PID " + pcb.pid);
 	return true;
 };
 
