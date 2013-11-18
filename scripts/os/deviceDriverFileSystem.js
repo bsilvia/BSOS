@@ -112,10 +112,6 @@ function FileEntry() {
     //parseInt("" + t + s + b, 10);
   };
 
-  //  get the numeric value for the link for this entry
-  //this.getNumericLinkIndex = function() {
-  //  return parseInt("" + this.track + this.sector + this.block, 10);
-  //};
   // gets the string value (T,S,B) for the link for this entry
   this.getStringLink = function() {
     return this.track + "," + this.sector + "," + this.block;
@@ -249,6 +245,9 @@ DeviceDriverFileSystem.prototype.getNextOpenDirEntry = function() {
 // function to return the a list of the desired number of open file
 // entries or null if not enough open entries are available
 DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
+  if(numOfEntries === 0)
+    return null;
+
   var entry = "";
   var count = 0;
   var list = [];
@@ -274,6 +273,15 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
   }
 
   return null;
+};
+
+// function to remove blank space character
+DeviceDriverFileSystem.prototype.removeFiller = function(string) {
+  var idx = string.indexOf("*");
+  if(idx > 0)
+    return string.substring(0, idx);
+  else
+    return string;
 };
 
 
@@ -309,8 +317,8 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   }
 
   var nextOpenDir = this.getNextOpenDirEntry();
-  var openFileEntry = this.getOpenFileEntries(1);   // when checking in write for if enough exist, subtract one for the first one we reserve when we create it
-  if(nextOpenDir === null || openFileEntry === null) {
+  var openFileEntries = this.getOpenFileEntries(1);   // when checking in write for if enough exist, subtract one for the first one we reserve when we create it
+  if(nextOpenDir === null || openFileEntries === null) {
     _StdOut.putText("Error: file system full");
     _StdOut.advanceLine();
     _StdOut.putText(">");
@@ -330,41 +338,19 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   var entry = new FileEntry();
   entry.parseEntry(localStorage[nextOpenDir]);
   entry.setData(filename);
-  entry.setLink(openFileEntry[0]);
+  entry.setLink(openFileEntries[0]);
 
   // reserve the next open file entry spot for this newly created file
   var reserveSpot = new FileEntry();
-  reserveSpot.parseEntry(localStorage[openFileEntry[0]]);
+  reserveSpot.parseEntry(localStorage[openFileEntries[0]]);
   reserveSpot.setData(""); // TODO - better way to set in use?
 
   localStorage[nextOpenDir] = entry.toString();
-  localStorage[openFileEntry[0]] = reserveSpot.toString();
+  localStorage[openFileEntries[0]] = reserveSpot.toString();
 };
 
 // function to display the contents of a file
 DeviceDriverFileSystem.prototype.read = function(filename) {
-  // TODO
-  if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
-    return;
-  }
-};
-
-// function to write data to a file
-DeviceDriverFileSystem.prototype.write = function(filename) {
-  // TODO
-  if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
-    return;
-  }
-};
-
-// function to remove a file from storage
-DeviceDriverFileSystem.prototype.delete = function(filename) {
   // TODO
   if(!this.formatted) {
     _StdOut.putText("Error: file system not formatted yet");
@@ -382,20 +368,129 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     return;
   }
 
-  var blankEntry = new FileEntry();
+  // parse the entry info from the directory entry
+  var entryObj = new FileEntry();
+  entryObj.parseEntry(localStorage[dirTSB]);
 
+  // get the first link to the file data
+  var nextLink = entryObj.getStringLink();
+  entryObj.parseEntry(localStorage[nextLink]);
+
+  var fileData = entryObj.data;
+
+  // go through each link of the chain and grab concatenate the data together
+  while(entryObj.hasLink()) {
+    nextLink = entryObj.getStringLink();
+    entryObj.parseEntry(localStorage[nextLink]);
+    fileData += entryObj.data;
+  }
+
+  _StdOut.putText(fileData);
+  _StdOut.advanceLine();
+  _StdOut.putText(">");
+};
+
+// function to write data to a file
+DeviceDriverFileSystem.prototype.write = function(filename, data) {
+  if(!this.formatted) {
+    _StdOut.putText("Error: file system not formatted yet");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  var dirTSB = this.findDirEntry(filename);
+  
+  if(dirTSB === "") {
+    _StdOut.putText("Error: file not found");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  this.delete(filename);
+  this.create(filename);
+
+  var entryObj = new FileEntry();
+  entryObj.parseEntry(localStorage[dirTSB]);
+  var allocatedBlock = entryObj.getStringLink();
+  
+  // if the data can fit in the block that we already assigned it when we created the file
+  if (data.length < BLOCK_SIZE - 4) {
+    // just put the data in there
+    entryObj = new FileEntry();
+    entryObj.setData(data);
+    localStorage[allocatedBlock] = entryObj.toString();
+  }
+  // otherwise we must spread this file out across several blocks
+  else {
+    var dataArray = [];
+    var maxDataSize = BLOCK_SIZE - 4;
+    while (data !== "") {
+      dataArray[dataArray.length] = data.substring(0, maxDataSize);
+      data = data.substring(maxDataSize, data.length);
+      if(data.length < maxDataSize)
+        maxDataSize = data.length;
+    }
+
+    // when checking if enough blocks exist, subtract one for the first one we reserve when we created it
+    var openFileEntries = this.getOpenFileEntries(dataArray.length - 1);
+    if(openFileEntries === null) {
+      _StdOut.putText("Error: not enough space in file system");
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+      return;
+    }
+
+    var lastTSB = allocatedBlock;//entryObj.getStringLink();
+    
+    // go about spreading the data across more than 1 block
+    for (var j = 0; j <= openFileEntries.length; j++) {
+      entryObj = new FileEntry();
+      entryObj.setData(dataArray[j]);
+      if(j !== openFileEntries.length)
+        entryObj.setLink(openFileEntries[j]);
+      localStorage[lastTSB] = entryObj.toString();
+      lastTSB = openFileEntries[j];
+    }
+  }
+  
+};
+
+// function to remove a file from storage
+DeviceDriverFileSystem.prototype.delete = function(filename) {
+  // TODO
+  if(!this.formatted) {
+    _StdOut.putText("Error: file system not formatted yet");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  // get the TSB of the directory entry for this file
+  var dirTSB = this.findDirEntry(filename);
+  
+  if(dirTSB === "") {
+    _StdOut.putText("Error: file not found");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  var blankEntry = new FileEntry();
+  // parse the entry info from the directory entry
   var entryObj = new FileEntry();
   entryObj.parseEntry(localStorage[dirTSB]);
   localStorage[dirTSB] = blankEntry.toString();
 
+  // get the first link to the file data
   var nextLink = entryObj.getStringLink();
-  localStorage[nextLink] = blankEntry.toString();
   entryObj.parseEntry(localStorage[nextLink]);
-  //var fileChain = [nextLink];
+  localStorage[nextLink] = blankEntry.toString();
 
+  // go through each link of the chain and replace entries with blank entries
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
-    //fileChain[fileChain.length] = nextLink;
     entryObj.parseEntry(localStorage[nextLink]);
     localStorage[nextLink] = blankEntry.toString();
   }
@@ -411,19 +506,21 @@ DeviceDriverFileSystem.prototype.list = function() {
     return;
   }
 
+  // make sure there are more than just the msb in the directory track
   var files = this.getDirEntries();
-  if(files.length < 1) {
+  if(files.length < 2) {
     _StdOut.putText("No files found");
     _StdOut.advanceLine();
     _StdOut.putText(">");
     return;
   }
 
+  // print out all the files
   for (var i = 0; i < files.length; i++) {
     if(files[i] !== "MBR") {
-      _StdOut.putText(files[i].data);
-      _StdOut.advanceLine();
+      _StdOut.putText(files[i].data + " ");
     }
   }
+  _StdOut.advanceLine();
   _StdOut.putText(">");
 };

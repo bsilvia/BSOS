@@ -123,7 +123,7 @@ function shellInit() {
             var newStatus = "";
             for (var i = 0; i < args.length; i++) {
                  newStatus += args[i] + " ";
-            };
+            }
 			_Status.value = newStatus;
             _Status.innerHTML = newStatus;
 		}
@@ -377,7 +377,6 @@ function shellInit() {
     sc.command = "ls";
     sc.description = "- Lists all files currently on disk.";
     sc.function = function(args) {
-        // TODO
         krnAddInterrupt(FILE_SYSTEM_IRQ, ["ls"]);
     };
     this.commandList[this.commandList.length] = sc;
@@ -392,7 +391,6 @@ function shellInit() {
         {
             // TODO - display message for error or success
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
-            //_StdOut.putText("valid");
         }
         else
         {
@@ -411,7 +409,7 @@ function shellInit() {
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO - display error if something went wrong
-            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]); // in read isr call function to validate filename
+            krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]);
         }
         else
         {
@@ -423,18 +421,21 @@ function shellInit() {
     // write
     sc = new ShellCommand();
     sc.command = "write";
-    sc.description = "<filename data> - Writes the given data to a file.";
+    sc.description = "<filename data> - Writes the given string of data to a file.";
     sc.function = function(args) {
         // ensure they passed a filename
         if (args.length > 1 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO - display message for error or success
             var data = "";
-            for (var i = 0; i < args.length; i++) {
-                data += args[i] + " ";
+            for (var i = 1; i < args.length; i++) {
+                if(i !== args.length - 1)    // trim isn't working for some reason
+                    data += args[i] + " ";
+                else
+                    data += args[i];
             }
             data.trim();
-            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["write", args[0], data]); // in write isr call function to validate filename
+            krnAddInterrupt(FILE_SYSTEM_IRQ, ["write", args[0], data]);
         }
         else
         {
