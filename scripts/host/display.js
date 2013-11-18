@@ -133,8 +133,8 @@ function updateFileSystemDisplay(entries) {
 
   // foreach block in each sector in each track, generate a row and two cells to display its info
   for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         row = table.insertRow(idx);
         // change color on every 3rd track
         if(sector === 0 && block === 0) {
@@ -156,13 +156,12 @@ function updateFileSystemDisplay(entries) {
             if(entries === null)
               cell.innerHTML = "";
             else {
-              var index = parseInt("" + track + sector + block, 10);
               // assign it a hyperlink to the appropriate cell if it has a link
-              if (entries[index].hasLink())
-                cell.innerHTML = "<a href='#" + entries[index].getStringLink() + "'>" +
-                                  entries[index].toString() + "</a>";
+              if (entries[idx - 1].hasLink())
+                cell.innerHTML = "<a href='#" + entries[idx - 1].getStringLink() + "'>" +
+                                  entries[idx - 1].toString() + "</a>";
               else
-                cell.innerHTML = entries[index].toString();
+                cell.innerHTML = entries[idx - 1].toString();
             }
           }
         }

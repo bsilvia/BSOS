@@ -77,10 +77,16 @@ function FileEntry() {
     var tsb = vals[1].split(",");
     if(!isNaN(tsb[0]))
       this.track = parseInt(tsb[0], 10);
+    else
+      this.track = "-";
     if(!isNaN(tsb[1]))
       this.sector = parseInt(tsb[1], 10);
+    else
+      this.track = "-";
     if(!isNaN(tsb[2]))
       this.block = parseInt(tsb[2], 10);
+    else
+      this.track = "-";
 
     //this.key = vals[1];
     var idx = vals[2].indexOf("*");
@@ -107,16 +113,16 @@ function FileEntry() {
   };
 
   //  get the numeric value for the link for this entry
-  this.getNumericLinkIndex = function() {
-    return parseInt("" + this.track + this.sector + this.block, 10);
-  };
+  //this.getNumericLinkIndex = function() {
+  //  return parseInt("" + this.track + this.sector + this.block, 10);
+  //};
   // gets the string value (T,S,B) for the link for this entry
   this.getStringLink = function() {
     return this.track + "," + this.sector + "," + this.block;
   };
   // determines if this entry has a link or not
   this.hasLink = function() {
-    return !isNaN(this.getNumericLinkIndex());
+    return !isNaN(this.track);
   };
   // returns whether or not this entry is in use or not
   this.isInUse = function() {
@@ -154,18 +160,14 @@ DeviceDriverFileSystem.prototype.getEntries = function() {
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
   for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
-        // grab the file entries for everything in the dir but the mbr
-        if(track === 0 && sector === 0 && block === 0) {
-        }
-        else {
-          entry = localStorage[this.makeKey(track, sector, block)];
-          var fileEntry = new FileEntry();
-          fileEntry.parseEntry(entry);
-          list[list.length] = fileEntry;
-        }
-        
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
+
+        entry = localStorage[this.makeKey(track, sector, block)];
+        var fileEntry = new FileEntry();
+        fileEntry.parseEntry(entry);
+        list[list.length] = fileEntry;
+      
       }
     }
   }
@@ -180,8 +182,8 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
   for(var track = 0; track < 1; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
@@ -196,6 +198,30 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
   return list;
 };
 
+// function to find a specific entrying in the directory and return its TSB
+DeviceDriverFileSystem.prototype.findDirEntry = function(filename) {
+  var entry = "";
+  var tsbString = "";
+
+  // foreach block in each sector in the directory, grab the entries,
+  // check to see if they are in use, i.e. they have an entry
+  for(var track = 0; track < 1; track++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
+        
+        entry = localStorage[this.makeKey(track, sector, block)];
+        var fileEntry = new FileEntry();
+        fileEntry.parseEntry(entry);
+        if(fileEntry.isInUse() && fileEntry.data === filename)
+          return this.makeKey(track, sector, block);
+
+      }
+    }
+  }
+
+  return tsbString;
+};
+
 // function to get the next open slot in the directory
 DeviceDriverFileSystem.prototype.getNextOpenDirEntry = function() {
   var entry = "";
@@ -203,8 +229,8 @@ DeviceDriverFileSystem.prototype.getNextOpenDirEntry = function() {
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
   for(var track = 0; track < 1; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
@@ -230,8 +256,8 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
   for(var track = 1; track < NUMBER_OF_TRACKS; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
@@ -256,9 +282,9 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
 // function to format the file system
 DeviceDriverFileSystem.prototype.format = function() {
   // foreach block in each sector in each track, enter the default data
-  for(var track = 0; track <= NUMBER_OF_TRACKS; track++) {
-    for (var sector = 0; sector <= NUMBER_OF_SECTORS; sector++) {
-      for (var block = 0; block <= NUMBER_OF_BLOCKS; block++) {
+  for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
+    for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
+      for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         var entry = new FileEntry();
         if(track === 0 && sector === 0 && block === 0) {
@@ -275,7 +301,6 @@ DeviceDriverFileSystem.prototype.format = function() {
 
 // function to create a file
 DeviceDriverFileSystem.prototype.create = function(filename) {
-  // TODO
   if(!this.formatted) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
@@ -287,6 +312,14 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   var openFileEntry = this.getOpenFileEntries(1);   // when checking in write for if enough exist, subtract one for the first one we reserve when we create it
   if(nextOpenDir === null || openFileEntry === null) {
     _StdOut.putText("Error: file system full");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  var fileList = this.findDirEntry(filename);
+  if(fileList !== "") {
+    _StdOut.putText("Error: filename already taken");
     _StdOut.advanceLine();
     _StdOut.putText(">");
     return;
@@ -339,6 +372,34 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     _StdOut.putText(">");
     return;
   }
+
+  var dirTSB = this.findDirEntry(filename);
+  
+  if(dirTSB === "") {
+    _StdOut.putText("Error: file not found");
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+    return;
+  }
+
+  var blankEntry = new FileEntry();
+
+  var entryObj = new FileEntry();
+  entryObj.parseEntry(localStorage[dirTSB]);
+  localStorage[dirTSB] = blankEntry.toString();
+
+  var nextLink = entryObj.getStringLink();
+  localStorage[nextLink] = blankEntry.toString();
+  entryObj.parseEntry(localStorage[nextLink]);
+  //var fileChain = [nextLink];
+
+  while(entryObj.hasLink()) {
+    nextLink = entryObj.getStringLink();
+    //fileChain[fileChain.length] = nextLink;
+    entryObj.parseEntry(localStorage[nextLink]);
+    localStorage[nextLink] = blankEntry.toString();
+  }
+
 };
 
 // function to list the files currently stored on the disk
@@ -359,8 +420,10 @@ DeviceDriverFileSystem.prototype.list = function() {
   }
 
   for (var i = 0; i < files.length; i++) {
-    _StdOut.putText(files[i].data);
-    _StdOut.advanceLine();
+    if(files[i] !== "MBR") {
+      _StdOut.putText(files[i].data);
+      _StdOut.advanceLine();
+    }
   }
   _StdOut.putText(">");
 };

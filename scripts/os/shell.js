@@ -452,7 +452,7 @@ function shellInit() {
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
             // TODO - display message for error or success
-            // krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]); // in delete isr call function to validate filename
+            krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]);
         }
         else
         {
