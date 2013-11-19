@@ -11,7 +11,6 @@ function MemoryManager() {
    this.memoryBlocks = new Array(new MemoryBlock(0, _BlockSize),
 								new MemoryBlock(_MemorySize/3, _BlockSize),
 								new MemoryBlock(_MemorySize*2/3, _BlockSize));
-   this.virtualMemory = [];
    this.relocationRegister = 0;
    this.lastLoadedPCB = null;
 }
@@ -75,12 +74,9 @@ MemoryManager.prototype.load = function(program, priority) {
 	var blockNum = this.getNextAvailableBlock();
 
 	// create a new process control block
-	var pcb;// = new PCB();
+	var pcb;
 
-	//if(priority > -1)
-	//	pcb.priority = priority;
-
-	// TODO - need to move this down below and set the location appropriately
+	// if there was no open memory blocks then we must put this process onto the disk
 	if(blockNum === -1) {
 		if(!krnFileSystemDriver.isFormatted()) {
 			_StdOut.putText("Error: can't load program into virtual memory, file system is not formatted");
@@ -92,12 +88,8 @@ MemoryManager.prototype.load = function(program, priority) {
 		if(priority > -1)
 			pcb.priority = priority;
 
-		this.rollIn(pcb, program);
-		//pcb.location = "Disk";
-		//pcb.swapFileName = "~pid" + pcb.pid;
-		//virtualMemory[virtualMemory.length] = pcb;
-		//_StdOut.putText("No more free slots in memory");
-		//return false;
+		// roll the process onto the disk, so should be roll out from this perspective?
+		this.rollOut(pcb, program);
 	}
 	else {
 		// create a new process control block and set the priority if applicable
@@ -159,8 +151,8 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 
 		// if the new processes is on the disk then we must swap it with the current process 
 		if(newPCB.isOnDisk()) {
-			this.rollIn(_CurrentPCB, this.readMemoryBlock()); // need to pass the program to be put on disk
-			this.rollOut(newPCB);
+			this.rollOut(_CurrentPCB, this.readMemoryBlock()); // need to pass the program to be put on disk
+			this.rollIn(newPCB);
 		}
 	}
 	// otherwise don't add the current process back onto the ready queue
@@ -168,8 +160,7 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 		// take the new process on disk and roll into memory, we can do this since we know
 		// there will be a spot in memory for it due to the fact that current process finished
 		// and relinquished the memory block it was in at the time
-		// TODO - should roll out and roll in be switched to make from the perspective of the mem manager?
-		this.rollOut(newPCB);
+		this.rollIn(newPCB);
 	}
 
 	// set the current process to the new process that was passed
@@ -179,8 +170,8 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
     this.SetRelocationRegister(_CurrentPCB.base);
 };
 
-// rolls a process onto the disk from memory
-MemoryManager.prototype.rollIn = function(pcb, program) {
+// rolls a process out of memory and onto the disk
+MemoryManager.prototype.rollOut = function(pcb, program) {
 	pcb.swapLocation();
 	pcb.base = 0;
 	pcb.limit = 0;
@@ -200,7 +191,7 @@ MemoryManager.prototype.rollIn = function(pcb, program) {
 };
 
 // rolls a processes out of the disk and into memory
-MemoryManager.prototype.rollOut = function(pcb) {
+MemoryManager.prototype.rollIn = function(pcb) {
 	// read the program from the swap file
 	krnFileSystemDriver.isr(["swapRead", pcb.swapFileName]);
 
