@@ -14,15 +14,10 @@ function MemoryManager() {
    this.virtualMemory = [];
    this.relocationRegister = 0;
    this.lastLoadedPCB = null;
-   this.swapFileContents = "";
 }
 
 MemoryManager.prototype.SetRelocationRegister = function(num) {
 	this.relocationRegister = num;
-};
-
-MemoryManager.prototype.passSwapFileContents = function(data) {
-	this.swapFileContents = data;
 };
 
 // function to return the next available block of memory if there is one
@@ -206,21 +201,13 @@ MemoryManager.prototype.rollIn = function(pcb, program) {
 
 // rolls a processes out of the disk and into memory
 MemoryManager.prototype.rollOut = function(pcb) {
-	// TODO - test that changes to pcb are reflected in newPCB above after this function call
 	// read the program from the swap file
-	//krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapRead", pcb.swapFileName]);
-	// 
 	krnFileSystemDriver.isr(["swapRead", pcb.swapFileName]);
 
-	//while(this.swapFileContents === "") {	// TODO - this breaks things, must fix
-
-	//}
 	krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapDelete", pcb.swapFileName]);
 	pcb.swapLocation();
 	var swapFileData = krnFileSystemDriver.getReadData();
 	var program = swapFileData.split(" ");
-	// reset the swap file contents variable
-	this.swapFileContents = "";
 
 	// put the process into a free memory slot
 	var blockNum = this.getNextAvailableBlock();

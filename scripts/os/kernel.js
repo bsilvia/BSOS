@@ -178,11 +178,6 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             break;
         case FILE_SYSTEM_IRQ:
             krnFileSystemDriver.isr(params);
-            // pass the value of the swap file to the memory 
-            // manager if that is the operation we are performing
-            if(params[0] === "swapRead") {
-              _MemoryManager.passSwapFileContents(krnFileSystemDriver.getReadData());
-            }
             updateFileSystemDisplay(krnFileSystemDriver.getEntries());
             break;
         case PROGRAM_TERMINATION_IRQ:
