@@ -35,7 +35,7 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
   }
   else if(params[0] === "read") {
     if(this.read(params[1])) {
-      _StdOut.putText(fileData);
+      _StdOut.putText(this.readData);
       _StdOut.advanceLine();
       _StdOut.putText(">");
     }
@@ -253,6 +253,7 @@ DeviceDriverFileSystem.prototype.format = function() {
     }
   }
   this.formatted = true;
+  return true;
 };
 
 // function to create a file
@@ -301,7 +302,6 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
 
 // function to display the contents of a file
 DeviceDriverFileSystem.prototype.read = function(filename) {
-  // TODO
   if(!this.formatted) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();

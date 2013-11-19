@@ -36,6 +36,9 @@ CpuScheduler.prototype.schedule = function() {
 			// if we aren't already running another process
 			if(!_CPU.isExecuting)
 			{
+				// reset the cycles since we are executing on a new process
+				// and cycles may be > 0 from previous execution
+				this.cycles = 0;
 				if(_ReadyQueue.isEmpty())
 					return;
 				// pull one off the ready queue and have to set
@@ -149,6 +152,7 @@ CpuScheduler.prototype.killProcess = function(pid, idx) {
 	// otherwise we just need to remove it from the ready queue
 	else {
 		var pcb = _ReadyQueue.removeAt(idx);
+		// make sure to deallocate the memory that was being used 
 		_MemoryManager.deallocate(pcb[0].memBlock);
 		pcb[0].finished = true;
 	}

@@ -151,7 +151,7 @@ MemoryManager.prototype.readMemoryBlock = function() {
 		else
 			data += this.read(i);
 	}
-	return data;
+	return data.split(" ");
 };
 
 // function to handle context switches and swapping of processes
@@ -168,6 +168,14 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 			this.rollOut(newPCB);
 		}
 	}
+	// otherwise don't add the current process back onto the ready queue
+	else if(newPCB.isOnDisk()) {
+		// take the new process on disk and roll into memory, we can do this since we know
+		// there will be a spot in memory for it due to the fact that current process finished
+		// and relinquished the memory block it was in at the time
+		// TODO - should roll out and roll in be switched to make from the perspective of the mem manager?
+		this.rollOut(newPCB);
+	}
 
 	// set the current process to the new process that was passed
     _CurrentPCB = newPCB;
@@ -179,6 +187,8 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 // rolls a process onto the disk from memory
 MemoryManager.prototype.rollIn = function(pcb, program) {
 	pcb.swapLocation();
+	pcb.base = 0;
+	pcb.limit = 0;
 	pcb.swapFileName = "~pid" + pcb.pid;
 	this.deallocate(pcb.memBlock);
 	pcb.memBlock = -1;
@@ -198,14 +208,17 @@ MemoryManager.prototype.rollIn = function(pcb, program) {
 MemoryManager.prototype.rollOut = function(pcb) {
 	// TODO - test that changes to pcb are reflected in newPCB above after this function call
 	// read the program from the swap file
-	krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapRead", pcb.swapFileName]);
+	//krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapRead", pcb.swapFileName]);
 	// 
-	while(this.swapFileContents === "") {	// TODO - this breaks things, must fix
+	krnFileSystemDriver.isr(["swapRead", pcb.swapFileName]);
 
-	}
+	//while(this.swapFileContents === "") {	// TODO - this breaks things, must fix
+
+	//}
 	krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapDelete", pcb.swapFileName]);
 	pcb.swapLocation();
-	var program = this.swapFileContents;
+	var swapFileData = krnFileSystemDriver.getReadData();
+	var program = swapFileData.split(" ");
 	// reset the swap file contents variable
 	this.swapFileContents = "";
 
