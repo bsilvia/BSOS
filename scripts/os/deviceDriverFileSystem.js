@@ -1,7 +1,7 @@
 /* ------------  
    deviceDriverFileSystem.js
 
-   Requires globals.js
+   Requires globals.js and deviceDriverFileSystemFileEntry.js
 
    Prototype to handle all implementation of byte-level detail of file system.
    ------------ */
@@ -14,6 +14,7 @@ function DeviceDriverFileSystem() {
   //this.isr = krnFsIsr;
   this.status = "not loaded";
   this.formatted = false;
+  // 
 }
 
 DeviceDriverFileSystem.prototype.driverEntry = function() {
@@ -26,105 +27,54 @@ DeviceDriverFileSystem.prototype.driverEntry = function() {
 // function to handle file system ISR operations - read, write, create, delete, format, ls
 DeviceDriverFileSystem.prototype.isr = function(params) {
   if(params[0] === "create") {
-    this.create(params[1]);
+    if(this.create(params[1])) {
+      _StdOut.putText("Successfully create new file: " + params[1]);
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+    }
   }
   else if(params[0] === "read") {
     this.read(params[1]);
   }
   else if(params[0] === "write") {
-    this.write(params[1], params[2]);
+    if (this.write(params[1], params[2])) {
+      _StdOut.putText("Successfully wrote to " + params[1]);
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+    }
   }
   else if(params[0] === "delete") {
-    this.delete(params[1]);
+    if (this.delete(params[1])) {
+      _StdOut.putText("Successfully deleted " + params[1]);
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+    }
   }
   else if(params[0] === "format") {
-    this.format();
+    if (this.format()) {
+      _StdOut.putText("Successfully formatted the file system");
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+    }
   }
   else if(params[0] === "ls") {
     this.list();
   }
+  else if(params[0] === "swapCreate") {
+    this.delete(params[1]);
+  }
+  else if(params[0] === "swapRead") {
+    this.read(params[1]);
+  }
+  else if(params[0] === "swapWrite") {
+    this.write(params[1], params[2]);
+  }
+  else if(params[0] === "swapDelete") {
+    this.delete(params[1]);
+  }
 };
 
-// class to keep track of each file entry
-function FileEntry() {
-  this.inUse = 0;
-  this.track = "-";
-  this.sector = "-";
-  this.block = "-";
-  //this.key = "";
-  this.data = "";
-  this.separator = "  ";
 
-  // function to return this file entry's string representation
-  this.toString = function () {
-    return this.inUse + this.separator +
-      this.track + "," + this.sector + "," + this.block + this.separator +
-      this.padData(this.data);
-  };
-  // function to take some data and an empty space holder
-  this.padData = function(data) {
-    var newData = data;
-    for (var i = newData.length; i < BLOCK_SIZE - 4; i++) {
-      newData += "*";
-    }
-    return newData;
-  };
-  // function to parse this entry into its appropriate values
-  this.parseEntry = function(entryString) {
-    var vals = entryString.split(this.separator);
-    this.inUse = parseInt(vals[0], 10);
-
-    var tsb = vals[1].split(",");
-    if(!isNaN(tsb[0]))
-      this.track = parseInt(tsb[0], 10);
-    else
-      this.track = "-";
-    if(!isNaN(tsb[1]))
-      this.sector = parseInt(tsb[1], 10);
-    else
-      this.track = "-";
-    if(!isNaN(tsb[2]))
-      this.block = parseInt(tsb[2], 10);
-    else
-      this.track = "-";
-
-    //this.key = vals[1];
-    var idx = vals[2].indexOf("*");
-    if(idx > 0)
-      this.data = vals[2].substring(0, idx);
-    else
-      this.data = vals[2];
-  };
-  // function to set the data in this entry
-  this.setData = function(data) {
-    if(data.length > BLOCK_SIZE - 4)
-      return false;
-    this.data = data;
-    this.inUse = 1;
-    return true;
-  };
-  // function to set the link to the next in the chain
-  this.setLink = function(tsbString) {
-    var items = tsbString.split(",");
-    this.track = parseInt(items[0], 10);
-    this.sector = parseInt(items[1], 10);
-    this.block = parseInt(items[2], 10);
-    //parseInt("" + t + s + b, 10);
-  };
-
-  // gets the string value (T,S,B) for the link for this entry
-  this.getStringLink = function() {
-    return this.track + "," + this.sector + "," + this.block;
-  };
-  // determines if this entry has a link or not
-  this.hasLink = function() {
-    return !isNaN(this.track);
-  };
-  // returns whether or not this entry is in use or not
-  this.isInUse = function() {
-    return this.inUse === 1;
-  };
-}
 
 // returns whether or not the file system is formatted
 DeviceDriverFileSystem.prototype.isFormatted = function() {
@@ -276,13 +226,13 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
 };
 
 // function to remove blank space character
-DeviceDriverFileSystem.prototype.removeFiller = function(string) {
+/*DeviceDriverFileSystem.prototype.removeFiller = function(string) {
   var idx = string.indexOf("*");
   if(idx > 0)
     return string.substring(0, idx);
   else
     return string;
-};
+};*/
 
 
 
@@ -313,7 +263,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   var nextOpenDir = this.getNextOpenDirEntry();
@@ -322,7 +272,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     _StdOut.putText("Error: file system full");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   var fileList = this.findDirEntry(filename);
@@ -330,7 +280,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     _StdOut.putText("Error: filename already taken");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   // get the directory slot and set the appropriate filename and link
@@ -347,6 +297,8 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
 
   localStorage[nextOpenDir] = entry.toString();
   localStorage[openFileEntries[0]] = reserveSpot.toString();
+
+  return true;
 };
 
 // function to display the contents of a file
@@ -356,7 +308,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   var dirTSB = this.findDirEntry(filename);
@@ -365,7 +317,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   // parse the entry info from the directory entry
@@ -388,6 +340,8 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   _StdOut.putText(fileData);
   _StdOut.advanceLine();
   _StdOut.putText(">");
+
+  return true;
 };
 
 // function to write data to a file
@@ -396,7 +350,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   var dirTSB = this.findDirEntry(filename);
@@ -405,11 +359,10 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
-  this.delete(filename);
-  this.create(filename);
+  this.deleteFileContents(dirTSB);
 
   var entryObj = new FileEntry();
   entryObj.parseEntry(localStorage[dirTSB]);
@@ -439,7 +392,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
       _StdOut.putText("Error: not enough space in file system");
       _StdOut.advanceLine();
       _StdOut.putText(">");
-      return;
+      return false;
     }
 
     var lastTSB = allocatedBlock;//entryObj.getStringLink();
@@ -455,16 +408,16 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     }
   }
   
+  return true;
 };
 
 // function to remove a file from storage
 DeviceDriverFileSystem.prototype.delete = function(filename) {
-  // TODO
   if(!this.formatted) {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   // get the TSB of the directory entry for this file
@@ -474,7 +427,7 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   var blankEntry = new FileEntry();
@@ -495,6 +448,29 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     localStorage[nextLink] = blankEntry.toString();
   }
 
+  return true;
+};
+
+// function to delete the contents of a given file
+DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
+  var blankEntry = new FileEntry();
+  // parse the entry info from the directory entry
+  var entryObj = new FileEntry();
+  entryObj.parseEntry(localStorage[dirTSB]);
+
+  // get the first link to the file data
+  var nextLink = entryObj.getStringLink();
+  entryObj.parseEntry(localStorage[nextLink]);
+  localStorage[nextLink] = blankEntry.toString();
+
+  // go through each link of the chain and replace entries with blank entries
+  while(entryObj.hasLink()) {
+    nextLink = entryObj.getStringLink();
+    entryObj.parseEntry(localStorage[nextLink]);
+    localStorage[nextLink] = blankEntry.toString();
+  }
+
+  return true;
 };
 
 // function to list the files currently stored on the disk
@@ -503,7 +479,7 @@ DeviceDriverFileSystem.prototype.list = function() {
     _StdOut.putText("Error: file system not formatted yet");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   // make sure there are more than just the msb in the directory track
@@ -512,15 +488,17 @@ DeviceDriverFileSystem.prototype.list = function() {
     _StdOut.putText("No files found");
     _StdOut.advanceLine();
     _StdOut.putText(">");
-    return;
+    return false;
   }
 
   // print out all the files
   for (var i = 0; i < files.length; i++) {
-    if(files[i] !== "MBR") {
+    if(files[i].data !== "MBR") {
       _StdOut.putText(files[i].data + " ");
     }
   }
   _StdOut.advanceLine();
   _StdOut.putText(">");
+
+  return true;
 };
