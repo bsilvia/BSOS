@@ -138,10 +138,23 @@ MemoryManager.prototype.load = function(program, priority) {
 
 // deallocates a block of memory once a process no longer needs it
 MemoryManager.prototype.deallocate = function(idxBlock) {
-	this.memoryBlocks[idxBlock].taken = false;
+	if(idxBlock >= 0 && idxBlock <= 3)
+		this.memoryBlocks[idxBlock].taken = false;
 };
 
-// 
+// function to read the entire current block of memory, as required with swapping
+MemoryManager.prototype.readMemoryBlock = function() {
+	var data = "";
+	for (var i = 0; i < _BlockSize; i++) {
+		if(i !== _BlockSize)
+			data += this.read(i) + " ";
+		else
+			data += this.read(i);
+	}
+	return data;
+};
+
+// function to handle context switches and swapping of processes
 MemoryManager.prototype.contextSwitch = function(newPCB) {
 	var pidSwappedOut = _CurrentPCB.pid;
 
@@ -151,7 +164,7 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 
 		// if the new processes is on the disk then we must swap it with the current process 
 		if(newPCB.isOnDisk()) {
-			this.rollIn(_CurrentPCB);
+			this.rollIn(_CurrentPCB, this.readMemoryBlock()); // need to pass the program to be put on disk
 			this.rollOut(newPCB);
 		}
 	}
@@ -187,7 +200,7 @@ MemoryManager.prototype.rollOut = function(pcb) {
 	// read the program from the swap file
 	krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapRead", pcb.swapFileName]);
 	// 
-	while(this.swapFileContents === "") {
+	while(this.swapFileContents === "") {	// TODO - this breaks things, must fix
 
 	}
 	krnAddInterrupt(FILE_SYSTEM_IRQ, ["swapDelete", pcb.swapFileName]);

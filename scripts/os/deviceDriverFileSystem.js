@@ -34,7 +34,11 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
     }
   }
   else if(params[0] === "read") {
-    this.read(params[1]);
+    if(this.read(params[1])) {
+      _StdOut.putText(fileData);
+      _StdOut.advanceLine();
+      _StdOut.putText(">");
+    }
   }
   else if(params[0] === "write") {
     if (this.write(params[1], params[2])) {
@@ -332,10 +336,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   }
 
   this.readData = fileData;
-  _StdOut.putText(fileData);
-  _StdOut.advanceLine();
-  _StdOut.putText(">");
-
+  
   return true;
 };
 
