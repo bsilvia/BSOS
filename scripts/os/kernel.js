@@ -259,6 +259,15 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 // - CloseFile
 
 
+// function to handle writing to console
+function krnWriteConsole(msg, putPrompt) {
+  _StdOut.putText(msg);
+  if(putPrompt) {
+    _StdOut.advanceLine();
+    _StdOut.putText(">");
+  }
+}
+
 //
 // OS Utility Routines
 //

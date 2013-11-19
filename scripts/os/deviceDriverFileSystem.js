@@ -90,15 +90,6 @@ DeviceDriverFileSystem.prototype.makeKey = function(t, s, b) {
   return t + "," + s + "," + b;
 };
 
-//  get the numeric value for the tsb string given
-DeviceDriverFileSystem.prototype.getNumericKey = function(tsbString) {
-  var items = tsbString.split(",");
-  var t = items[0];
-  var s = items[1];
-  var b = items[2];
-  return parseInt("" + t + s + b, 10);
-};
-
 // funtion to return the last data that was read from the disk
 DeviceDriverFileSystem.prototype.getReadData = function() {
   return this.readData;
@@ -106,14 +97,14 @@ DeviceDriverFileSystem.prototype.getReadData = function() {
 
 // function to return all the entries in the file system for display
 DeviceDriverFileSystem.prototype.getEntries = function() {
-  // prevent the display from refreshing
+  // prevent the display from refreshing if we aren't formatted
   if(!this.formatted)
     return;
 
+  // list of FileEntry objects for every TSB on the disk for display
   var list = [];
 
-  // foreach block in each sector in the directory, grab the entries,
-  // check to see if they are in use, i.e. they have an entry
+  // foreach block in each sector in the directory, grab the entries
   for(var track = 0; track < NUMBER_OF_TRACKS; track++) {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
@@ -126,6 +117,7 @@ DeviceDriverFileSystem.prototype.getEntries = function() {
       }
     }
   }
+
   return list;
 };
 
@@ -156,7 +148,6 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
 // function to find a specific entrying in the directory and return its TSB
 DeviceDriverFileSystem.prototype.findDirEntry = function(filename) {
   var entry = "";
-  var tsbString = "";
 
   // foreach block in each sector in the directory, grab the entries,
   // check to see if they are in use, i.e. they have an entry
@@ -164,9 +155,11 @@ DeviceDriverFileSystem.prototype.findDirEntry = function(filename) {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
+        // get the file entry on the disk and parse it
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
+        // see if it is in use and if it matches the filename we are looking for
         if(fileEntry.isInUse() && fileEntry.data === filename)
           return this.makeKey(track, sector, block);
 
@@ -174,7 +167,7 @@ DeviceDriverFileSystem.prototype.findDirEntry = function(filename) {
     }
   }
 
-  return tsbString;
+  return "";
 };
 
 // function to get the next open slot in the directory
@@ -187,6 +180,7 @@ DeviceDriverFileSystem.prototype.getNextOpenDirEntry = function() {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
+        // get the file entry on the disk and parse it
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
@@ -217,9 +211,12 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
+        // get the file entry on the disk and parse it
         entry = localStorage[this.makeKey(track, sector, block)];
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
+        // if the entry is not in use then add it to the list and increment  
+        // our count, returning when we have found numOfEntries open entries
         if(!fileEntry.isInUse()) {
           list[list.length] = this.makeKey(track, sector, block);
           count++;
@@ -242,16 +239,17 @@ DeviceDriverFileSystem.prototype.format = function() {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
-        var entry = new FileEntry();
+        var blankEntry = new FileEntry();
         if(track === 0 && sector === 0 && block === 0) {
-          entry.setData("MBR");
+          blankEntry.setData("MBR");
         }
+        // set the local storage to a blank file entry - not in use, no link and no data
+        localStorage[this.makeKey(track, sector, block)] = blankEntry.toString();
 
-        //this.fileEntries[this.getNumericKey(this.makeKey(track, sector, block))] = entry;
-        localStorage[this.makeKey(track, sector, block)] = entry.toString();
       }
     }
   }
+
   this.formatted = true;
   return true;
 };
@@ -265,6 +263,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     return false;
   }
 
+  // look for space in the directory and at least one open file entry
   var nextOpenDir = this.getNextOpenDirEntry();
   var openFileEntries = this.getOpenFileEntries(1);
   if(nextOpenDir === null || openFileEntries === null) {
@@ -274,8 +273,9 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     return false;
   }
 
-  var fileList = this.findDirEntry(filename);
-  if(fileList !== "") {
+  // search for a file with our filename and see if it 
+  // is not found i.e. the filename isn't already taken
+  if(this.findDirEntry(filename) !== "") {
     _StdOut.putText("Error: filename already taken");
     _StdOut.advanceLine();
     _StdOut.putText(">");
@@ -283,7 +283,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   }
 
   // get the directory slot and set the appropriate 
-  // filename and link to a reserved spot
+  // filename and link to a reserved file entry spot
   var entry = new FileEntry();
   entry.parseEntry(localStorage[nextOpenDir]);
   entry.setData(filename);
@@ -294,6 +294,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   reserveSpot.parseEntry(localStorage[openFileEntries[0]]);
   reserveSpot.setData(""); // TODO - better way to set in use?
 
+  // commit the values to the disk
   localStorage[nextOpenDir] = entry.toString();
   localStorage[openFileEntries[0]] = reserveSpot.toString();
 
@@ -309,8 +310,9 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
     return false;
   }
 
+  // search for a file with our filename and see if it 
+  // is found i.e. the filename does exist
   var dirTSB = this.findDirEntry(filename);
-  
   if(dirTSB === "") {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
@@ -326,15 +328,16 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   var nextLink = entryObj.getStringLink();
   entryObj.parseEntry(localStorage[nextLink]);
 
+  // extract the first bit of info from the first link in the chain
   var fileData = entryObj.data;
 
-  // go through each link of the chain and grab concatenate the data together
+  // go through the rest of the links in the chain and concatenate the data together
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
     entryObj.parseEntry(localStorage[nextLink]);
     fileData += entryObj.data;
   }
-
+  // store the last read data for when we want to display it or when we are swapping
   this.readData = fileData;
   
   return true;
@@ -349,8 +352,9 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     return false;
   }
 
+  // search for a file with our filename and see if it 
+  // is found i.e. the file does exist
   var dirTSB = this.findDirEntry(filename);
-  
   if(dirTSB === "") {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
@@ -358,8 +362,11 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     return false;
   }
 
+  // go through and delete all the contents of this file
+  // since write is an over-write in our implementation
   this.deleteFileContents(dirTSB);
 
+  // go and grab the first link in the chain for this file
   var entryObj = new FileEntry();
   entryObj.parseEntry(localStorage[dirTSB]);
   var allocatedBlock = entryObj.getStringLink();
@@ -375,6 +382,8 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
   else {
     var dataArray = [];
     var maxDataSize = BLOCK_SIZE - 4;
+    // grab block size chunks of the data at a time, adding that to a
+    // list which we will write to disk and chain all together
     while (data !== "") {
       dataArray[dataArray.length] = data.substring(0, maxDataSize);
       data = data.substring(maxDataSize, data.length);
@@ -382,7 +391,9 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
         maxDataSize = data.length;
     }
 
-    // when checking if enough blocks exist, subtract one for the first one we reserve when we created it
+    // see if there are enough open blocks on the disk for the size of this write
+    // we need as many blocks as split the data into - 1 because when we created
+    // the file we reserved one block
     var openFileEntries = this.getOpenFileEntries(dataArray.length - 1);
     if(openFileEntries === null) {
       _StdOut.putText("Error: not enough space in file system");
@@ -391,12 +402,17 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
       return false;
     }
 
-    var lastTSB = allocatedBlock;//entryObj.getStringLink();
+    // variable to keep track of the last link - this is the TSB
+    // in which we are writing to, after we write to it we assign
+    // it the next open block and continue
+    var lastTSB = allocatedBlock;
     
-    // go about spreading the data across more than 1 block
+    // go about spreading the data across more than 1 block by
+    // adding each chunk of data to each open block we found earlier
     for (var j = 0; j <= openFileEntries.length; j++) {
       entryObj = new FileEntry();
       entryObj.setData(dataArray[j]);
+      // set the next link in the chain if we aren't at the last one
       if(j !== openFileEntries.length)
         entryObj.setLink(openFileEntries[j]);
       localStorage[lastTSB] = entryObj.toString();
@@ -416,9 +432,10 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     return false;
   }
 
-  // get the TSB of the directory entry for this file
+  // get the TSB of the directory entry for this file, i.e.
+  // search for a file with our filename and see if it 
+  // is found i.e. the file does exist
   var dirTSB = this.findDirEntry(filename);
-  
   if(dirTSB === "") {
     _StdOut.putText("Error: file not found");
     _StdOut.advanceLine();
@@ -427,17 +444,21 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
   }
 
   var blankEntry = new FileEntry();
-  // parse the entry info from the directory entry
   var entryObj = new FileEntry();
+
+  // parse the entry info from the directory entry in order
+  // to get the next link in this file chain
   entryObj.parseEntry(localStorage[dirTSB]);
+  // clear out the directory entry
   localStorage[dirTSB] = blankEntry.toString();
 
-  // get the first link to the file data
+  // get the first link to the chain from the directory entry we parsed earlier
   var nextLink = entryObj.getStringLink();
   entryObj.parseEntry(localStorage[nextLink]);
+  // clear out this entry
   localStorage[nextLink] = blankEntry.toString();
 
-  // go through each link of the chain and replace entries with blank entries
+  // go through each remaining link of the chain and delete those in similar fashion
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
     entryObj.parseEntry(localStorage[nextLink]);
@@ -450,18 +471,21 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
 // function to delete the contents of a given file
 DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
   var blankEntry = new FileEntry();
-  // parse the entry info from the directory entry
   var entryObj = new FileEntry();
+
+  // parse the entry info from the directory entry in order
+  // to get the first link in this file chain
   entryObj.parseEntry(localStorage[dirTSB]);
 
-  // get the first link to the file data
+  // get the first link to the chain from the directory entry we parsed earlier
   var nextLink = entryObj.getStringLink();
   entryObj.parseEntry(localStorage[nextLink]);
-  // clear out the entry's data and store it in the resevered file spot
+  // clear out the first entry's data but still reserve it since we alwasy want
+  // to have at least one block for each file that we create
   entryObj.setData("");
   localStorage[nextLink] = entryObj.toString();
 
-  // go through each link of the chain and replace entries with blank, unused entries
+  // go through any remaining links of the chain and replace entries with blank, unused entries
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
     entryObj.parseEntry(localStorage[nextLink]);
@@ -489,7 +513,7 @@ DeviceDriverFileSystem.prototype.list = function() {
     return false;
   }
 
-  // print out all the files
+  // go through all the files and print out the names except for the MBR
   for (var i = 0; i < files.length; i++) {
     if(files[i].data !== "MBR") {
       _StdOut.putText(files[i].data + " ");
