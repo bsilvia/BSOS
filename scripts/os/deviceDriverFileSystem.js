@@ -14,7 +14,7 @@ function DeviceDriverFileSystem() {
   //this.isr = krnFsIsr;
   this.status = "not loaded";
   this.formatted = false;
-  // 
+  this.readData = "";
 }
 
 DeviceDriverFileSystem.prototype.driverEntry = function() {
@@ -61,7 +61,7 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
     this.list();
   }
   else if(params[0] === "swapCreate") {
-    this.delete(params[1]);
+    this.create(params[1]);
   }
   else if(params[0] === "swapRead") {
     this.read(params[1]);
@@ -93,6 +93,11 @@ DeviceDriverFileSystem.prototype.getNumericKey = function(tsbString) {
   var s = items[1];
   var b = items[2];
   return parseInt("" + t + s + b, 10);
+};
+
+// funtion to return the last data that was read from the disk
+DeviceDriverFileSystem.prototype.getReadData = function() {
+  return this.readData;
 };
 
 // function to return all the entries in the file system for display
@@ -225,17 +230,6 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
   return null;
 };
 
-// function to remove blank space character
-/*DeviceDriverFileSystem.prototype.removeFiller = function(string) {
-  var idx = string.indexOf("*");
-  if(idx > 0)
-    return string.substring(0, idx);
-  else
-    return string;
-};*/
-
-
-
 
 // function to format the file system
 DeviceDriverFileSystem.prototype.format = function() {
@@ -267,7 +261,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   }
 
   var nextOpenDir = this.getNextOpenDirEntry();
-  var openFileEntries = this.getOpenFileEntries(1);   // when checking in write for if enough exist, subtract one for the first one we reserve when we create it
+  var openFileEntries = this.getOpenFileEntries(1);
   if(nextOpenDir === null || openFileEntries === null) {
     _StdOut.putText("Error: file system full");
     _StdOut.advanceLine();
@@ -283,8 +277,8 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
     return false;
   }
 
-  // get the directory slot and set the appropriate filename and link
-  // to a reserved spot
+  // get the directory slot and set the appropriate 
+  // filename and link to a reserved spot
   var entry = new FileEntry();
   entry.parseEntry(localStorage[nextOpenDir]);
   entry.setData(filename);
@@ -337,6 +331,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
     fileData += entryObj.data;
   }
 
+  this.readData = fileData;
   _StdOut.putText(fileData);
   _StdOut.advanceLine();
   _StdOut.putText(">");
@@ -461,9 +456,11 @@ DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
   // get the first link to the file data
   var nextLink = entryObj.getStringLink();
   entryObj.parseEntry(localStorage[nextLink]);
-  localStorage[nextLink] = blankEntry.toString();
+  // clear out the entry's data and store it in the resevered file spot
+  entryObj.setData("");
+  localStorage[nextLink] = entryObj.toString();
 
-  // go through each link of the chain and replace entries with blank entries
+  // go through each link of the chain and replace entries with blank, unused entries
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
     entryObj.parseEntry(localStorage[nextLink]);

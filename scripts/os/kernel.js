@@ -178,6 +178,11 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             break;
         case FILE_SYSTEM_IRQ:
             krnFileSystemDriver.isr(params);
+            // pass the value of the swap file to the memory 
+            // manager if that is the operation we are performing
+            if(params[0] === "swapRead") {
+              _MemoryManager.passSwapFileContents(krnFileSystemDriver.getReadData());
+            }
             updateFileSystemDisplay(krnFileSystemDriver.getEntries());
             break;
         case PROGRAM_TERMINATION_IRQ:
@@ -194,6 +199,19 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case CONTEXT_SWITCH_IRQ:
             // update the process's PCB
             _CurrentPCB.update();
+
+
+
+            var pidSwappedOut = _CurrentPCB.pid;
+            var pidSwappedIn = params.pid;
+
+            // set the cpu values from the values in the pcb of the new process
+            _CPU.set(params);
+
+            // TODO - need to change up to use mem manager
+            _MemoryManager.contextSwitch(params);
+
+            /*
             var pidSwappedOut = _CurrentPCB.pid;
 
             // add the current process back onto the ready queue if it is not finished
@@ -209,7 +227,10 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
 
             // set relocation register in memory manager
             _MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+            */
             
+
+
             // update ready queue display
             updateReadyQueue();
 

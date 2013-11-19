@@ -389,7 +389,6 @@ function shellInit() {
         // ensure they passed a filename and that it only contains characters and digits
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]) && args[0].length < BLOCK_SIZE - 4)
         {
-            // TODO - display message for error or success
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
         }
         else
@@ -408,7 +407,6 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO - display error if something went wrong
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]);
         }
         else
@@ -426,7 +424,6 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 1 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO - display message for error or success
             var data = "";
             for (var i = 1; i < args.length; i++) {
                 if(i !== args.length - 1)    // trim isn't working for some reason
@@ -452,7 +449,6 @@ function shellInit() {
         // ensure they passed a filename
         if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
         {
-            // TODO - display message for error or success
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]);
         }
         else

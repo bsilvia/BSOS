@@ -9,7 +9,7 @@ function PCB() {
 	this.base = 0;
 	this.limit = 0;
 	this.memBlock = -1;
-	this.swapFile = "";
+	this.swapFileName = "";
 	this.finished = false;
 	this.priority = -1;
 	this.location = "Mem";
@@ -59,4 +59,19 @@ PCB.prototype.Display = function() {
 	_StdOut.putText("   Z: " + this.Zflag);
 	_StdOut.advanceLine();
 	_StdOut.putText(">");
+};
+
+PCB.prototype.isOnDisk = function() {
+	return this.memBlock === -1;
+};
+
+PCB.prototype.isInMemory = function() {
+	return this.memBlock !== -1;
+};
+
+PCB.prototype.swapLocation = function() {
+	if(this.location === "Mem")
+		this.location = "Disk";
+	else
+		this.location = "Mem";
 };
