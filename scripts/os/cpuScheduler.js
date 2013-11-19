@@ -79,9 +79,9 @@ CpuScheduler.prototype.schedule = function(pcb) {
 					}
 					// otherwise there is an open spot and we can just roll in the process
 					else {
-						_CPU.clear();
 						_MemoryManager.rollIn(_ReadyQueue.dequeue());
 						_CurrentPCB = pcb;
+						_CPU.set(_CurrentPCB);
 					}
 				}
 			}
