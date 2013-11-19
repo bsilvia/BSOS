@@ -22,14 +22,14 @@ CpuScheduler.prototype.cycle = function() {
 	this.cycles++;
 	// only call schedule at each clock cycle if we are doing round robin
 	if(CURRENT_SCHEDULING_ALGOR === ROUND_ROBIN) {
-		this.schedule();
+		this.schedule(null);
 	}
 };
 
 // this method checks for any scheduling decisions to be made and context switches if necessary
 // onRun distinguishes scheduling operations based on if we are scheduling at a clock tick or
 // because we just got a command to run one or more programs
-CpuScheduler.prototype.schedule = function() {
+CpuScheduler.prototype.schedule = function(pcb) {
 	switch (CURRENT_SCHEDULING_ALGOR)
     {
 		case ROUND_ROBIN:
@@ -41,11 +41,49 @@ CpuScheduler.prototype.schedule = function() {
 				this.cycles = 0;
 				if(_ReadyQueue.isEmpty())
 					return;
-				// pull one off the ready queue and have to set
-				// current pcb, cpu, and relocation register accordingly
-				_CurrentPCB = _ReadyQueue.dequeue();
-				_CPU.set(_CurrentPCB);
-				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+
+				// if we aren't running just one specific process
+				// or we are running one specific process but it is in memory
+				if(pcb === null || (pcb !== null && pcb.isInMemory())) {
+					// pull one off the ready queue (it only has one on it) and
+					// set current pcb, cpu, and relocation register accordingly
+					_CurrentPCB = _ReadyQueue.dequeue();
+					_CPU.set(_CurrentPCB);
+					_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+				}
+				// if we are running a specific process and its on the disk
+				else if(pcb !== null && pcb.isOnDisk()) {
+					// if all the memory slots are full
+					if(_MemoryManager.getNextAvailableBlock() === -1) {
+						// clear the cpu since the current process (the process that we
+						// pick out of the ready queue that is in memory) which we will
+						// be swapping will get updated with the cpu values
+						_CPU.clear();
+
+						// go through the resident list, looking for a process that is
+						// in memory that we can swap with
+						for (var i = 0; i < _ResidentList.length; i++) {
+							if (_ResidentList[i].isInMemory()) {
+								// set the first process we find in memory to the current PCB
+								// since we always context switch with the current PCB
+								_CurrentPCB = _ResidentList[i];
+								_CurrentPCB.tempSwap = true;
+								break;
+							}
+						}
+
+						// make the call to context switch, swapping out the process in memory
+						// with the process that is on the disk (that we added to the ready queue 
+						// earlier) that the user is requesting to run
+						this.contextSwitch(_ReadyQueue.dequeue());
+					}
+					// otherwise there is an open spot and we can just roll in the process
+					else {
+						_CPU.clear();
+						_MemoryManager.rollIn(_ReadyQueue.dequeue());
+						_CurrentPCB = pcb;
+					}
+				}
 			}
 			else if(this.cycles >= _Quantum)
 			{
@@ -116,9 +154,9 @@ CpuScheduler.prototype.run = function(pcb, index) {
 	_ReadyQueue.enqueue(pcb);
 
 	// remove it from the resident list
-	_ResidentList.splice(index);
+	_ResidentList.splice(index, 1);
 
-	this.schedule();
+	this.schedule(pcb);
 };
 
 // runs all programs that are in the resident list
@@ -131,7 +169,7 @@ CpuScheduler.prototype.runAll = function() {
 	// clear the resident list
 	_ResidentList = [];
 
-	this.schedule();
+	this.schedule(null);
 	updateReadyQueue();
 };
 
@@ -146,7 +184,7 @@ CpuScheduler.prototype.killProcess = function(pid, idx) {
 		this.cycles = _Quantum;
 		// we must pick a new process to run if available so call schedule
 		if(!_ReadyQueue.isEmpty()) {
-			this.schedule();
+			this.schedule(null);
 		}
 	}
 	// otherwise we just need to remove it from the ready queue

@@ -11,6 +11,7 @@ function PCB() {
 	this.memBlock = -1;
 	this.swapFileName = "";
 	this.finished = false;
+	this.tempSwap = false;
 	this.priority = -1;
 	this.location = "Mem";
 	

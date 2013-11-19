@@ -140,9 +140,14 @@ MemoryManager.prototype.readMemoryBlock = function() {
 MemoryManager.prototype.contextSwitch = function(newPCB) {
 	var pidSwappedOut = _CurrentPCB.pid;
 
-    // add the current process back onto the ready queue if it is not finished
     if(_CurrentPCB.finished !== true) {
-		_ReadyQueue.enqueue(_CurrentPCB);
+		if(!_CurrentPCB.tempSwap) {
+			// add the current process back onto the ready queue if it is not finished
+			_ReadyQueue.enqueue(_CurrentPCB);
+		}
+		else {
+			_CurrentPCB.tempSwap = false;
+		}
 
 		// if the new process is on the disk then we must swap it with the current process 
 		if(newPCB.isOnDisk()) {
@@ -189,6 +194,7 @@ MemoryManager.prototype.rollIn = function(pcb) {
 	pcb.limit = this.memoryBlocks[blockNum].limit;
 	pcb.memBlock = blockNum;
 	this.memoryBlocks[blockNum].taken = true;
+	this.SetRelocationRegister(pcb.base);
 	
 	// and actually writing the program to memory
 	for (var i = 0; i < program.length; i++) {

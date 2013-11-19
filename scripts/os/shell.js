@@ -335,13 +335,31 @@ function shellInit() {
             return;
         }
 
-        _StdOut.putText("Active processes: ");
+        _StdOut.putText("Active processes PIDs: ");
         _StdOut.putText(_CurrentPCB.pid + " ");
         for (var i = 0; i < _ReadyQueue.getSize(); i++) {
             _StdOut.putText(_ReadyQueue.getItem(i).pid.toString() + " ");
         }
         //StdOut.putText(_ReadyQueue.toString() + "[" + this.q[i] + "] "); // TODO - or resident list?
         //_StdOut.advanceLine();
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // lsrl
+    sc = new ShellCommand();
+    sc.command = "lsrl";
+    sc.description = "- Displays the PIDs of all processes in the resident list.";
+    sc.function = function(args) {
+        if(_ResidentList.length === 0)
+        {
+            _StdOut.putText("No processes in resident list");
+            return;
+        }
+
+        _StdOut.putText("Resident list processes PIDs: ");
+        for (var i = 0; i < _ResidentList.length; i++) {
+            _StdOut.putText(_ResidentList[i].pid.toString() + " ");
+        }
     };
     this.commandList[this.commandList.length] = sc;
 
