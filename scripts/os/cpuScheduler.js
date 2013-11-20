@@ -101,11 +101,48 @@ CpuScheduler.prototype.schedule = function(pcb) {
 			{
 				if(_ReadyQueue.isEmpty())
 					return;
-				// pull one off the ready queue and have to set
-				// current pcb, cpu, and relocation register accordingly
-				_CurrentPCB = _ReadyQueue.dequeue();
-				_CPU.set(_CurrentPCB);
-				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+				// if we aren't running just one specific process
+				// or we are running one specific process but it is in memory
+				if(pcb === null || (pcb !== null && pcb.isInMemory())) {
+					// pull one off the ready queue (it only has one on it) and
+					// set current pcb, cpu, and relocation register accordingly
+					_CurrentPCB = _ReadyQueue.dequeue();
+					_CPU.set(_CurrentPCB);
+					_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+				}
+				// if we are running a specific process and its on the disk
+				else if(pcb !== null && pcb.isOnDisk()) {
+					// if all the memory slots are full
+					if(_MemoryManager.getNextAvailableBlock() === -1) {
+						// clear the cpu since the current process (the process that we
+						// pick out of the ready queue that is in memory) which we will
+						// be swapping will get updated with the cpu values
+						_CPU.clear();
+
+						// go through the resident list, looking for a process that is
+						// in memory that we can swap with
+						for (var i = 0; i < _ResidentList.length; i++) {
+							if (_ResidentList[i].isInMemory()) {
+								// set the first process we find in memory to the current PCB
+								// since we always context switch with the current PCB
+								_CurrentPCB = _ResidentList[i];
+								_CurrentPCB.tempSwap = true;
+								break;
+							}
+						}
+
+						// make the call to context switch, swapping out the process in memory
+						// with the process that is on the disk (that we added to the ready queue 
+						// earlier) that the user is requesting to run
+						this.contextSwitch(_ReadyQueue.dequeue());
+					}
+					// otherwise there is an open spot and we can just roll in the process
+					else {
+						_MemoryManager.rollIn(_ReadyQueue.dequeue());
+						_CurrentPCB = pcb;
+						_CPU.set(_CurrentPCB);
+					}
+				}
 			}
 			// otherwise we have to pluck the next process off the queue
 			else
