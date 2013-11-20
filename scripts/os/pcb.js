@@ -14,6 +14,7 @@ function PCB() {
 	this.tempSwap = false;
 	this.priority = -1;
 	this.location = "Mem";
+	this.arrival = _OSclock;
 	
 	this.PC = 0;
 	this.AC = 0;

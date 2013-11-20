@@ -42,48 +42,7 @@ CpuScheduler.prototype.schedule = function(pcb) {
 				if(_ReadyQueue.isEmpty())
 					return;
 
-				// if we aren't running just one specific process
-				// or we are running one specific process but it is in memory
-				if(pcb === null || (pcb !== null && pcb.isInMemory())) {
-					// pull one off the ready queue (it only has one on it) and
-					// set current pcb, cpu, and relocation register accordingly
-					_CurrentPCB = _ReadyQueue.dequeue();
-					_CPU.set(_CurrentPCB);
-					_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
-				}
-				// if we are running a specific process and its on the disk
-				else if(pcb !== null && pcb.isOnDisk()) {
-					// if all the memory slots are full
-					if(_MemoryManager.getNextAvailableBlock() === -1) {
-						// clear the cpu since the current process (the process that we
-						// pick out of the ready queue that is in memory) which we will
-						// be swapping will get updated with the cpu values
-						_CPU.clear();
-
-						// go through the resident list, looking for a process that is
-						// in memory that we can swap with
-						for (var i = 0; i < _ResidentList.length; i++) {
-							if (_ResidentList[i].isInMemory()) {
-								// set the first process we find in memory to the current PCB
-								// since we always context switch with the current PCB
-								_CurrentPCB = _ResidentList[i];
-								_CurrentPCB.tempSwap = true;
-								break;
-							}
-						}
-
-						// make the call to context switch, swapping out the process in memory
-						// with the process that is on the disk (that we added to the ready queue 
-						// earlier) that the user is requesting to run
-						this.contextSwitch(_ReadyQueue.dequeue());
-					}
-					// otherwise there is an open spot and we can just roll in the process
-					else {
-						_MemoryManager.rollIn(_ReadyQueue.dequeue());
-						_CurrentPCB = pcb;
-						_CPU.set(_CurrentPCB);
-					}
-				}
+				this.runProcess(_ReadyQueue.dequeue());
 			}
 			else if(this.cycles >= _Quantum)
 			{
@@ -101,48 +60,10 @@ CpuScheduler.prototype.schedule = function(pcb) {
 			{
 				if(_ReadyQueue.isEmpty())
 					return;
-				// if we aren't running just one specific process
-				// or we are running one specific process but it is in memory
-				if(pcb === null || (pcb !== null && pcb.isInMemory())) {
-					// pull one off the ready queue (it only has one on it) and
-					// set current pcb, cpu, and relocation register accordingly
-					_CurrentPCB = _ReadyQueue.dequeue();
-					_CPU.set(_CurrentPCB);
-					_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
-				}
-				// if we are running a specific process and its on the disk
-				else if(pcb !== null && pcb.isOnDisk()) {
-					// if all the memory slots are full
-					if(_MemoryManager.getNextAvailableBlock() === -1) {
-						// clear the cpu since the current process (the process that we
-						// pick out of the ready queue that is in memory) which we will
-						// be swapping will get updated with the cpu values
-						_CPU.clear();
 
-						// go through the resident list, looking for a process that is
-						// in memory that we can swap with
-						for (var i = 0; i < _ResidentList.length; i++) {
-							if (_ResidentList[i].isInMemory()) {
-								// set the first process we find in memory to the current PCB
-								// since we always context switch with the current PCB
-								_CurrentPCB = _ResidentList[i];
-								_CurrentPCB.tempSwap = true;
-								break;
-							}
-						}
-
-						// make the call to context switch, swapping out the process in memory
-						// with the process that is on the disk (that we added to the ready queue 
-						// earlier) that the user is requesting to run
-						this.contextSwitch(_ReadyQueue.dequeue());
-					}
-					// otherwise there is an open spot and we can just roll in the process
-					else {
-						_MemoryManager.rollIn(_ReadyQueue.dequeue());
-						_CurrentPCB = pcb;
-						_CPU.set(_CurrentPCB);
-					}
-				}
+				// pull the next process out and set current pcb,
+				// cpu, and relocation register accordingly
+				this.runProcess(this.getNextEarliestArrivalProcess());
 			}
 			// otherwise we have to pluck the next process off the queue
 			else
@@ -150,7 +71,7 @@ CpuScheduler.prototype.schedule = function(pcb) {
 				this.cycles = 0;
 				if(!_ReadyQueue.isEmpty())
 				{
-					this.contextSwitch(_ReadyQueue.dequeue());
+					this.contextSwitch(this.getNextEarliestArrivalProcess());
 				}
 			}
 			break;
@@ -160,13 +81,11 @@ CpuScheduler.prototype.schedule = function(pcb) {
 			{
 				if(_ReadyQueue.isEmpty())
 					return;
-				// get the next highest priority process and set
-				// current pcb, cpu, and relocation register accordingly
-				_CurrentPCB = this.getNextHighestPriorityProcess();
-				_CPU.set(_CurrentPCB);
-				_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+
+				// pull the next process out and run it
+				this.runProcess(this.getNextHighestPriorityProcess());
 			}
-			// otherwise we have to 
+			// otherwise we have to pull the next highest priority and run that one
 			else
 			{
 				this.cycles = 0;
@@ -176,6 +95,100 @@ CpuScheduler.prototype.schedule = function(pcb) {
 				}
 			}
 			break;
+	}
+};
+
+// starts execution of a given process, checking to see if it
+// needs to be switched from the disk to memory
+CpuScheduler.prototype.runProcess = function(pcb) {
+	if(pcb.isOnDisk()) {
+		this.runProcessOnDisk(pcb);
+	}
+
+	_CurrentPCB = pcb;
+	_CPU.set(_CurrentPCB);
+	_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+};
+
+// takes the process on disk and either puts it in an empty memory slot
+// or picks a process in memory and swaps it out, we only do this when
+// we first start execution, i.e. CPU.isExecuting === false
+CpuScheduler.prototype.runProcessOnDisk = function(processOnDisk) {
+	// if all the memory slots are full
+	if(_MemoryManager.getNextAvailableBlock() === -1) {
+		// clear the cpu since the current process (the process that we
+		// pick out of the ready queue that is in memory) which we will
+		// be swapping will get updated with the cpu values
+		_CPU.clear();
+
+		// go through the resident list, looking for a process that is
+		// in memory that we can swap with
+		for (var j = 0; j < _ResidentList.length; j++) {
+			if (_ResidentList[j].isInMemory()) {
+				// set the first process we find in memory to the current PCB
+				// since we always context switch with the current PCB
+				_CurrentPCB = _ResidentList[j];
+				_CurrentPCB.tempSwap = true;
+				break;
+			}
+		}
+
+		// make the call to context switch, swapping out the process in memory
+		// with the process that is on the disk that the user is requesting to run
+		this.contextSwitch(processOnDisk);
+	}
+	// otherwise there is an open spot and we can just roll in the process
+	else {
+		_MemoryManager.rollIn(processOnDisk);
+		_CurrentPCB = processOnDisk;
+		_CPU.set(_CurrentPCB);
+	}
+};
+
+// schedules when the cpu is not yet executing and must schedule either
+// one given process or the first of all the processes loaded
+CpuScheduler.prototype.scheduleOneProcess = function(pcb) {
+	// if we aren't running just one specific process
+	// or we are running one specific process but it is in memory
+	if(pcb === null || (pcb !== null && pcb.isInMemory())) {
+		// pull the next process out and set current pcb,
+		// cpu, and relocation register accordingly
+		_CurrentPCB = _ReadyQueue.dequeue();
+		_CPU.set(_CurrentPCB);
+		_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+	}
+	// if we are running a specific process and its on the disk
+	else if(pcb !== null && pcb.isOnDisk()) {
+		// if all the memory slots are full
+		if(_MemoryManager.getNextAvailableBlock() === -1) {
+			// clear the cpu since the current process (the process that we
+			// pick out of the ready queue that is in memory) which we will
+			// be swapping will get updated with the cpu values
+			_CPU.clear();
+
+			// go through the resident list, looking for a process that is
+			// in memory that we can swap with
+			for (var j = 0; j < _ResidentList.length; j++) {
+				if (_ResidentList[j].isInMemory()) {
+					// set the first process we find in memory to the current PCB
+					// since we always context switch with the current PCB
+					_CurrentPCB = _ResidentList[j];
+					_CurrentPCB.tempSwap = true;
+					break;
+				}
+			}
+
+			// make the call to context switch, swapping out the process in memory
+			// with the process that is on the disk (that we added to the ready queue 
+			// earlier) that the user is requesting to run
+			this.contextSwitch(_ReadyQueue.dequeue());
+		}
+		// otherwise there is an open spot and we can just roll in the process
+		else {
+			_MemoryManager.rollIn(_ReadyQueue.dequeue());
+			_CurrentPCB = pcb;
+			_CPU.set(_CurrentPCB);
+		}
 	}
 };
 
@@ -243,8 +256,24 @@ CpuScheduler.prototype.getNextHighestPriorityProcess = function() {
 	// Due to the default value of priority we give processes that were not loaded with a priority,
 	// they will always execute after all the processes that were given a priority number
 	for (var i = 0; i < _ReadyQueue.getSize(); i++) {
-		if(_ReadyQueue.getItem(i).priority != -1 && _ReadyQueue.getItem(i).priority < lowestPriority){
+		if(_ReadyQueue.getItem(i).priority != -1 && _ReadyQueue.getItem(i).priority < lowestPriority) {
 			lowestPriority = _ReadyQueue.getItem(i).priority;
+			idx = i;
+		}
+	}
+
+	return _ReadyQueue.removeAt(idx)[0];
+};
+
+// function to get the next process that came before the rest
+CpuScheduler.prototype.getNextEarliestArrivalProcess = function() {
+	var earliestArrival = Number.MAX_VALUE;
+	var idx = -1;
+
+	// Go through the ready queue to find the earliest arrival process.
+	for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+		if(_ReadyQueue.getItem(i).arrival < earliestArrival) {
+			earliestArrival = _ReadyQueue.getItem(i).arrival;
 			idx = i;
 		}
 	}
