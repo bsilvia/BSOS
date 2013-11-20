@@ -101,13 +101,21 @@ CpuScheduler.prototype.schedule = function(pcb) {
 // starts execution of a given process, checking to see if it
 // needs to be switched from the disk to memory
 CpuScheduler.prototype.runProcess = function(pcb) {
+	// if it is on the disk then we must deal with taking it out
+	// and "swap" it with another process that we choose in
+	// memory in order to get it into memory therefore we 
+	// can't set the current pcb right here
 	if(pcb.isOnDisk()) {
 		this.runProcessOnDisk(pcb);
+		_CPU.set(pcb);
+		_MemoryManager.SetRelocationRegister(pcb.base);
 	}
-
-	_CurrentPCB = pcb;
-	_CPU.set(_CurrentPCB);
-	_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+	// otherwise it is in memory so we can proceed as normal
+	else {
+		_CurrentPCB = pcb;
+		_CPU.set(_CurrentPCB);
+		_MemoryManager.SetRelocationRegister(_CurrentPCB.base);
+	}
 };
 
 // takes the process on disk and either puts it in an empty memory slot
@@ -121,6 +129,8 @@ CpuScheduler.prototype.runProcessOnDisk = function(processOnDisk) {
 		// be swapping will get updated with the cpu values
 		_CPU.clear();
 
+		_CurrentPCB = null;
+
 		// go through the resident list, looking for a process that is
 		// in memory that we can swap with
 		for (var j = 0; j < _ResidentList.length; j++) {
@@ -130,6 +140,20 @@ CpuScheduler.prototype.runProcessOnDisk = function(processOnDisk) {
 				_CurrentPCB = _ResidentList[j];
 				_CurrentPCB.tempSwap = true;
 				break;
+			}
+		}
+
+		// if we couldn't find a process in memory in the resident list to
+		// swap with then we must take something from the ready queue
+		if(_CurrentPCB === null) {
+			for (var k = 0; k < _ReadyQueue.getSize(); k++) {
+				if (_ReadyQueue.getItem(k).isInMemory()) {
+					// set the first process we find in memory to the current PCB
+					// since we always context switch with the current PCB
+					_CurrentPCB = _ReadyQueue.getItem(k);
+					_CurrentPCB.tempSwap = true;
+					break;
+				}
 			}
 		}
 
