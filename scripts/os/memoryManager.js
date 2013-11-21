@@ -118,8 +118,12 @@ MemoryManager.prototype.load = function(program, priority) {
 
 // deallocates a block of memory once a process no longer needs it
 MemoryManager.prototype.deallocate = function(idxBlock) {
-	if(idxBlock >= 0 && idxBlock <= 3)
+	if(idxBlock >= 0 && idxBlock <= 3) {
 		this.memoryBlocks[idxBlock].taken = false;
+		for (var i = 0; i < _BlockSize; i++) {
+			this.memory.write(i + this.memoryBlocks[idxBlock].base, "00");
+		}
+	}
 };
 
 // function to read the entire current block of memory, as needed when swapping

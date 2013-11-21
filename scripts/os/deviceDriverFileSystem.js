@@ -15,6 +15,7 @@ function DeviceDriverFileSystem() {
   this.status = "not loaded";
   this.formatted = false;
   this.readData = "";
+  this.disk = new Disk();
 }
 
 DeviceDriverFileSystem.prototype.driverEntry = function() {
@@ -103,7 +104,7 @@ DeviceDriverFileSystem.prototype.getEntries = function() {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
 
-        entry = localStorage[this.makeKey(track, sector, block)];
+        entry = this.disk.getEntry(this.makeKey(track, sector, block));
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
         list[list.length] = fileEntry;
@@ -126,7 +127,7 @@ DeviceDriverFileSystem.prototype.getDirEntries = function() {
     for (var sector = 0; sector < NUMBER_OF_SECTORS; sector++) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
-        entry = localStorage[this.makeKey(track, sector, block)];
+        entry = this.disk.getEntry(this.makeKey(track, sector, block));
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
         if(fileEntry.isInUse())
@@ -150,7 +151,7 @@ DeviceDriverFileSystem.prototype.findDirEntry = function(filename) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         // get the file entry on the disk and parse it
-        entry = localStorage[this.makeKey(track, sector, block)];
+        entry = this.disk.getEntry(this.makeKey(track, sector, block));
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
         // see if it is in use and if it matches the filename we are looking for
@@ -175,7 +176,7 @@ DeviceDriverFileSystem.prototype.getNextOpenDirEntry = function() {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         // get the file entry on the disk and parse it
-        entry = localStorage[this.makeKey(track, sector, block)];
+        entry = this.disk.getEntry(this.makeKey(track, sector, block));
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
         // if its not in use then return the TSB
@@ -206,7 +207,7 @@ DeviceDriverFileSystem.prototype.getOpenFileEntries = function(numOfEntries) {
       for (var block = 0; block < NUMBER_OF_BLOCKS; block++) {
         
         // get the file entry on the disk and parse it
-        entry = localStorage[this.makeKey(track, sector, block)];
+        entry = this.disk.getEntry(this.makeKey(track, sector, block));
         var fileEntry = new FileEntry();
         fileEntry.parseEntry(entry);
         // if the entry is not in use then add it to the list and increment  
@@ -238,7 +239,7 @@ DeviceDriverFileSystem.prototype.format = function() {
           blankEntry.setData("MBR");
         }
         // set the local storage to a blank file entry - not in use, no link and no data
-        localStorage[this.makeKey(track, sector, block)] = blankEntry.toString();
+        this.disk.setEntry(this.makeKey(track, sector, block), blankEntry.toString());
 
       }
     }
@@ -275,18 +276,18 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   // get the directory slot and set the appropriate 
   // filename and link to a reserved file entry spot
   var entry = new FileEntry();
-  entry.parseEntry(localStorage[nextOpenDir]);
+  entry.parseEntry(this.disk.getEntry(nextOpenDir));
   entry.setData(filename);
   entry.setLink(openFileEntries[0]);
 
   // reserve the next open file entry spot for this newly created file
   var reserveSpot = new FileEntry();
-  reserveSpot.parseEntry(localStorage[openFileEntries[0]]);
+  reserveSpot.parseEntry(this.disk.getEntry(openFileEntries[0]));
   reserveSpot.setData(""); // TODO - better way to set in use?
 
   // commit the values to the disk
-  localStorage[nextOpenDir] = entry.toString();
-  localStorage[openFileEntries[0]] = reserveSpot.toString();
+  this.disk.setEntry(nextOpenDir, entry.toString());
+  this.disk.setEntry(openFileEntries[0], reserveSpot.toString());
 
   krnTrace("successfully created the file " + filename);
   return true;
@@ -309,11 +310,11 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
 
   // parse the entry info from the directory entry
   var entryObj = new FileEntry();
-  entryObj.parseEntry(localStorage[dirTSB]);
+  entryObj.parseEntry(this.disk.getEntry(dirTSB));
 
   // get the first link to the file data
   var nextLink = entryObj.getStringLink();
-  entryObj.parseEntry(localStorage[nextLink]);
+  entryObj.parseEntry(this.disk.getEntry(nextLink));
 
   // extract the first bit of info from the first link in the chain
   var fileData = entryObj.data;
@@ -321,7 +322,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   // go through the rest of the links in the chain and concatenate the data together
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
-    entryObj.parseEntry(localStorage[nextLink]);
+    entryObj.parseEntry(this.disk.getEntry(nextLink));
     fileData += entryObj.data;
   }
   // store the last read data for when we want to display it or when we are swapping
@@ -352,7 +353,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
 
   // go and grab the first link in the chain for this file
   var entryObj = new FileEntry();
-  entryObj.parseEntry(localStorage[dirTSB]);
+  entryObj.parseEntry(this.disk.getEntry(dirTSB));
   var allocatedBlock = entryObj.getStringLink();
   
   // if the data can fit in the block that we already assigned it when we created the file
@@ -360,7 +361,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     // just put the data in there
     entryObj = new FileEntry();
     entryObj.setData(data);
-    localStorage[allocatedBlock] = entryObj.toString();
+    this.disk.setEntry(allocatedBlock, entryObj.toString());
   }
   // otherwise we must spread this file out across several blocks
   else {
@@ -398,7 +399,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
       // set the next link in the chain if we aren't at the last one
       if(j !== openFileEntries.length)
         entryObj.setLink(openFileEntries[j]);
-      localStorage[lastTSB] = entryObj.toString();
+      this.disk.setEntry(lastTSB, entryObj.toString());
       lastTSB = openFileEntries[j];
     }
   }
@@ -428,21 +429,21 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
 
   // parse the entry info from the directory entry in order
   // to get the next link in this file chain
-  entryObj.parseEntry(localStorage[dirTSB]);
+  entryObj.parseEntry(this.disk.getEntry(dirTSB));
   // clear out the directory entry
-  localStorage[dirTSB] = blankEntry.toString();
+  this.disk.setEntry(dirTSB, blankEntry.toString());
 
   // get the first link to the chain from the directory entry we parsed earlier
   var nextLink = entryObj.getStringLink();
-  entryObj.parseEntry(localStorage[nextLink]);
+  entryObj.parseEntry(this.disk.getEntry(nextLink));
   // clear out this entry
-  localStorage[nextLink] = blankEntry.toString();
+  this.disk.setEntry(nextLink, blankEntry.toString());
 
   // go through each remaining link of the chain and delete those in similar fashion
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
-    entryObj.parseEntry(localStorage[nextLink]);
-    localStorage[nextLink] = blankEntry.toString();
+    entryObj.parseEntry(this.disk.getEntry(nextLink));
+    this.disk.setEntry(nextLink, blankEntry.toString());
   }
 
   krnTrace("successfully deleted file " + filename);
@@ -456,21 +457,21 @@ DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
 
   // parse the entry info from the directory entry in order
   // to get the first link in this file chain
-  entryObj.parseEntry(localStorage[dirTSB]);
+  entryObj.parseEntry(this.disk.getEntry(dirTSB));
 
   // get the first link to the chain from the directory entry we parsed earlier
   var nextLink = entryObj.getStringLink();
-  entryObj.parseEntry(localStorage[nextLink]);
+  entryObj.parseEntry(this.disk.getEntry(nextLink));
   // clear out the first entry's data but still reserve it since we alwasy want
   // to have at least one block for each file that we create
   entryObj.setData("");
-  localStorage[nextLink] = entryObj.toString();
+  this.disk.setEntry(nextLink, entryObj.toString());
 
   // go through any remaining links of the chain and replace entries with blank, unused entries
   while(entryObj.hasLink()) {
     nextLink = entryObj.getStringLink();
-    entryObj.parseEntry(localStorage[nextLink]);
-    localStorage[nextLink] = blankEntry.toString();
+    entryObj.parseEntry(this.disk.getEntry(nextLink));
+    this.disk.setEntry(nextLink, blankEntry.toString());
   }
 
   return true;
