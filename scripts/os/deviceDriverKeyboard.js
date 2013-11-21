@@ -6,7 +6,7 @@
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
 
-DeviceDriverKeyboard.prototype = new DeviceDriver  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
+DeviceDriverKeyboard.prototype = new DeviceDriver();  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
 
 function DeviceDriverKeyboard()                     // Add or override specific attributes and method pointers.
 {

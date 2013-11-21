@@ -6,7 +6,7 @@
    Prototype to handle all implementation of byte-level detail of file system.
    ------------ */
 
-DeviceDriverFileSystem.prototype = new DeviceDriver;  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
+DeviceDriverFileSystem.prototype = new DeviceDriver();  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
 
 function DeviceDriverFileSystem() {
   // Override the base method pointers.
@@ -66,10 +66,12 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
   }
 };
 
-
-
 // returns whether or not the file system is formatted
 DeviceDriverFileSystem.prototype.isFormatted = function() {
+  if(!this.formatted) {
+    krnWriteConsole("Error: file system not formatted yet", true);
+    krnTrace("Error: file system not formatted yet");
+  }
   return this.formatted;
 };
 
@@ -238,14 +240,14 @@ DeviceDriverFileSystem.prototype.format = function() {
     }
   }
 
+  krnTrace("successfully formatted hard drive");
   this.formatted = true;
   return true;
 };
 
 // function to create a file
 DeviceDriverFileSystem.prototype.create = function(filename) {
-  if(!this.formatted) {
-    krnWriteConsole("Error: file system not formatted yet", true);
+  if(!this.isFormatted()) {
     return false;
   }
 
@@ -254,6 +256,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   var openFileEntries = this.getOpenFileEntries(1);
   if(nextOpenDir === null || openFileEntries === null) {
     krnWriteConsole("Error: file system full", true);
+    krnTrace("Error: file system full");
     return false;
   }
 
@@ -261,6 +264,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   // is not found i.e. the filename isn't already taken
   if(this.findDirEntry(filename) !== "") {
     krnWriteConsole("Error: filename already taken", true);
+    krnTrace("Error: filename already taken");
     return false;
   }
 
@@ -280,13 +284,13 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   localStorage[nextOpenDir] = entry.toString();
   localStorage[openFileEntries[0]] = reserveSpot.toString();
 
+  krnTrace("successfully created the file " + filename);
   return true;
 };
 
 // function to display the contents of a file
 DeviceDriverFileSystem.prototype.read = function(filename) {
-  if(!this.formatted) {
-    krnWriteConsole("Error: file system not formatted yet", true);
+  if(!this.isFormatted()) {
     return false;
   }
 
@@ -295,6 +299,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
     krnWriteConsole("Error: file not found", true);
+    krnTrace("Error: file not found");
     return false;
   }
 
@@ -318,13 +323,13 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   // store the last read data for when we want to display it or when we are swapping
   this.readData = fileData;
   
+  krnTrace("successfully read data from file " + filename);
   return true;
 };
 
 // function to write data to a file
 DeviceDriverFileSystem.prototype.write = function(filename, data) {
-  if(!this.formatted) {
-    krnWriteConsole("Error: file system not formatted yet", true);
+  if(!this.isFormatted()) {
     return false;
   }
 
@@ -333,6 +338,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
     krnWriteConsole("Error: file not found", true);
+    krnTrace("Error: file not found");
     return false;
   }
 
@@ -371,6 +377,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     var openFileEntries = this.getOpenFileEntries(dataArray.length - 1);
     if(openFileEntries === null) {
       krnWriteConsole("Error: not enough space in file system", true);
+      krnTrace("Error: not enough space in file system");
       return false;
     }
 
@@ -392,13 +399,13 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     }
   }
   
+  krnTrace("successfully wrote data to file " + filename);
   return true;
 };
 
 // function to remove a file from storage
 DeviceDriverFileSystem.prototype.delete = function(filename) {
-  if(!this.formatted) {
-    krnWriteConsole("Error: file system not formatted yet", true);
+  if(!this.isFormatted()) {
     return false;
   }
 
@@ -408,6 +415,7 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
     krnWriteConsole("Error: file not found", true);
+    krnTrace("Error: file not");
     return false;
   }
 
@@ -433,6 +441,7 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
     localStorage[nextLink] = blankEntry.toString();
   }
 
+  krnTrace("successfully deleted file " + filename);
   return true;
 };
 
@@ -465,8 +474,7 @@ DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
 
 // function to list the files currently stored on the disk
 DeviceDriverFileSystem.prototype.list = function() {
-  if(!this.formatted) {
-    krnWriteConsole("Error: file system not formatted yet", true);
+  if(!this.isFormatted()) {
     return false;
   }
 
@@ -474,17 +482,17 @@ DeviceDriverFileSystem.prototype.list = function() {
   var files = this.getDirEntries();
   if(files.length < 2) {
     krnWriteConsole("No files found", true);
+    krnTrace("No files found");
     return false;
   }
 
   // go through all the files and print out the names except for the MBR
   for (var i = 0; i < files.length; i++) {
     if(files[i].data !== "MBR") {
-      _StdOut.putText(files[i].data + " ");
+      krnWriteConsole(files[i].data + " ", false);
     }
   }
-  _StdOut.advanceLine();
-  _StdOut.putText(">");
+  krnWriteConsole("", true);
 
   return true;
 };

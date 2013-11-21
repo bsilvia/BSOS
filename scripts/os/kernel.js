@@ -240,7 +240,8 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 
 // function to handle writing to console
 function krnWriteConsole(msg, putPrompt) {
-  _StdOut.putText(msg);
+  if(msg !== "")
+    _StdOut.putText(msg);
   if(putPrompt) {
     _StdOut.advanceLine();
     _StdOut.putText(">");
