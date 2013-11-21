@@ -235,7 +235,6 @@ function shellInit() {
         if(validCommands) {
             var commands = str.split(" ");
 
-            // TODO - add priority here
             krnLoadProgram(commands, priority);
 
             updateMemoryDisplay();
@@ -285,12 +284,10 @@ function shellInit() {
     sc.command = "run";
     sc.description = "<pid> - Runs the program with the given process ID.";
     sc.function = function(args) {
-        if (args.length > 0)
-        {
+        if (args.length > 0) {
             krnRunProgram(args[0]);
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: run <pid> Please supply a pid.");
         }
     };
@@ -311,14 +308,10 @@ function shellInit() {
     sc.description = "<int> - Changes the quantum of time for Round Robin.";
     sc.function = function(args) {
         // ensure they passed an int
-        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) > 0)
-        {
+        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) > 0) {
             _Quantum = parseInt(args[0], 10);
-            // let the scheduler know we have a new quantum
-            //_CpuScheduler.newQuantum();
         }
-        else
-        {
+        else {
             _StdOut.putText("Usage: quantum <int> Please supply a positive integer.");
         }
     };
@@ -329,8 +322,7 @@ function shellInit() {
     sc.command = "processes";
     sc.description = "- Displays the PIDs of all active processes.";
     sc.function = function(args) {
-        if(_ReadyQueue.getSize() === 0 && _CurrentPCB.finished === true)
-        {
+        if(_ReadyQueue.getSize() === 0 && _CurrentPCB.finished === true) {
             _StdOut.putText("No active processes");
             return;
         }
@@ -340,8 +332,6 @@ function shellInit() {
         for (var i = 0; i < _ReadyQueue.getSize(); i++) {
             _StdOut.putText(_ReadyQueue.getItem(i).pid.toString() + " ");
         }
-        //StdOut.putText(_ReadyQueue.toString() + "[" + this.q[i] + "] "); // TODO - or resident list?
-        //_StdOut.advanceLine();
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -350,8 +340,7 @@ function shellInit() {
     sc.command = "lsrl";
     sc.description = "- Displays the PIDs of all processes in the resident list.";
     sc.function = function(args) {
-        if(_ResidentList.length === 0)
-        {
+        if(_ResidentList.length === 0) {
             _StdOut.putText("No processes in resident list");
             return;
         }
@@ -369,12 +358,10 @@ function shellInit() {
     sc.description = "<pid> - Kills the process with the given pid.";
     sc.function = function(args) {
         // ensure they passed a pid
-        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) >= 0)
-        {
+        if (args.length > 0 && !isNaN(args[0]) && parseInt(args[0], 10) >= 0) {
             krnKill(parseInt(args[0],10));
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: kill <pid> Please supply a non-negative pid.");
         }
     };
@@ -385,7 +372,6 @@ function shellInit() {
     sc.command = "format";
     sc.description = "- Formats the hard disk.";
     sc.function = function(args) {
-        // TODO - display message for error or success
         krnAddInterrupt(FILE_SYSTEM_IRQ, ["format"]);
     };
     this.commandList[this.commandList.length] = sc;
@@ -405,12 +391,10 @@ function shellInit() {
     sc.description = "<filename> - Creates a file with the given name.";
     sc.function = function(args) {
         // ensure they passed a filename and that it only contains characters and digits
-        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]) && args[0].length < BLOCK_SIZE - 4)
-        {
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]) && args[0].length < BLOCK_SIZE - 4) {
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["create", args[0]]);
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: create <filename> Please supply a valid filename no greater then " +
                 (BLOCK_SIZE - 4).toString() + " characters in length.");
         }
@@ -423,12 +407,10 @@ function shellInit() {
     sc.description = "<filename> - Reads the contents of the given file.";
     sc.function = function(args) {
         // ensure they passed a filename
-        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
-        {
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0])) {
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["read", args[0]]);
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: read <filename> Please supply a valid filename.");
         }
     };
@@ -452,8 +434,7 @@ function shellInit() {
             data.trim();
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["write", args[0], data]);
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: write <filename data> Please supply a valid filename and some data.");
         }
     };
@@ -465,12 +446,10 @@ function shellInit() {
     sc.description = "<filename> - Removes the given file for storage.";
     sc.function = function(args) {
         // ensure they passed a filename
-        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0]))
-        {
+        if (args.length > 0 && /^[A-Za-z][A-Za-z0-9]*$/.test(args[0])) {
             krnAddInterrupt(FILE_SYSTEM_IRQ, ["delete", args[0]]);
         }
-        else
-        {
+        else {
             _StdIn.putText("Usage: delete <filename> Please supply a valid filename.");
         }
     };

@@ -180,7 +180,6 @@ function Cpu() {
       disableStepBtn();
 
       krnKill(_CurrentPCB.pid);
-      //krnAddInterrupt(PROGRAM_TERMINATION_IRQ, true);   // TODO - to be changed
     };
     // EC - compare a byte in memory to the x register, sets z flag if equal
     this.CPX = function () {
@@ -227,9 +226,6 @@ function Cpu() {
     // $02 in x register = print the 00-terminated string stored at the address in the y register
     this.SYS = function () {
       if(this.Xreg == 1) {
-        //_StdOut.putText(this.Yreg.toString());
-        //_StdOut.advanceLine();
-        //_StdOut.putText(">");
         krnAddInterrupt(SYSTEM_CALL_PRINT_IRQ, this.Yreg.toString());
       }
       else if(this.Xreg == 2) {
@@ -240,12 +236,9 @@ function Cpu() {
         // read all the characters of the string and print each out until we reach the 00 character
         while (data != "00") {
           var ASCIIvalue = parseInt(data, 16);
-          //_StdOut.putText(String.fromCharCode(ASCIIvalue));
           str += String.fromCharCode(ASCIIvalue);
           data = _MemoryManager.read(address++);
         }
-        //_StdOut.advanceLine();
-        //_StdOut.putText(">");
         krnAddInterrupt(SYSTEM_CALL_PRINT_IRQ, str);
       }
     };

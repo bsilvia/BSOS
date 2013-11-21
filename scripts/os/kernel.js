@@ -181,15 +181,11 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             updateFileSystemDisplay(krnFileSystemDriver.getEntries());
             break;
         case PROGRAM_TERMINATION_IRQ:
-            _StdOut.putText("Process " + _CurrentPCB.pid + " terminated unexpectedly");
-            _StdOut.advanceLine();
-            _StdOut.putText(">");
+            krnWriteConsole("Process " + _CurrentPCB.pid + " terminated unexpectedly", true);
             krnKill(_CurrentPCB.pid);
             break;
         case SYSTEM_CALL_PRINT_IRQ:
-            _StdOut.putText(params);
-            _StdOut.advanceLine();
-            _StdOut.putText(">");
+            krnWriteConsole(params, true);
             break;
         case CONTEXT_SWITCH_IRQ:
             // update the process's PCB
@@ -310,9 +306,7 @@ function krnRunProgram(pid) {
   if(idx === -1)
   {
     // wasn't found
-    _StdOut.putText("Invalid pid.");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Invalid pid.", false);
     return;
   }
 
@@ -331,7 +325,7 @@ function krnRunAll() {
   if(_ResidentList.length === 0)
   {
     // wasn't found
-    _StdOut.putText("No programs loaded.");
+    krnWriteConsole("No programs loaded.", false);
     return;
   }
 
@@ -371,7 +365,7 @@ function krnKill(pid) {
   if(idx === -1)
   {
     // wasn't found
-    _StdOut.putText("Invalid pid.");
+    krnWriteConsole("Invalid pid.", false);
     return;
   }
 
