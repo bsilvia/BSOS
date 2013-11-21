@@ -24,45 +24,49 @@ DeviceDriverFileSystem.prototype.driverEntry = function() {
 
 // function to handle file system ISR operations - read, write, create, delete, format, ls
 DeviceDriverFileSystem.prototype.isr = function(params) {
-  if(params[0] === "create") {
-    if(this.create(params[1])) {
-      krnWriteConsole("Successfully create new file: " + params[1], true);
+  var command = params[0];
+  var filename = params[1];
+  var data = params[2];
+
+  if(command === "create") {
+    if(this.create(filename)) {
+      krnWriteConsole("Successfully create new file: " + filename, true);
     }
   }
-  else if(params[0] === "read") {
-    if(this.read(params[1])) {
+  else if(command === "read") {
+    if(this.read(filename)) {
       krnWriteConsole(this.readData, true);
     }
   }
-  else if(params[0] === "write") {
-    if (this.write(params[1], params[2])) {
-      krnWriteConsole("Successfully wrote to " + params[1], true);
+  else if(command === "write") {
+    if (this.write(filename, data)) {
+      krnWriteConsole("Successfully wrote to " + filename, true);
     }
   }
-  else if(params[0] === "delete") {
-    if (this.delete(params[1])) {
-      krnWriteConsole("Successfully deleted " + params[1], true);
+  else if(command === "delete") {
+    if (this.delete(filename)) {
+      krnWriteConsole("Successfully deleted " + filename, true);
     }
   }
-  else if(params[0] === "format") {
+  else if(command === "format") {
     if (this.format()) {
       krnWriteConsole("Successfully formatted the file system", true);
     }
   }
-  else if(params[0] === "ls") {
+  else if(command === "ls") {
     this.list();
   }
-  else if(params[0] === "swapCreate") {
-    this.create(params[1]);
+  else if(command === "swapCreate") {
+    this.create(filename);
   }
-  else if(params[0] === "swapRead") {
-    this.read(params[1]);
+  else if(command === "swapRead") {
+    this.read(filename);
   }
-  else if(params[0] === "swapWrite") {
-    this.write(params[1], params[2]);
+  else if(command === "swapWrite") {
+    this.write(filename, data);
   }
-  else if(params[0] === "swapDelete") {
-    this.delete(params[1]);
+  else if(command === "swapDelete") {
+    this.delete(filename);
   }
 };
 
