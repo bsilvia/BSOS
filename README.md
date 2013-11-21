@@ -1,4 +1,4 @@
-Layered Cake
+BSOS
 ============
 
 A Browser-based virtual Operating System for Operating Systems CMSC 422L111

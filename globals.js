@@ -11,7 +11,7 @@
 //
 // Global CONSTANTS
 //
-var APP_NAME = "Layered Cake";
+var APP_NAME = "BSOS";
 var APP_VERSION = "2.112";
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
