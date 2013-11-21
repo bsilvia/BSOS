@@ -46,52 +46,58 @@
         <h1>Layered Cake</h1>
       </td>
     </tr>-->
-      
+    <tr id="titleRow">
+      <td id="titleCell" colspan="3">
+        <div style="height:20px"><h1>Layered Cake</h1></div>
+      </td>
+    </tr>
     <tr>
       <td id="buttonsCell">
+        <div style="height:20px">
+          <input type="button"
+               id = "btnStartOS"
+               name="brnStartOS"
+               class="normal_button"
+               value="Start"
+               tabindex="0"
+               onclick="hostBtnStartOS_click(this);">
+
         <input type="button"
-             id = "btnStartOS"
-             name="brnStartOS"
-             class="normal_button"
-             value="Start"
-             tabindex="0"
-             onclick="hostBtnStartOS_click(this);">
+               id = "btnHaltOS"
+               name="brnHaltOS"
+               class="normal_button"
+               disabled="disabled"
+               value="Halt"
+               tabindex="1"
+               onclick="hostBtnHaltOS_click(this);">
 
-      <input type="button"
-             id = "btnHaltOS"
-             name="brnHaltOS"
-             class="normal_button"
-             disabled="disabled"
-             value="Halt"
-             tabindex="1"
-             onclick="hostBtnHaltOS_click(this);">
+        <input type="button"
+               id = "btnReset"
+               name="brnReset"
+               class="normal_button"
+               disabled="disabled"
+               value="Reset"
+               tabindex="2"
+               onclick="hostBtnReset_click(this);">
 
-      <input type="button"
-             id = "btnReset"
-             name="brnReset"
-             class="normal_button"
-             disabled="disabled"
-             value="Reset"
-             tabindex="2"
-             onclick="hostBtnReset_click(this);">
-
-      <input type="button"
-             id = "btnStep"
-             name="btnStep"
-             class="normal_button"
-             disabled="disabled"
-             value="Step"
-             tabindex="3"
-             onclick="hostBtnStep_click(this);">
+        <input type="button"
+               id = "btnStep"
+               name="btnStep"
+               class="normal_button"
+               disabled="disabled"
+               value="Step"
+               tabindex="3"
+               onclick="hostBtnStep_click(this);">
+        </div>
       </td>
-      <td id="titleCell">
-        <h1>Layered Cake</h1>
+      <td id="oldTitleCell">
+        <!--<h1>Layered Cake</h1>-->
       </td>
       <td id="statusBarCell">
-        <div>
+        <div style="height:10px">
           <p id="status">Welcome</p>
         </div>
-        <div>
+        <div style="height:10px">
           <p id="datetime">Date Time:</p>
         </div>
       </td>

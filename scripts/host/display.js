@@ -78,7 +78,7 @@ function updateMemoryDisplay() {
     var row = table.insertRow(i);
 
     if(memoryIndex % 256 === 0) {
-      row.style.backgroundColor = '#6191FF';
+      row.style.backgroundColor = '#008C00';//'#FAFAFA';//'#6191FF';
     }
 
     for(var j = 0; j < 9; j++) {
@@ -89,7 +89,7 @@ function updateMemoryDisplay() {
         cell.style.fontWeight = "bold";
         var pad = "000";
         hexString = pad.substring(0, pad.length - hexString.length) + hexString;
-        cell.innerHTML = "$" + hexString;
+        cell.innerHTML = "$" + hexString.toUpperCase();
       }
       else {
         cell.innerHTML = memory[memoryIndex].read();
@@ -138,7 +138,7 @@ function updateFileSystemDisplay(entries) {
         row = table.insertRow(idx);
         // change color on every 3rd track
         if(sector === 0 && block === 0) {
-          row.style.backgroundColor = '#6191FF';
+          row.style.backgroundColor = '#009600';//'#6191FF';
         }
 
         // go through and display the (T,S,B) and the data it contains
