@@ -26,41 +26,27 @@ DeviceDriverFileSystem.prototype.driverEntry = function() {
 DeviceDriverFileSystem.prototype.isr = function(params) {
   if(params[0] === "create") {
     if(this.create(params[1])) {
-      _StdOut.putText("Successfully create new file: " + params[1]);
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole("Successfully create new file: " + params[1], true);
     }
   }
   else if(params[0] === "read") {
     if(this.read(params[1])) {
       krnWriteConsole(this.readData, true);
-      //_StdOut.putText(this.readData);
-      //_StdOut.advanceLine();
-      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "write") {
     if (this.write(params[1], params[2])) {
       krnWriteConsole("Successfully wrote to " + params[1], true);
-      //_StdOut.putText("Successfully wrote to " + params[1]);
-      //_StdOut.advanceLine();
-      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "delete") {
     if (this.delete(params[1])) {
       krnWriteConsole("Successfully deleted " + params[1], true);
-      //_StdOut.putText("Successfully deleted " + params[1]);
-      //_StdOut.advanceLine();
-      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "format") {
     if (this.format()) {
       krnWriteConsole("Successfully formatted the file system", true);
-      //_StdOut.putText("Successfully formatted the file system");
-      //_StdOut.advanceLine();
-      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "ls") {
@@ -259,9 +245,7 @@ DeviceDriverFileSystem.prototype.format = function() {
 // function to create a file
 DeviceDriverFileSystem.prototype.create = function(filename) {
   if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system not formatted yet", true);
     return false;
   }
 
@@ -269,18 +253,14 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
   var nextOpenDir = this.getNextOpenDirEntry();
   var openFileEntries = this.getOpenFileEntries(1);
   if(nextOpenDir === null || openFileEntries === null) {
-    _StdOut.putText("Error: file system full");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system full", true);
     return false;
   }
 
   // search for a file with our filename and see if it 
   // is not found i.e. the filename isn't already taken
   if(this.findDirEntry(filename) !== "") {
-    _StdOut.putText("Error: filename already taken");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: filename already taken", true);
     return false;
   }
 
@@ -306,9 +286,7 @@ DeviceDriverFileSystem.prototype.create = function(filename) {
 // function to display the contents of a file
 DeviceDriverFileSystem.prototype.read = function(filename) {
   if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system not formatted yet", true);
     return false;
   }
 
@@ -316,9 +294,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
   // is found i.e. the filename does exist
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
-    _StdOut.putText("Error: file not found");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file not found", true);
     return false;
   }
 
@@ -348,9 +324,7 @@ DeviceDriverFileSystem.prototype.read = function(filename) {
 // function to write data to a file
 DeviceDriverFileSystem.prototype.write = function(filename, data) {
   if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system not formatted yet", true);
     return false;
   }
 
@@ -358,9 +332,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
   // is found i.e. the file does exist
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
-    _StdOut.putText("Error: file not found");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file not found", true);
     return false;
   }
 
@@ -398,9 +370,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
     // the file we reserved one block
     var openFileEntries = this.getOpenFileEntries(dataArray.length - 1);
     if(openFileEntries === null) {
-      _StdOut.putText("Error: not enough space in file system");
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole("Error: not enough space in file system", true);
       return false;
     }
 
@@ -428,9 +398,7 @@ DeviceDriverFileSystem.prototype.write = function(filename, data) {
 // function to remove a file from storage
 DeviceDriverFileSystem.prototype.delete = function(filename) {
   if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system not formatted yet", true);
     return false;
   }
 
@@ -439,9 +407,7 @@ DeviceDriverFileSystem.prototype.delete = function(filename) {
   // is found i.e. the file does exist
   var dirTSB = this.findDirEntry(filename);
   if(dirTSB === "") {
-    _StdOut.putText("Error: file not found");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file not found", true);
     return false;
   }
 
@@ -500,18 +466,14 @@ DeviceDriverFileSystem.prototype.deleteFileContents = function(dirTSB) {
 // function to list the files currently stored on the disk
 DeviceDriverFileSystem.prototype.list = function() {
   if(!this.formatted) {
-    _StdOut.putText("Error: file system not formatted yet");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("Error: file system not formatted yet", true);
     return false;
   }
 
   // make sure there are more than just the msb in the directory track
   var files = this.getDirEntries();
   if(files.length < 2) {
-    _StdOut.putText("No files found");
-    _StdOut.advanceLine();
-    _StdOut.putText(">");
+    krnWriteConsole("No files found", true);
     return false;
   }
 
