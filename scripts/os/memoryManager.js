@@ -140,6 +140,7 @@ MemoryManager.prototype.readMemoryBlock = function() {
 MemoryManager.prototype.contextSwitch = function(newPCB) {
 	var pidSwappedOut = _CurrentPCB.pid;
 
+	// if the current process isn't finished yet, then we must add it to ready queue
     if(_CurrentPCB.finished !== true) {
 		if(!_CurrentPCB.tempSwap) {
 			// add the current process back onto the ready queue if it is not finished

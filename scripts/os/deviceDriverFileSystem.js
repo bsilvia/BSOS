@@ -20,8 +20,6 @@ function DeviceDriverFileSystem() {
 DeviceDriverFileSystem.prototype.driverEntry = function() {
   // Initialization routine for this, the kernel-mode Keyboard Device Driver.
   this.status = "loaded";
-
-  // TODO - do we want to support non-volatile storage?
 };
 
 // function to handle file system ISR operations - read, write, create, delete, format, ls
@@ -35,30 +33,34 @@ DeviceDriverFileSystem.prototype.isr = function(params) {
   }
   else if(params[0] === "read") {
     if(this.read(params[1])) {
-      _StdOut.putText(this.readData);
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole(this.readData, true);
+      //_StdOut.putText(this.readData);
+      //_StdOut.advanceLine();
+      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "write") {
     if (this.write(params[1], params[2])) {
-      _StdOut.putText("Successfully wrote to " + params[1]);
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole("Successfully wrote to " + params[1], true);
+      //_StdOut.putText("Successfully wrote to " + params[1]);
+      //_StdOut.advanceLine();
+      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "delete") {
     if (this.delete(params[1])) {
-      _StdOut.putText("Successfully deleted " + params[1]);
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole("Successfully deleted " + params[1], true);
+      //_StdOut.putText("Successfully deleted " + params[1]);
+      //_StdOut.advanceLine();
+      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "format") {
     if (this.format()) {
-      _StdOut.putText("Successfully formatted the file system");
-      _StdOut.advanceLine();
-      _StdOut.putText(">");
+      krnWriteConsole("Successfully formatted the file system", true);
+      //_StdOut.putText("Successfully formatted the file system");
+      //_StdOut.advanceLine();
+      //_StdOut.putText(">");
     }
   }
   else if(params[0] === "ls") {

@@ -195,36 +195,15 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             // update the process's PCB
             _CurrentPCB.update();
 
-
-
             var pidSwappedOut = _CurrentPCB.pid;
             var pidSwappedIn = params.pid;
 
             // set the cpu values from the values in the pcb of the new process
             _CPU.set(params);
 
-            // TODO - need to change up to use mem manager
+            // call the memory manager to manage switching between processes that
+            // may be across memory or across blocks on the disk
             _MemoryManager.contextSwitch(params);
-
-            /*
-            var pidSwappedOut = _CurrentPCB.pid;
-
-            // add the current process back onto the ready queue if it is not finished
-            if(_CurrentPCB.finished !== true)
-              _ReadyQueue.enqueue(_CurrentPCB);
-
-            // set the current process to the process that was passed
-            _CurrentPCB = params;
-            var pidSwappedIn = _CurrentPCB.pid;
-
-            // set the cpu values from the values in the pcb of the new process
-            _CPU.set(_CurrentPCB);
-
-            // set relocation register in memory manager
-            _MemoryManager.SetRelocationRegister(_CurrentPCB.base);
-            */
-            
-
 
             // update ready queue display
             updateReadyQueue();

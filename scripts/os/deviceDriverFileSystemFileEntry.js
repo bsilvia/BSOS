@@ -51,9 +51,8 @@ FileEntry.prototype.parseEntry = function(entryString) {
   else
     this.track = "-";
 
-  //this.key = vals[1];
   var idx = vals[2].indexOf("*");
-  if(idx > 0)
+  if(idx >= 0)
     this.data = vals[2].substring(0, idx);
   else
     this.data = vals[2];
