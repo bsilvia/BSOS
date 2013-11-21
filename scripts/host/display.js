@@ -200,7 +200,7 @@ function updateReadyQueue () {
 
     var row = table.insertRow(i);
 
-    for(var j = 0; j < 9; j++) {
+    for(var j = 0; j < 10; j++) {
       var cell = row.insertCell(j);
       
       // if we are in the first column, pad the number and display it in bold
@@ -211,24 +211,27 @@ function updateReadyQueue () {
         cell.innerHTML = "Loc.";
       }
       else if (i === 0 && j === 2) {
-        cell.innerHTML = "Base";
+        cell.innerHTML = "Pr";
       }
       else if (i === 0 && j === 3) {
-        cell.innerHTML = "Limit";
+        cell.innerHTML = "Base";
       }
       else if (i === 0 && j === 4) {
-        cell.innerHTML = "PC";
+        cell.innerHTML = "Limit";
       }
       else if (i === 0 && j === 5) {
-        cell.innerHTML = "AC";
+        cell.innerHTML = "PC";
       }
       else if (i === 0 && j === 6) {
-        cell.innerHTML = "X";
+        cell.innerHTML = "AC";
       }
       else if (i === 0 && j === 7) {
-        cell.innerHTML = "Y";
+        cell.innerHTML = "X";
       }
       else if (i === 0 && j === 8) {
+        cell.innerHTML = "Y";
+      }
+      else if (i === 0 && j === 9) {
         cell.innerHTML = "Z";
       }
       // display the item in ready queue (if applicable)
@@ -245,7 +248,8 @@ function updateReadyQueue () {
           row.insertCell(6);
           row.insertCell(7);
           row.insertCell(8);
-          j = 9;
+          row.insertCell(9);
+          j = 10;
         }
         else
           cell.innerHTML = _ReadyQueue.getItem(i-1).pid;
@@ -254,24 +258,27 @@ function updateReadyQueue () {
         cell.innerHTML = _ReadyQueue.getItem(i-1).location;
       }
       else if (j === 2) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).base;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).priority;
       }
       else if (j === 3) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).limit;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).base;
       }
       else if (j === 4) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).PC;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).limit;
       }
       else if (j === 5) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).AC;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).PC;
       }
       else if (j === 6) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).Xreg;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).AC;
       }
       else if (j === 7) {
-        cell.innerHTML = _ReadyQueue.getItem(i-1).Yreg;
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Xreg;
       }
       else if (j === 8) {
+        cell.innerHTML = _ReadyQueue.getItem(i-1).Yreg;
+      }
+      else if (j === 9) {
         cell.innerHTML = _ReadyQueue.getItem(i-1).Zflag;
       }
     } // end for each column in this row

@@ -65,7 +65,7 @@ MemoryManager.prototype.getMemory = function() {
 MemoryManager.prototype.load = function(program, priority) {
 	// check the size of the program
 	if(program.length > _BlockSize) {
-		_StdOut.putText("Program size exceeds max memory size");
+		krnWriteConsole("Program size exceeds max memory size", false);
 		return false;
 	}
 
@@ -75,7 +75,7 @@ MemoryManager.prototype.load = function(program, priority) {
 	// if there was no open memory blocks then we must put this process onto the disk
 	if(blockNum === -1) {
 		if(!krnFileSystemDriver.isFormatted()) {
-			_StdOut.putText("Error: can't load program into virtual memory, file system is not formatted");
+			krnWriteConsole("Can't load program into virtual memory if file system is not formatted", false);
 			return false;
 		}
 
@@ -109,9 +109,9 @@ MemoryManager.prototype.load = function(program, priority) {
 	this.lastLoadedPCB = pcb;
 
 	if(priority > -1)
-		_StdOut.putText("Loaded program with PID " + pcb.pid + " and priority " + priority);
+		krnWriteConsole("Loaded program with PID " + pcb.pid + " and priority " + priority, false);
 	else
-		_StdOut.putText("Loaded program with PID " + pcb.pid);
+		krnWriteConsole("Loaded program with PID " + pcb.pid, false);
 
 	return true;
 };
@@ -175,6 +175,7 @@ MemoryManager.prototype.contextSwitch = function(newPCB) {
 
 // rolls a processes out of the disk and into memory
 MemoryManager.prototype.rollIn = function(pcb) {
+	krnTrace("rolling in process id " + pcb.pid + " from disk");
 	// read the program from the swap file
 	krnFileSystemDriver.isr(["swapRead", pcb.swapFileName]);
 	var swapFileData = krnFileSystemDriver.getReadData();
@@ -205,6 +206,7 @@ MemoryManager.prototype.rollIn = function(pcb) {
 
 // rolls a process out of memory and onto the disk
 MemoryManager.prototype.rollOut = function(pcb, program) {
+	krnTrace("rolling out process id " + pcb.pid + " out of memory");
 	// set the appropriate pcb attributes to reflect that this
 	// process is no longer in memory but on the disk
 	pcb.swapLocation();
