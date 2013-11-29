@@ -92,7 +92,11 @@ function updateMemoryDisplay() {
         cell.innerHTML = "$" + hexString.toUpperCase();
       }
       else {
-        cell.innerHTML = memory[memoryIndex].read();
+        var text = memory[memoryIndex].read()
+        if(text !== "")
+          cell.innerHTML = text;
+        else
+          cell.innerHTML = "00";
         memoryIndex++;
       }
     }
