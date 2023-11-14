@@ -3,7 +3,7 @@ BSOS
 
 A Browser-based virtual Operating System for Operating Systems CMSC 422L111
 
-View the latest submission of the project <a href="http://bsilvia.github.com/BSOS">here</a>.
+View the latest submission of the project <a href="https://bsilvia.github.io/BSOS/">here</a>.
 
 <a href="http://labouseur.com/courses/os/iProject1.pdf">iProject1</a> - First set of enhancements to code base.  Due 9/19.
 
